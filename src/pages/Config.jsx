@@ -2,8 +2,9 @@ import { useRef, useState } from 'react'
 import { del } from 'idb-keyval'
 import { useApp, aplicarImportacao, estadoInicial } from '../store.jsx'
 import { lerPlanilha, resumir } from '../importer.js'
-import { toast } from '../components/ui.jsx'
+import { ThemeSeg, toast } from '../components/ui.jsx'
 import { useNav } from '../App.jsx'
+import Icon from '../components/Icon.jsx'
 
 const NOMES = { academia: 'Treino (Plano_Academia)', corrida: 'Corrida (Plano_Corrida)', alimentacao: 'Dieta e suplementação' }
 
@@ -35,7 +36,7 @@ export default function Config() {
 
   const aplicar = () => {
     setState((prev) => aplicarImportacao(prev, lidos, { sobrescrever }))
-    toast('Planilhas importadas ✓')
+    toast('Planilhas importadas')
     setLidos([])
     go('hoje')
   }
@@ -76,7 +77,12 @@ export default function Config() {
       <p className="sub">Importar planilhas, backup e integrações</p>
 
       <div className="card">
-        <h2>📥 Importar planilhas</h2>
+        <h2><Icon name="sun" /> Aparência</h2>
+        <ThemeSeg />
+      </div>
+
+      <div className="card">
+        <h2><Icon name="upload" /> Importar planilhas</h2>
         <p className="mut small">
           Selecione de uma vez as três planilhas (ou só a que mudou). O <b>plano</b> (treinos, dieta, corrida) é atualizado com o da planilha. Seus <b>registros</b> (cargas, treinos feitos, pesagens, corridas) são mantidos e mesclados. Reimporte sempre que editar as planilhas.
         </p>
@@ -109,23 +115,23 @@ export default function Config() {
       </div>
 
       <div className="card">
-        <h2>⌚ Relógio e balança</h2>
+        <h2><Icon name="watch" /> Relógio e balança</h2>
         <p className="small"><b>Relógio (Fitbeing):</b> exporte a corrida do Fitbeing ou do Strava em GPX/TCX e importe na aba Corrida (botão “Importar GPX/TCX”). Distância, tempo e FC média entram sozinhos.</p>
-        <p className="small"><b>Balança de bioimpedância:</b> por enquanto, digite peso, gordura, massa magra e água na aba Evolução. A leitura automática via Apple Health é a próxima fase.</p>
+        <p className="small"><b>Balança de bioimpedância:</b> use a aba Bio para conectar por Bluetooth, importar o CSV do app da balança ou digitar as medidas.</p>
         <div className="note">No iPhone, um app instalado pelo Safari não lê o Apple Health nem usa Bluetooth. Por isso a integração direta precisa de uma camada extra, que está no roadmap.</div>
       </div>
 
       <div className="card">
-        <h2>📲 Instalar no celular</h2>
+        <h2><Icon name="phone" /> Instalar no celular</h2>
         <ul className="clean small">
-          <li><b>iPhone:</b> abra no Safari → botão Compartilhar → “Adicionar à Tela de Início”.</li>
+          <li><b>iPhone:</b> abra no Safari, toque em Compartilhar e depois em “Adicionar à Tela de Início”.</li>
           <li><b>PC (Chrome/Edge):</b> ícone de instalar na barra de endereço.</li>
           <li>Os dados ficam guardados no aparelho. Celular e PC ainda não se sincronizam: use o backup para levar os dados de um para o outro.</li>
         </ul>
       </div>
 
       <div className="card">
-        <h2>💾 Backup</h2>
+        <h2><Icon name="save" /> Backup</h2>
         <div className="row wrap">
           <button className="btn" onClick={exportar}>Exportar backup (.json)</button>
           <button className="btn" onClick={() => backupRef.current?.click()}>Restaurar backup</button>

@@ -3,8 +3,9 @@ import { useApp } from '../store.jsx'
 import { useNav } from '../App.jsx'
 import { DIAS, DIAS_LABEL, addDays, fmtLongo, mondayOf, planWeek, todayISO } from '../lib/dates.js'
 import { corridaDoDia, inicioDoPlano, metas, pesoAtual, sequencia, statusDia, treinoDoDia } from '../lib/metrics.js'
-import { Bar, Check, Empty, Kpi, num, r1, toast } from '../components/ui.jsx'
+import { Bar, Check, Empty, Kpi, Streak, num, r1, toast } from '../components/ui.jsx'
 import { Habitos, MealList } from '../components/Dia.jsx'
+import Icon from '../components/Icon.jsx'
 
 export default function Hoje() {
   const { s, update } = useApp()
@@ -18,7 +19,7 @@ export default function Hoje() {
       <>
         <h1>Bem-vindo ao FOCO</h1>
         <p className="sub">Dieta, treino e corrida num lugar só.</p>
-        <Empty emoji="📥" title="Importe suas planilhas para começar">
+        <Empty icon="upload" title="Importe suas planilhas para começar">
           <p>Traga Plano_Academia, Plano_Corrida e Plano_Alimentacao_Suplementacao. O app monta tudo sozinho.</p>
           <button className="btn pri" onClick={() => go('config')}>Importar planilhas</button>
         </Empty>
@@ -74,9 +75,9 @@ export default function Hoje() {
       </p>
 
       <div className="kpis">
-        <Kpi cls="fire" v={`🔥 ${seqT.atual}`} l={`Ofensiva de treino (melhor: ${seqT.melhor})`} />
-        <Kpi cls="fire" v={`🔥 ${seqD.atual}`} l={`Ofensiva de dieta (melhor: ${seqD.melhor})`} />
-        <Kpi cls="fire" v={`🔥 ${seqC.atual}`} l="Ofensiva da creatina" />
+        <Kpi cls="fire" v={<Streak n={seqT.atual} />} l={`Ofensiva de treino (melhor: ${seqT.melhor})`} />
+        <Kpi cls="fire" v={<Streak n={seqD.atual} />} l={`Ofensiva de dieta (melhor: ${seqD.melhor})`} />
+        <Kpi cls="fire" v={<Streak n={seqC.atual} />} l="Ofensiva da creatina" />
         <Kpi v={ref ? `${r1(ref)} kg` : '–'} l={m ? `IMC ${r1(m.imc)}` : 'Peso atual'} />
       </div>
 
@@ -86,7 +87,7 @@ export default function Hoje() {
             <div key={d} className={'d' + (di === iso ? ' today' : '') + (st === 'ok' ? ' ok' : st === 'miss' ? ' miss' : '')}>
               {DIAS_LABEL[d]}
               <b>{di.slice(8)}</b>
-              <span>{rest ? '·' : st === 'ok' ? '✓' : st === 'miss' ? '✗' : '○'}</span>
+              <span className="wd">{rest ? <Icon name="minus" /> : st === 'ok' ? <Icon name="check" /> : st === 'miss' ? <Icon name="close" /> : <Icon name="ring" />}</span>
             </div>
           ))}
         </div>
@@ -95,8 +96,8 @@ export default function Hoje() {
       <div className="grid c2">
         <div className="card">
           <div className="row">
-            <h2 className="sp">🏋️ Musculação</h2>
-            {treinoLog?.feito && <span className="chip ok">Concluído ✓</span>}
+            <h2 className="sp"><Icon name="treino" /> Musculação</h2>
+            {treinoLog?.feito && <span className="chip ok"><Icon name="check" /> Concluído</span>}
           </div>
           {treino ? (
             <>
@@ -114,8 +115,8 @@ export default function Hoje() {
 
         <div className="card">
           <div className="row">
-            <h2 className="sp">🏃 Corrida</h2>
-            {corFeita && <span className="chip ok">Feita ✓</span>}
+            <h2 className="sp"><Icon name="corrida" /> Corrida</h2>
+            {corFeita && <span className="chip ok"><Icon name="check" /> Feita</span>}
           </div>
           {cor ? (
             <>
@@ -133,7 +134,7 @@ export default function Hoje() {
       </div>
 
       <div className="card">
-        <h2>🍽️ Refeições de hoje</h2>
+        <h2><Icon name="dieta" /> Refeições de hoje</h2>
         <MealList iso={iso} />
       </div>
 
@@ -143,12 +144,12 @@ export default function Hoje() {
       </div>
 
       <div className="card">
-        <h2>⚖️ Pesagem de hoje</h2>
+        <h2><Icon name="bio" /> Pesagem de hoje</h2>
         <div className="row">
-          <input type="number" inputMode="decimal" step="0.1" placeholder="Peso em kg (em jejum)" value={peso} onChange={(e) => setPeso(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && salvarPeso()} />
+          <input type="number" inputMode="decimal" step="0.1" placeholder="Peso em kg, em jejum…" aria-label="Peso em kg" autoComplete="off" value={peso} onChange={(e) => setPeso(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && salvarPeso()} />
           <button className="btn pri" onClick={salvarPeso}>Salvar</button>
         </div>
-        <div className="mut small" style={{ marginTop: 6 }}>O plano pede 3 pesagens por semana, em jejum. Composição corporal (gordura, massa magra) entra na aba Evolução.</div>
+        <div className="mut small" style={{ marginTop: 6 }}>O plano pede 3 pesagens por semana, em jejum. Gordura e massa magra entram na aba Bio.</div>
       </div>
     </>
   )

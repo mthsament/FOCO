@@ -100,7 +100,7 @@ export default function IntervalTimer({ sessao, onFim, onFechar }) {
   const fase = fases[idx]
   return (
     <div className={'card timer ' + (estado === 'fim' ? '' : fase.tipo)}>
-      <div className="phase">{estado === 'pronto' ? `Sessão: ${sessao.texto}` : estado === 'fim' ? 'Sessão concluída 🎉' : fase.label}</div>
+      <div className="phase">{estado === 'pronto' ? `Sessão: ${sessao.texto}` : estado === 'fim' ? 'Sessão concluída' : fase.label}</div>
       <div className="clock">{estado === 'pronto' ? fmt(total) : estado === 'fim' ? fmt(total) : fmt(restante)}</div>
       <div className="mut small">
         {estado === 'pronto' && `Duração total: ${Math.round(total / 60)} min. Deixe a tela ligada para ouvir os avisos.`}

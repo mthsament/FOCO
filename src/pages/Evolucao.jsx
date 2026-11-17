@@ -3,10 +3,10 @@ import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContai
 import { useApp } from '../store.jsx'
 import { addDays, dateOf, fmtCurto, planWeek, todayISO } from '../lib/dates.js'
 import { aderencia, historicoCarga, inicioDoPlano, kmPorSemana, metas, pesagensOrdenadas, pesoAtual, ritmo, sequencia, statusDia } from '../lib/metrics.js'
-import { Kpi, num, r1, toast } from '../components/ui.jsx'
+import { Kpi, Streak, num, r1, toast } from '../components/ui.jsx'
 
-const C = { acc: '#c6f432', blue: '#5ab0ff', violet: '#b38cff', warn: '#ffb347', bad: '#ff6b6b', grid: '#262e39' }
-const tip = { contentStyle: { background: '#161b22', border: '1px solid #262e39', borderRadius: 10, color: '#e8edf3' }, labelStyle: { color: '#8b97a6' } }
+const C = { acc: 'var(--acc)', blue: 'var(--blue)', violet: 'var(--violet)', warn: 'var(--warn)', bad: 'var(--bad)', grid: 'var(--line)' }
+const tip = { contentStyle: { background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 10, color: 'var(--txt)' }, labelStyle: { color: 'var(--mut)' } }
 
 function ChartCard({ titulo, children, vazio, nota }) {
   return (
@@ -104,9 +104,9 @@ export default function Evolucao() {
         <Kpi v={ref ? `${r1(ref)} kg` : '–'} l="Peso atual" />
         <Kpi v={variacao == null ? '–' : `${variacao > 0 ? '+' : ''}${r1(variacao)} kg`} l={`Desde o início (${base ? r1(base) : '–'} kg)`} />
         <Kpi v={m && ref ? r1(ref / s.perfil.altura ** 2) : '–'} l="IMC" />
-        <Kpi cls="fire" v={`🔥 ${seq.treino.atual}`} l={`Treino · melhor ${seq.treino.melhor}`} />
-        <Kpi cls="fire" v={`🔥 ${seq.dieta.atual}`} l={`Dieta · melhor ${seq.dieta.melhor}`} />
-        <Kpi cls="fire" v={`🔥 ${seq.creatina.atual}`} l={`Creatina · melhor ${seq.creatina.melhor}`} />
+        <Kpi cls="fire" v={<Streak n={seq.treino.atual} />} l={`Treino · melhor ${seq.treino.melhor}`} />
+        <Kpi cls="fire" v={<Streak n={seq.dieta.atual} />} l={`Dieta · melhor ${seq.dieta.melhor}`} />
+        <Kpi cls="fire" v={<Streak n={seq.creatina.atual} />} l={`Creatina · melhor ${seq.creatina.melhor}`} />
         <Kpi v={pct(ad7.treino)} l="Treino, últimos 7 dias" />
         <Kpi v={pct(ad7.dieta)} l="Dieta, últimos 7 dias" />
       </div>
@@ -114,16 +114,16 @@ export default function Evolucao() {
       <div className="card">
         <h2>Registrar medição</h2>
         <div className="form">
-          <div><label className="f">Data</label><input type="date" value={f.data} onChange={(e) => setF({ ...f, data: e.target.value })} /></div>
-          <div><label className="f">Peso (kg)</label><input type="number" inputMode="decimal" step="0.1" value={f.kg} onChange={(e) => setF({ ...f, kg: e.target.value })} /></div>
-          <div><label className="f">Gordura (%)</label><input type="number" inputMode="decimal" step="0.1" value={f.gordura} onChange={(e) => setF({ ...f, gordura: e.target.value })} /></div>
-          <div><label className="f">Massa magra (kg)</label><input type="number" inputMode="decimal" step="0.1" value={f.massaMagra} onChange={(e) => setF({ ...f, massaMagra: e.target.value })} /></div>
-          <div><label className="f">Água (%)</label><input type="number" inputMode="decimal" step="0.1" value={f.agua} onChange={(e) => setF({ ...f, agua: e.target.value })} /></div>
-          <div><label className="f">Cintura (cm)</label><input type="number" inputMode="decimal" step="0.5" value={f.cintura} onChange={(e) => setF({ ...f, cintura: e.target.value })} /></div>
+          <label className="fld"><span className="f">Data</span><input autoComplete="off" type="date" value={f.data} onChange={(e) => setF({ ...f, data: e.target.value })} /></label>
+          <label className="fld"><span className="f">Peso (kg)</span><input autoComplete="off" type="number" inputMode="decimal" step="0.1" value={f.kg} onChange={(e) => setF({ ...f, kg: e.target.value })} /></label>
+          <label className="fld"><span className="f">Gordura (%)</span><input autoComplete="off" type="number" inputMode="decimal" step="0.1" value={f.gordura} onChange={(e) => setF({ ...f, gordura: e.target.value })} /></label>
+          <label className="fld"><span className="f">Massa magra (kg)</span><input autoComplete="off" type="number" inputMode="decimal" step="0.1" value={f.massaMagra} onChange={(e) => setF({ ...f, massaMagra: e.target.value })} /></label>
+          <label className="fld"><span className="f">Água (%)</span><input autoComplete="off" type="number" inputMode="decimal" step="0.1" value={f.agua} onChange={(e) => setF({ ...f, agua: e.target.value })} /></label>
+          <label className="fld"><span className="f">Cintura (cm)</span><input autoComplete="off" type="number" inputMode="decimal" step="0.5" value={f.cintura} onChange={(e) => setF({ ...f, cintura: e.target.value })} /></label>
         </div>
         <div className="row" style={{ marginTop: 10 }}>
           <button className="btn pri" onClick={salvar}>Salvar medição</button>
-          <span className="mut small">Gordura, massa magra e água vêm da balança de bioimpedância (digite por enquanto; a sincronização automática é a próxima fase).</span>
+          <span className="mut small">Para gordura, massa magra e água direto da balança, use a aba Bio.</span>
         </div>
       </div>
 
@@ -137,7 +137,7 @@ export default function Evolucao() {
           </LineChart>
         </ChartCard>
 
-        <ChartCard titulo="Composição corporal" vazio={comp.length < 1 && 'Sem dados de bioimpedância ainda.'}>
+        <ChartCard titulo="Composição corporal" vazio={comp.length < 1 && 'Sem dados de bioimpedância ainda. Registre na aba Bio.'}>
           <LineChart data={comp}>
             <CartesianGrid stroke={C.grid} vertical={false} />
             <XAxis dataKey="d" /><YAxis yAxisId="a" width={40} /><YAxis yAxisId="b" orientation="right" width={40} /><Tooltip {...tip} /><Legend />

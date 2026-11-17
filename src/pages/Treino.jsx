@@ -4,6 +4,7 @@ import { fmtBR, fmtCurto, todayISO } from '../lib/dates.js'
 import { treinoDoDia, ultimaCarga, historicoCarga } from '../lib/metrics.js'
 import { Bar, DayPicker, Empty, Seg, num, toast } from '../components/ui.jsx'
 import { useNav } from '../App.jsx'
+import Icon from '../components/Icon.jsx'
 
 const arred = (kg) => Math.round(kg * 2) / 2
 
@@ -16,7 +17,7 @@ export default function Treino() {
 
   if (!treinos) {
     return (
-      <Empty emoji="🏋️" title="Nenhum treino importado">
+      <Empty icon="treino" title="Nenhum treino importado">
         <button className="btn pri" onClick={() => go('config')}>Importar Plano_Academia.xlsx</button>
       </Empty>
     )
@@ -76,7 +77,7 @@ export default function Treino() {
       <div className="card">
         <div className="row">
           <h2 className="sp"><span className="tag">{letra}</span> {t.nome}</h2>
-          {logLetra?.feito && <span className="chip ok">Concluído ✓</span>}
+          {logLetra?.feito && <span className="chip ok"><Icon name="check" /> Concluído</span>}
         </div>
         <div className="row small mut" style={{ marginBottom: 6 }}><span>{setsFeitos}/{setsTot} séries</span></div>
         <Bar pct={setsTot ? setsFeitos / setsTot : 0} />
@@ -92,7 +93,7 @@ export default function Treino() {
                 <div className="sp">
                   <b>{ex.nome}</b>
                   <div className="mut small">{ex.series} × {ex.reps} · descanso {ex.descanso}</div>
-                  {ex.obs && <div className="mut small">💡 {ex.obs}</div>}
+                  {ex.obs && <div className="mut small"><Icon name="bulb" /> {ex.obs}</div>}
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <input className="kg" type="number" inputMode="decimal" step="0.5" placeholder={ant ? String(ant) : 'kg'} value={e.kg ?? ''} onChange={(ev) => setKg(ex.id, num(ev.target.value))} aria-label={`Carga de ${ex.nome} em kg`} />
@@ -101,7 +102,7 @@ export default function Treino() {
               <div className="row small mut" style={{ marginTop: 4 }}>
                 {ultima ? <span>Última: {ultima.kg} kg ({fmtCurto(ultima.data)})</span> : <span>Sem carga anterior</span>}
                 {ultima && <button className="btn sm ghost" onClick={() => setKg(ex.id, ultima.kg)}>usar {ultima.kg}</button>}
-                {ultima && <button className="btn sm ghost" onClick={() => setKg(ex.id, arred(ultima.kg * 1.03))} title="Se fechou o topo das repetições em todas as séries: +2 a 5%">+3% → {arred(ultima.kg * 1.03)}</button>}
+                {ultima && <button className="btn sm ghost" onClick={() => setKg(ex.id, arred(ultima.kg * 1.03))} title="Se fechou o topo das repetições em todas as séries: +2 a 5%">+3%: {arred(ultima.kg * 1.03)}</button>}
               </div>
               <div className="sets">
                 {Array.from({ length: ex.series }, (_, i) => (
@@ -115,7 +116,7 @@ export default function Treino() {
         })}
 
         <div className="row" style={{ marginTop: 14 }}>
-          <button className={'btn ' + (logLetra?.feito ? '' : 'pri')} onClick={() => { concluir(); toast(logLetra?.feito ? 'Treino reaberto' : 'Treino concluído 💪') }}>
+          <button className={'btn ' + (logLetra?.feito ? '' : 'pri')} onClick={() => { concluir(); toast(logLetra?.feito ? 'Treino reaberto' : 'Treino concluído') }}>
             {logLetra?.feito ? 'Reabrir treino' : 'Concluir treino'}
           </button>
         </div>

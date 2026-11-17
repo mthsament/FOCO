@@ -3,7 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#0e1116" />
+    <meta name="theme-color" content="#0f1b2d" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      // aplica o tema antes de pintar, para não piscar
+      try {
+        var p = localStorage.getItem('foco-theme');
+        var t = p === 'light' || p === 'dark' ? p : (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.dataset.theme = t;
+        document.documentElement.style.colorScheme = t;
+        document.querySelector('meta[name="theme-color"]').setAttribute('content', t === 'dark' ? '#08101a' : '#0f1b2d');
+      } catch (e) {}
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />

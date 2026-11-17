@@ -1,19 +1,22 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
-import { Toaster } from './components/ui.jsx'
+import { Toaster, ThemeToggle } from './components/ui.jsx'
+import Icon from './components/Icon.jsx'
 import Hoje from './pages/Hoje.jsx'
 import Treino from './pages/Treino.jsx'
 import Dieta from './pages/Dieta.jsx'
 import Corrida from './pages/Corrida.jsx'
+import Bio from './pages/Bio.jsx'
 import Evolucao from './pages/Evolucao.jsx'
 import Config from './pages/Config.jsx'
 
 const TABS = [
-  ['hoje', 'Hoje', '🏠', Hoje],
-  ['treino', 'Treino', '🏋️', Treino],
-  ['dieta', 'Dieta', '🍽️', Dieta],
-  ['corrida', 'Corrida', '🏃', Corrida],
-  ['evolucao', 'Evolução', '📈', Evolucao],
-  ['config', 'Ajustes', '⚙️', Config],
+  ['hoje', 'Hoje', 'hoje', Hoje],
+  ['treino', 'Treino', 'treino', Treino],
+  ['dieta', 'Dieta', 'dieta', Dieta],
+  ['corrida', 'Corrida', 'corrida', Corrida],
+  ['bio', 'Bio', 'bio', Bio],
+  ['evolucao', 'Evolução', 'evolucao', Evolucao],
+  ['config', 'Ajustes', 'config', Config],
 ]
 
 const NavCtx = createContext(null)
@@ -47,27 +50,30 @@ export default function App() {
   return (
     <NavCtx.Provider value={{ tab, go, params }}>
       <div className="app">
+        <a className="skip" href="#conteudo" onClick={(e) => { e.preventDefault(); document.getElementById('conteudo')?.focus() }}>Ir para o conteúdo</a>
         <header className="top">
-          <span className="logo">FOCO</span>
+          <span className="logo" translate="no">FOCO</span>
           <span className="sp" />
-          <button className="iconbtn" onClick={() => go('config')} aria-label="Ajustes">⚙️</button>
+          <ThemeToggle />
+          <button className="iconbtn" onClick={() => go('config')} aria-label="Ajustes"><Icon name="config" /></button>
         </header>
         <nav className="nav" aria-label="Navegação">
-          <div className="brand">FOCO</div>
+          <div className="brand" translate="no">FOCO</div>
           {principais.map(([k, l, ic]) => (
-            <button key={k} className={tab === k ? 'on' : ''} onClick={() => go(k)}>
-              <span className="ic">{ic}</span>
+            <button key={k} className={tab === k ? 'on' : ''} aria-current={tab === k ? 'page' : undefined} onClick={() => go(k)}>
+              <span className="ic"><Icon name={ic} /></span>
               <span>{l}</span>
             </button>
           ))}
           <div className="grow" />
-          <button className={'cfg ' + (tab === 'config' ? 'on' : '')} onClick={() => go('config')}
+          <ThemeToggle className="cfg" rotulo />
+          <button className={'cfg ' + (tab === 'config' ? 'on' : '')} aria-current={tab === 'config' ? 'page' : undefined} onClick={() => go('config')}
           >
-            <span className="ic">⚙️</span>
+            <span className="ic"><Icon name="config" /></span>
             <span>Ajustes</span>
           </button>
         </nav>
-        <main>
+        <main id="conteudo" tabIndex={-1}>
           <Page key={tab} />
         </main>
         <Toaster />

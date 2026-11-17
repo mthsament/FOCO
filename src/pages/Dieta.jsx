@@ -5,6 +5,7 @@ import { DIAS, DIAS_LABEL, todayISO } from '../lib/dates.js'
 import { metas } from '../lib/metrics.js'
 import { DayPicker, Empty, Seg, num, r0, r1 } from '../components/ui.jsx'
 import { Habitos, MealList } from '../components/Dia.jsx'
+import Icon from '../components/Icon.jsx'
 
 export default function Dieta() {
   const { s } = useApp()
@@ -13,7 +14,7 @@ export default function Dieta() {
   const [iso, setIso] = useState(todayISO())
   if (!s.plan.dieta) {
     return (
-      <Empty emoji="🍽️" title="Nenhuma dieta importada">
+      <Empty icon="dieta" title="Nenhuma dieta importada">
         <button className="btn pri" onClick={() => go('config')}>Importar Plano_Alimentacao_Suplementacao.xlsx</button>
       </Empty>
     )
@@ -140,15 +141,15 @@ function Metas() {
         <h2>Seus dados</h2>
         <div className="form">
           {CAMPOS.map(([k, l, st]) => (
-            <div key={k}>
-              <label className="f">{l}</label>
-              <input type="number" inputMode="decimal" step={st} value={p[k] ?? ''} onChange={(e) => set(k, num(e.target.value))} />
-            </div>
+            <label key={k} className="fld">
+              <span className="f">{l}</span>
+              <input type="number" inputMode="decimal" autoComplete="off" step={st} value={p[k] ?? ''} onChange={(e) => set(k, num(e.target.value))} />
+            </label>
           ))}
-          <div>
-            <label className="f">Sexo</label>
+          <label className="fld">
+            <span className="f">Sexo</span>
             <select value={p.sexo} onChange={(e) => set('sexo', e.target.value)}><option value="M">M</option><option value="F">F</option></select>
-          </div>
+          </label>
         </div>
         <p className="mut small">Idade, sexo e fator de atividade eram premissas da planilha. Ajuste para os valores reais.</p>
       </div>
@@ -183,7 +184,7 @@ function Metas() {
             <b>{x.nome}</b> <span className="chip acc">{x.dose}</span>
             <div className="mut small">{x.horario} · {x.frequencia}</div>
             <div className="small">{x.como}</div>
-            {x.cuidados && <div className="mut small">⚠️ {x.cuidados}</div>}
+            {x.cuidados && <div className="mut small"><Icon name="warn" /> {x.cuidados}</div>}
           </div>
         ))}
       </div>

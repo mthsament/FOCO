@@ -6,6 +6,7 @@ import { fmtDur, fmtRitmo, inicioDoPlano, ritmo } from '../lib/metrics.js'
 import { lerGps } from '../lib/gps.js'
 import IntervalTimer, { montarFases } from '../components/IntervalTimer.jsx'
 import { Empty, Kpi, Seg, num, r1, toast } from '../components/ui.jsx'
+import Icon from '../components/Icon.jsx'
 
 const DIAS_CORRIDA = [['qui', 'Quinta'], ['sab', 'Sábado'], ['dom', 'Domingo']]
 const vazio = () => ({ data: todayISO(), min: '', km: '', fc: '', esforco: '', obs: '' })
@@ -26,7 +27,7 @@ export default function Corrida() {
 
   if (!c) {
     return (
-      <Empty emoji="🏃" title="Nenhum plano de corrida importado">
+      <Empty icon="corrida" title="Nenhum plano de corrida importado">
         <button className="btn pri" onClick={() => go('config')}>Importar Plano_Corrida.xlsx</button>
       </Empty>
     )
@@ -59,7 +60,7 @@ export default function Corrida() {
       }
     })
     setForm(vazio())
-    toast('Corrida registrada 🏃')
+    toast('Corrida registrada')
     setAba('registro')
   }
 
@@ -120,7 +121,7 @@ export default function Corrida() {
                 <div className="mut small" style={{ margin: '2px 0 6px' }}>Meta: {w.meta}</div>
                 {DIAS_CORRIDA.map(([k, l]) => (
                   <div className="ses" key={k}>
-                    <button className={'check' + (feita(w.sem, k) ? ' on' : '')} onClick={() => toggle(w.sem, k)} aria-label={`Marcar ${l} da semana ${w.sem}`}>{feita(w.sem, k) ? '✓' : ''}</button>
+                    <button className={'check' + (feita(w.sem, k) ? ' on' : '')} onClick={() => toggle(w.sem, k)} aria-label={`Marcar ${l} da semana ${w.sem}`}>{feita(w.sem, k) ? <Icon name="check" /> : null}</button>
                     <span className="mut">{l}</span>
                     <b>{w[k].texto}</b>
                     {montarFases(w[k]) ? <button className="btn sm" onClick={() => { setTimer({ sessao: w[k] }); window.scrollTo(0, 0) }} aria-label="Iniciar timer">▶</button> : <span />}
@@ -137,16 +138,16 @@ export default function Corrida() {
           <div className="card">
             <h2>Registrar corrida</h2>
             <div className="form">
-              <div><label className="f">Data</label><input type="date" value={form.data} onChange={(e) => setForm({ ...form, data: e.target.value })} /></div>
-              <div><label className="f">Duração (min)</label><input type="number" inputMode="decimal" value={form.min} onChange={(e) => setForm({ ...form, min: e.target.value })} /></div>
-              <div><label className="f">Distância (km)</label><input type="number" inputMode="decimal" step="0.01" value={form.km} onChange={(e) => setForm({ ...form, km: e.target.value })} /></div>
-              <div><label className="f">FC média (bpm)</label><input type="number" inputMode="numeric" value={form.fc} onChange={(e) => setForm({ ...form, fc: e.target.value })} /></div>
-              <div><label className="f">Esforço (0-10)</label><input type="number" inputMode="numeric" min="0" max="10" value={form.esforco} onChange={(e) => setForm({ ...form, esforco: e.target.value })} /></div>
+              <label className="fld"><span className="f">Data</span><input autoComplete="off" type="date" value={form.data} onChange={(e) => setForm({ ...form, data: e.target.value })} /></label>
+              <label className="fld"><span className="f">Duração (min)</span><input autoComplete="off" type="number" inputMode="decimal" value={form.min} onChange={(e) => setForm({ ...form, min: e.target.value })} /></label>
+              <label className="fld"><span className="f">Distância (km)</span><input autoComplete="off" type="number" inputMode="decimal" step="0.01" value={form.km} onChange={(e) => setForm({ ...form, km: e.target.value })} /></label>
+              <label className="fld"><span className="f">FC média (bpm)</span><input autoComplete="off" type="number" inputMode="numeric" value={form.fc} onChange={(e) => setForm({ ...form, fc: e.target.value })} /></label>
+              <label className="fld"><span className="f">Esforço (0-10)</span><input autoComplete="off" type="number" inputMode="numeric" min="0" max="10" value={form.esforco} onChange={(e) => setForm({ ...form, esforco: e.target.value })} /></label>
             </div>
-            <div style={{ marginTop: 10 }}><label className="f">Observações (dor, sono, clima)</label><input type="text" value={form.obs} onChange={(e) => setForm({ ...form, obs: e.target.value })} /></div>
+            <label className="fld" style={{ marginTop: 10 }}><span className="f">Observações (dor, sono, clima)</span><input autoComplete="off" type="text" value={form.obs} onChange={(e) => setForm({ ...form, obs: e.target.value })} /></label>
             <div className="row wrap" style={{ marginTop: 12 }}>
               <button className="btn pri" onClick={salvar}>Salvar corrida</button>
-              <button className="btn" onClick={() => fileRef.current?.click()}>📎 Importar GPX/TCX</button>
+              <button className="btn" onClick={() => fileRef.current?.click()}><Icon name="clip" /> Importar GPX/TCX</button>
               <input ref={fileRef} type="file" accept=".gpx,.tcx,application/gpx+xml" hidden onChange={importar} />
             </div>
             <p className="mut small">Do relógio: no Fitbeing ou no Strava, exporte a atividade em GPX ou TCX e importe aqui. A distância e o tempo vêm do relógio, não do timer.</p>
@@ -165,7 +166,7 @@ export default function Corrida() {
                       <td>{x.km ? `${r1(x.km)} km` : '–'}</td>
                       <td>{x.km ? `${fmtRitmo(ritmo(x.min, x.km))}/km` : ''}</td>
                       <td>{x.fc ? `${x.fc} bpm` : ''}</td>
-                      <td><button className="btn sm ghost danger" onClick={() => update((d) => { d.logs.corridas = d.logs.corridas.filter((y) => y.id !== x.id) })} aria-label="Apagar">🗑</button></td>
+                      <td><button className="btn sm ghost danger" onClick={() => update((d) => { d.logs.corridas = d.logs.corridas.filter((y) => y.id !== x.id) })} aria-label="Apagar"><Icon name="trash" /></button></td>
                     </tr>
                   ))}
                 </tbody>
