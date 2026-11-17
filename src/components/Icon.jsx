@@ -133,12 +133,74 @@ const G = {
       <path d="M9 6.5L9.7 2.8h4.6L15 6.5M9 17.5l.7 3.7h4.6l.7-3.7M12 10.2v2l1.4.9" />
     </>
   ),
+  trofeu: (
+    <>
+      {D('M7.5 4h9v5.5a4.5 4.5 0 0 1-9 0z')}
+      <path d="M7.5 4h9v5.5a4.5 4.5 0 0 1-9 0zM7.5 6H4.5v1.5a3 3 0 0 0 3 3M16.5 6h3v1.5a3 3 0 0 1-3 3M12 14v3.5M8.5 20.5h7M9.5 17.5h5v3h-5z" />
+      {S(12, 8.4, 1.2)}
+    </>
+  ),
+  medalha: (
+    <>
+      <circle className="d" cx="12" cy="14.5" r="5.5" />
+      <circle cx="12" cy="14.5" r="5.5" />
+      <path d="M8.6 10.2L6.5 3.5h4l1.5 3.3M15.4 10.2l2.1-6.7h-4L12 6.8" />
+      {S(12, 14.5, 1.5)}
+    </>
+  ),
+  rota: (
+    <>
+      <circle className="d" cx="6.5" cy="17.5" r="2.5" />
+      <circle cx="6.5" cy="17.5" r="2.5" />
+      <circle cx="17.5" cy="6.5" r="2.5" />
+      <path d="M9 17.5h6.2a3 3 0 0 0 0-6H8.8a3 3 0 0 1 0-6H15" />
+    </>
+  ),
+  montanha: (
+    <>
+      {D('M3 19.5l6-10.5 3.5 6 2-3 6.5 7.5z')}
+      <path d="M3 19.5l6-10.5 3.5 6 2-3 6.5 7.5zM9 9l1.6 2.7" />
+    </>
+  ),
+  bolt: (
+    <>
+      {D('M13 3L5.5 13.5H12l-1 7.5 7.5-10.5H12z')}
+      <path d="M13 3L5.5 13.5H12l-1 7.5 7.5-10.5H12z" />
+    </>
+  ),
+  play: (
+    <>
+      {D('M8 5.5v13l10.5-6.5z')}
+      <path d="M8 5.5v13l10.5-6.5z" />
+    </>
+  ),
+  pause: <path d="M8.5 5.5v13M15.5 5.5v13" className="bold" />,
+  stop: (
+    <>
+      <rect className="d" x="6" y="6" width="12" height="12" rx="2.5" />
+      <rect x="6" y="6" width="12" height="12" rx="2.5" />
+    </>
+  ),
+  coracao: (
+    <>
+      {D('M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.2 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z')}
+      <path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.2 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z" />
+    </>
+  ),
+  pin: (
+    <>
+      {D('M12 21s6.5-5.8 6.5-11a6.5 6.5 0 0 0-13 0c0 5.2 6.5 11 6.5 11z')}
+      <path d="M12 21s6.5-5.8 6.5-11a6.5 6.5 0 0 0-13 0c0 5.2 6.5 11 6.5 11z" />
+      {S(12, 10, 2)}
+    </>
+  ),
+  lista: <path d="M8.5 6.5H20M8.5 12H20M8.5 17.5H20M4 6.5h.01M4 12h.01M4 17.5h.01" className="bold" />,
   dot: <circle className="s" cx="12" cy="12" r="3" />,
   ring: <circle cx="12" cy="12" r="5" />,
 }
 
 export default function Icon({ name, size, className = '', title }) {
-  const g = G[name]
+  const g = G[name === 'chama' ? 'flame' : name]
   if (!g) return null
   return (
     <svg

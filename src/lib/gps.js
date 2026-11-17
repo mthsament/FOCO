@@ -1,16 +1,12 @@
-// Lê GPX e TCX (exportados do Strava, Fitbeing, Garmin etc.) e devolve { data, min, km, fc }.
+// Lê GPX e TCX (exportados do Strava, Fitbeing, Garmin etc.) e devolve a corrida completa:
+// { data, min, km, fc, fcMax, subida, trilha, parciais, melhores, obs }.
 import { toISO } from './dates.js'
+import { analisar } from './corrida.js'
 
-const rad = (d) => (d * Math.PI) / 180
-function haversine(a, b) {
-  const R = 6371000
-  const dLat = rad(b.lat - a.lat)
-  const dLon = rad(b.lon - a.lon)
-  const x = Math.sin(dLat / 2) ** 2 + Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLon / 2) ** 2
-  return 2 * R * Math.asin(Math.sqrt(x))
-}
 const avg = (a) => (a.length ? a.reduce((x, y) => x + y, 0) / a.length : null)
 const tag = (el, name) => el.getElementsByTagNameNS('*', name)
+const txt = (el, name) => tag(el, name)[0]?.textContent
+const numOuNull = (v) => (v == null || v === '' || !Number.isFinite(+v) ? null : +v)
 
 export function lerGps(texto, nome = '') {
   const doc = new DOMParser().parseFromString(texto, 'application/xml')
@@ -21,39 +17,57 @@ export function lerGps(texto, nome = '') {
   throw new Error('Formato não suportado (use GPX ou TCX)')
 }
 
+// Converte pontos em corrida com análise completa
+export function corridaDePontos(pts, obs) {
+  const a = analisar(pts)
+  if (!a) return null
+  const { t0, ...resto } = a
+  return { data: toISO(new Date(t0)), ...resto, obs }
+}
+
 function lerGpx(doc, nome) {
-  const pts = [...tag(doc, 'trkpt')].map((p) => ({
-    lat: +p.getAttribute('lat'),
-    lon: +p.getAttribute('lon'),
-    t: tag(p, 'time')[0] ? new Date(tag(p, 'time')[0].textContent).getTime() : null,
-    hr: tag(p, 'hr')[0] ? +tag(p, 'hr')[0].textContent : null,
-  }))
+  const pts = [...tag(doc, 'trkpt')].map((p) => {
+    const t = txt(p, 'time')
+    return { lat: +p.getAttribute('lat'), lon: +p.getAttribute('lon'), t: t ? new Date(t).getTime() : null, ele: numOuNull(txt(p, 'ele')), hr: numOuNull(txt(p, 'hr')) }
+  })
   if (pts.length < 2) throw new Error('GPX sem pontos de trajeto')
-  let m = 0
-  for (let i = 1; i < pts.length; i++) m += haversine(pts[i - 1], pts[i])
-  const t0 = pts.find((p) => p.t)?.t
-  const t1 = [...pts].reverse().find((p) => p.t)?.t
-  const min = t0 && t1 ? (t1 - t0) / 60000 : null
-  return {
-    data: t0 ? toISO(new Date(t0)) : null,
-    min: min ? Math.round(min * 10) / 10 : null,
-    km: Math.round((m / 1000) * 100) / 100,
-    fc: Math.round(avg(pts.map((p) => p.hr).filter(Boolean)) || 0) || null,
-    obs: `Importado de ${nome}`,
-  }
+  const r = corridaDePontos(pts, `Importado de ${nome}`)
+  if (!r) throw new Error('O GPX não tem horário nos pontos, então não dá para calcular o ritmo')
+  return r
 }
 
 function lerTcx(doc, nome) {
+  const tps = [...tag(doc, 'Trackpoint')]
+  const pts = tps
+    .map((p) => {
+      const t = txt(p, 'Time')
+      const pos = tag(p, 'Position')[0]
+      const hrEl = tag(p, 'HeartRateBpm')[0]
+      return {
+        lat: pos ? numOuNull(txt(pos, 'LatitudeDegrees')) : NaN,
+        lon: pos ? numOuNull(txt(pos, 'LongitudeDegrees')) : NaN,
+        t: t ? new Date(t).getTime() : null,
+        ele: numOuNull(txt(p, 'AltitudeMeters')),
+        hr: hrEl ? numOuNull(txt(hrEl, 'Value')) : null,
+      }
+    })
+    .filter((p) => p.lat != null && p.lon != null)
+  if (pts.length >= 2) {
+    const r = corridaDePontos(pts, `Importado de ${nome}`)
+    if (r) return r
+  }
+
+  // sem GPS (esteira): usa só os totais das voltas
   const laps = [...tag(doc, 'Lap')]
   if (!laps.length) throw new Error('TCX sem voltas')
   let seg = 0
   let metros = 0
   for (const l of laps) {
-    seg += +(tag(l, 'TotalTimeSeconds')[0]?.textContent || 0)
-    metros += +(tag(l, 'DistanceMeters')[0]?.textContent || 0)
+    seg += +(txt(l, 'TotalTimeSeconds') || 0)
+    metros += +(txt(l, 'DistanceMeters') || 0)
   }
-  const hrs = [...tag(doc, 'HeartRateBpm')].map((h) => +(tag(h, 'Value')[0]?.textContent || 0)).filter(Boolean)
-  const t0 = tag(doc, 'Time')[0]?.textContent
+  const hrs = [...tag(doc, 'HeartRateBpm')].map((h) => +(txt(h, 'Value') || 0)).filter(Boolean)
+  const t0 = txt(doc, 'Time')
   return {
     data: t0 ? toISO(new Date(t0)) : null,
     min: Math.round((seg / 60) * 10) / 10,

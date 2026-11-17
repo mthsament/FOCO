@@ -196,3 +196,65 @@ main > :nth-child(n+6) { animation-delay: 150ms; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 0ms !important; animation-duration: 1ms !important; animation-delay: 0ms !important; }
 }
+
+/* ---------- Corrida: mapa, atividades, recordes, medalhas ---------- */
+.mapa { display: block; width: 100%; height: auto; border-radius: 12px; background: var(--card2); }
+.mapa.mini { background: transparent; max-height: 140px; }
+.mapa.vazio { display: grid; place-items: center; padding: 28px; }
+.mapa-grade line { stroke: var(--line); stroke-width: 1; opacity: .7; }
+.mapa-sombra { fill: none; stroke: var(--card); stroke-linejoin: round; stroke-linecap: round; opacity: .9; }
+.mapa-ini { fill: var(--ok); stroke: var(--card); stroke-width: 3; }
+.mapa-fim { fill: var(--txt); stroke: var(--card); stroke-width: 3; }
+.mapa-card { padding: 10px; }
+.legenda { display: flex; align-items: center; gap: 8px; justify-content: center; margin-top: 8px; font-size: 12.5px; color: var(--mut); }
+.legenda i { width: 120px; height: 6px; border-radius: 99px; background: linear-gradient(90deg, rgb(90,168,255), rgb(255,92,28)); }
+
+.prs { display: grid; gap: 8px; margin-bottom: 14px; }
+.pr { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px; background: var(--acc-soft); border: 1px solid var(--acc-line); }
+.pr .ico { width: 28px; height: 28px; color: var(--acc); }
+.pr b { display: block; }
+.pr span { color: var(--mut); font-size: 13.5px; }
+
+.parciais { display: grid; gap: 4px; }
+.parcial { display: grid; grid-template-columns: 30px 52px 1fr 68px 56px; gap: 10px; align-items: center; padding: 6px 0; font-variant-numeric: tabular-nums; }
+.parcial .n { color: var(--mut); text-align: right; font-size: 13.5px; }
+.parcial .t { font-weight: 700; }
+.parcial .b { height: 14px; border-radius: 4px; background: var(--card2); overflow: hidden; }
+.parcial .b i { display: block; height: 100%; background: var(--blue); border-radius: 4px; }
+.parcial.best .b i { background: var(--acc); }
+.parcial.best .t { color: var(--acc); }
+.parcial .m { color: var(--mut); font-size: 12.5px; text-align: right; }
+@media (max-width: 420px) { .parcial { grid-template-columns: 26px 46px 1fr 52px; } .parcial .m:last-child { display: none; } }
+
+.atv { display: grid; grid-template-columns: 120px 1fr; gap: 14px; width: 100%; text-align: left; padding: 10px; margin-bottom: 10px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); box-shadow: var(--shadow); cursor: pointer; transition: border-color 150ms var(--ease-out), transform 160ms var(--ease-out); }
+.atv:active { transform: scale(.985); }
+@media (hover: hover) and (pointer: fine) { .atv:hover { border-color: var(--mut); } }
+.atv-mapa { display: grid; place-items: center; min-height: 96px; border-radius: 10px; background: var(--card2); color: var(--mut); overflow: hidden; }
+.atv-mapa .mapa { max-height: 120px; }
+.atv-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.atv-top b { font: 700 26px/1 var(--display); }
+.atv-nums { display: flex; flex-wrap: wrap; gap: 2px 14px; margin-top: 6px; font-size: 13.5px; color: var(--mut); }
+.atv-nums b { color: var(--txt); font-weight: 700; }
+.atv-pr { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; padding: 2px 10px; border-radius: 99px; background: var(--acc-soft); color: var(--acc); font-size: 13px; font-weight: 600; }
+.atv-obs { margin-top: 4px; }
+
+tr.clicavel { cursor: pointer; }
+@media (hover: hover) and (pointer: fine) { tr.clicavel:hover td { background: var(--card2); } }
+.pr-t { font: 700 20px var(--display); color: var(--acc); }
+.chips-sel { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.chip.sel { cursor: pointer; min-height: 32px; }
+
+.medalhas { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 14px 10px; }
+.medalha { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; opacity: .55; }
+.medalha b { font-size: 13.5px; line-height: 1.2; }
+.medalha.on { opacity: 1; }
+.hex { width: 68px; height: 76px; display: grid; place-items: center; background: var(--card2); color: var(--mut); clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); }
+.hex .ico { width: 30px; height: 30px; }
+.medalha.on .hex { background: var(--acc); color: var(--acc-ink); }
+
+.gravador { border-color: var(--acc-line); }
+.live { text-align: center; padding: 6px 0 10px; }
+.live-clock { font: 700 84px/1 var(--display); font-variant-numeric: tabular-nums; color: var(--acc); }
+.live-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
+.live-grid b { display: block; font: 700 30px/1.1 var(--display); font-variant-numeric: tabular-nums; }
+.live-grid span { color: var(--mut); font-size: 12.5px; }

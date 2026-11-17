@@ -97,6 +97,25 @@ export async function conectarBalanca({ onLeitura, onStatus, onFim }) {
   return { nome, servicos: lista, assinou, desconectar: () => device.gatt.connected && device.gatt.disconnect() }
 }
 
+// ---------- Monitor de frequência cardíaca (cinta, ou relógio com "transmitir FC") ----------
+// Serviço padrão Heart Rate (0x180D). Muitos relógios só transmitem se o modo "transmitir FC"
+// estiver ligado no próprio relógio.
+export const lerFC = (dv) => (dv.getUint8(0) & 1 ? dv.getUint16(1, true) : dv.getUint8(1))
+
+export async function conectarFC({ onFC, onFim }) {
+  const device = await navigator.bluetooth.requestDevice({ filters: [{ services: ['heart_rate'] }] })
+  device.addEventListener('gattserverdisconnected', () => onFim?.())
+  const server = await device.gatt.connect()
+  const svc = await server.getPrimaryService('heart_rate')
+  const ch = await svc.getCharacteristic('heart_rate_measurement')
+  ch.addEventListener('characteristicvaluechanged', (e) => {
+    const v = lerFC(e.target.value)
+    if (v > 30 && v < 250) onFC(v)
+  })
+  await ch.startNotifications()
+  return { nome: device.name || 'Monitor de FC', desconectar: () => device.gatt.connected && device.gatt.disconnect() }
+}
+
 // ---------- Importação de CSV exportado pelo app da balança ----------
 const semAcento = (t) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim()
 const num = (v) => {
