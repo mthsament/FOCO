@@ -77,6 +77,12 @@ h2 .ico { width: 1.05em; height: 1.05em; margin-right: 2px; color: var(--acc); }
 }
 .kpi.fire .v .chama { width: .58em; height: .725em; margin-right: 1px; }
 .kpi.fire.azul .v { color: var(--blue); }
+/* garrafinha da ofensiva de água no KPI: enche conforme a meta do dia */
+.garrafa.mini { display: inline-block; width: .44em; height: .8em; flex: none; margin-right: 4px; }
+.garrafa.mini .g-borda { stroke-width: 7; }
+.garrafa.mini .g-tampa { stroke-width: 6; }
+.garrafa.mini .g-marca, .garrafa.mini .g-tampa-l, .garrafa.mini .g-sombra, .garrafa.mini .g-bolha { display: none; }
+.garrafa.mini .g-brilho { stroke-width: 8; }
 
 /* ---------- Água: garrafa que enche + ofensiva ---------- */
 .agua { position: relative; overflow: hidden; display: flex; gap: 18px; align-items: center; padding: 16px; margin-bottom: 14px; border-radius: var(--r); background: var(--card); border: 1px solid var(--line); isolation: isolate; transition: background-color 500ms var(--ease-out), border-color 500ms var(--ease-out), color 500ms var(--ease-out); }

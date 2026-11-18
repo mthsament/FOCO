@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { useApp } from '../store.jsx'
 import { addDays, todayISO } from '../lib/dates.js'
 import { aguaDoDia, metaAgua, sequenciaAgua } from '../lib/metrics.js'
@@ -13,25 +13,26 @@ const CORPO = 'M48 30H72V44C72 52 98 56 98 76V196Q98 208 86 208H34Q22 208 22 196
 const FUNDO = 208
 const TOPO = 58
 
-export function Garrafa({ pct }) {
+export function Garrafa({ pct, className = '' }) {
+  const uid = useId().replace(/[^a-zA-Z0-9_-]/g, '')
   const p = Math.min(1, Math.max(0, pct || 0))
   const cheia = p >= 1
   const dy = (1 - p) * (FUNDO - TOPO)
   return (
-    <svg className={'garrafa' + (cheia ? ' cheia' : '')} viewBox="0 0 120 220" role="img" aria-label={`Garrafa ${Math.round(p * 100)}% cheia`}>
+    <svg className={'garrafa' + (cheia ? ' cheia' : '') + (className ? ' ' + className : '')} viewBox="0 0 120 220" role="img" aria-label={`Garrafa ${Math.round(p * 100)}% cheia`}>
       <defs>
-        <clipPath id="g-corpo"><path d={CORPO} /></clipPath>
-        <linearGradient id="g-agua" x1="0" y1="0" x2="0" y2="1">
+        <clipPath id={`g-corpo-${uid}`}><path d={CORPO} /></clipPath>
+        <linearGradient id={`g-agua-${uid}`} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor="#5ccbff" />
           <stop offset="1" stopColor="#1478e0" />
         </linearGradient>
       </defs>
       <ellipse className="g-sombra" cx="60" cy="214" rx="38" ry="4" />
       <path className="g-vidro" d={CORPO} />
-      <g clipPath="url(#g-corpo)">
+      <g clipPath={`url(#g-corpo-${uid})`}>
         <g className="g-nivel" style={{ transform: `translateY(${dy}px)`, opacity: p > 0 ? 1 : 0 }}>
           <g className="g-onda g-onda2"><path d="M0 58q15 -7 30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0V230H0z" fill="#8bdcff" opacity=".55" /></g>
-          <g className="g-onda"><path d="M0 60q15 -8 30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0V230H0z" fill="url(#g-agua)" /></g>
+          <g className="g-onda"><path d="M0 60q15 -8 30 0t30 0t30 0t30 0t30 0t30 0t30 0t30 0V230H0z" fill={`url(#g-agua-${uid})`} /></g>
           <circle className="g-bolha b1" cx="44" cy="190" r="3" />
           <circle className="g-bolha b2" cx="70" cy="200" r="2.2" />
           <circle className="g-bolha b3" cx="58" cy="196" r="1.6" />

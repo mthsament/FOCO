@@ -2,11 +2,11 @@ import { useState } from 'react'
 import { useApp } from '../store.jsx'
 import { useNav } from '../App.jsx'
 import { DIAS, DIAS_LABEL, addDays, fmtLongo, mondayOf, planWeek, todayISO } from '../lib/dates.js'
-import { corridaDoDia, inicioDoPlano, metas, pesoAtual, sequencia, sequenciaAgua, statusDia, treinoDoDia } from '../lib/metrics.js'
+import { aguaDoDia, corridaDoDia, inicioDoPlano, metaAgua, metas, pesoAtual, sequencia, sequenciaAgua, statusDia, treinoDoDia } from '../lib/metrics.js'
 import { Bar, Check, Empty, Kpi, Streak, num, r1, toast } from '../components/ui.jsx'
 import { Habitos, MealList } from '../components/Dia.jsx'
 import Icon from '../components/Icon.jsx'
-import Agua from '../components/Agua.jsx'
+import Agua, { Garrafa } from '../components/Agua.jsx'
 
 export default function Hoje() {
   const { s, update } = useApp()
@@ -39,7 +39,6 @@ export default function Hoje() {
 
   const seqT = sequencia(s, 'treino')
   const seqD = sequencia(s, 'dieta')
-  const seqC = sequencia(s, 'creatina')
   const seqA = sequenciaAgua(s)
   const m = metas(s.perfil)
   const ref = pesoAtual(s)
@@ -79,8 +78,11 @@ export default function Hoje() {
       <div className="kpis">
         <Kpi cls="fire" v={<Streak n={seqT.atual} />} l={`Ofensiva de treino (melhor: ${seqT.melhor})`} />
         <Kpi cls="fire" v={<Streak n={seqD.atual} />} l={`Ofensiva de dieta (melhor: ${seqD.melhor})`} />
-        <Kpi cls="fire" v={<Streak n={seqC.atual} />} l="Ofensiva da creatina" />
-        <Kpi cls="fire azul" v={<Streak n={seqA.atual} azul />} l={`Ofensiva de água (melhor: ${seqA.melhor})`} />
+        <Kpi
+          cls="fire azul"
+          v={<span className="streak"><Garrafa pct={aguaDoDia(s, iso) / metaAgua(s)} className="mini" /><span key={seqA.atual} className="streak-n">{seqA.atual}</span></span>}
+          l={`Ofensiva de água (melhor: ${seqA.melhor})`}
+        />
         <Kpi v={ref ? `${r1(ref)} kg` : '–'} l={m ? `IMC ${r1(m.imc)}` : 'Peso atual'} />
       </div>
 

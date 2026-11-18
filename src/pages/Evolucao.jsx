@@ -2,7 +2,8 @@ import { useMemo, useState } from 'react'
 import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { useApp } from '../store.jsx'
 import { addDays, dateOf, fmtCurto, planWeek, todayISO } from '../lib/dates.js'
-import { aderencia, historicoCarga, inicioDoPlano, kmPorSemana, metas, pesagensOrdenadas, pesoAtual, ritmo, sequencia, sequenciaAgua, statusDia } from '../lib/metrics.js'
+import { Garrafa } from '../components/Agua.jsx'
+import { aderencia, aguaDoDia, metaAgua, historicoCarga, inicioDoPlano, kmPorSemana, metas, pesagensOrdenadas, pesoAtual, ritmo, sequencia, sequenciaAgua, statusDia } from '../lib/metrics.js'
 import { Kpi, Streak, num, r1, toast } from '../components/ui.jsx'
 
 const C = { acc: 'var(--acc)', blue: 'var(--blue)', violet: 'var(--violet)', warn: 'var(--warn)', bad: 'var(--bad)', grid: 'var(--line)' }
@@ -107,8 +108,11 @@ export default function Evolucao() {
         <Kpi v={m && ref ? r1(ref / s.perfil.altura ** 2) : '–'} l="IMC" />
         <Kpi cls="fire" v={<Streak n={seq.treino.atual} />} l={`Treino · melhor ${seq.treino.melhor}`} />
         <Kpi cls="fire" v={<Streak n={seq.dieta.atual} />} l={`Dieta · melhor ${seq.dieta.melhor}`} />
-        <Kpi cls="fire" v={<Streak n={seq.creatina.atual} />} l={`Creatina · melhor ${seq.creatina.melhor}`} />
-        <Kpi cls="fire azul" v={<Streak n={seqA.atual} azul />} l={`Água · melhor ${seqA.melhor}`} />
+        <Kpi
+          cls="fire azul"
+          v={<span className="streak"><Garrafa pct={aguaDoDia(s, todayISO()) / metaAgua(s)} className="mini" /><span key={seqA.atual} className="streak-n">{seqA.atual}</span></span>}
+          l={`Água · melhor ${seqA.melhor}`}
+        />
         <Kpi v={pct(ad7.treino)} l="Treino, últimos 7 dias" />
         <Kpi v={pct(ad7.dieta)} l="Dieta, últimos 7 dias" />
       </div>
