@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { addDays, fmtLongo, todayISO } from '../lib/dates.js'
 import { aplicarTema, lerPref, salvarPref } from '../lib/theme.js'
 import Icon from './Icon.jsx'
+import Chama from './Chama.jsx'
 
 export const Check = ({ on, onClick, label }) => (
   <button type="button" className={'check' + (on ? ' on' : '')} onClick={onClick} aria-pressed={!!on} aria-label={label}>
@@ -22,8 +23,12 @@ export const Kpi = ({ v, l, cls = '' }) => (
   </div>
 )
 
-export const Streak = ({ n }) => (
-  <span className="streak"><Icon name="flame" /> {n}</span>
+export const Streak = ({ n, azul = false, on }) => (
+  <span className="streak">
+    <Chama on={on ?? n > 0} azul={azul} />
+    {/* key: ao subir a ofensiva o número "pula" */}
+    <span key={n} className="streak-n">{n}</span>
+  </span>
 )
 
 export const Empty = ({ icon = 'hoje', title, children }) => (

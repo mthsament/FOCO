@@ -103,6 +103,30 @@ export function sequencia(s, tipo, hoje = todayISO()) {
   return { atual, melhor }
 }
 
+// ---------- Água ----------
+export const META_AGUA_PADRAO = 3500
+export const metaAgua = (s) => s.perfil.metaAgua || META_AGUA_PADRAO
+export const aguaDoDia = (s, iso) => s.logs.dieta[iso]?.agua || 0
+
+// Ofensiva de água: dias seguidos batendo a meta. Hoje ainda em andamento não quebra a sequência.
+// Começa no primeiro dia em que você registrou água (não depende do plano).
+export function sequenciaAgua(s, hoje = todayISO()) {
+  const meta = metaAgua(s)
+  const dias = Object.keys(s.logs.dieta).filter((d) => s.logs.dieta[d]?.agua > 0 && d <= hoje).sort()
+  if (!dias.length) return { atual: 0, melhor: 0, hojeOk: false }
+  const total = diffDays(hoje, dias[0])
+  let corrente = 0
+  let melhor = 0
+  for (let i = 0; i <= total; i++) {
+    const iso = addDays(dias[0], i)
+    if (aguaDoDia(s, iso) >= meta) {
+      corrente++
+      melhor = Math.max(melhor, corrente)
+    } else if (iso !== hoje) corrente = 0
+  }
+  return { atual: corrente, melhor, hojeOk: aguaDoDia(s, hoje) >= meta }
+}
+
 // Aderência dos últimos N dias (somente dias com algo planejado)
 export function aderencia(s, tipo, dias = 7, hoje = todayISO()) {
   let ok = 0

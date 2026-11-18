@@ -3,13 +3,14 @@ import { del } from 'idb-keyval'
 import { useApp, aplicarImportacao, estadoInicial } from '../store.jsx'
 import { lerPlanilha, resumir } from '../importer.js'
 import { ThemeSeg, toast } from '../components/ui.jsx'
+import { metaAgua } from '../lib/metrics.js'
 import { useNav } from '../App.jsx'
 import Icon from '../components/Icon.jsx'
 
 const NOMES = { academia: 'Treino (Plano_Academia)', corrida: 'Corrida (Plano_Corrida)', alimentacao: 'Dieta e suplementação' }
 
 export default function Config() {
-  const { s, setState } = useApp()
+  const { s, setState, update } = useApp()
   const { go } = useNav()
   const [lidos, setLidos] = useState([])
   const [sobrescrever, setSobrescrever] = useState(false)
@@ -79,6 +80,18 @@ export default function Config() {
       <div className="card">
         <h2><Icon name="sun" /> Aparência</h2>
         <ThemeSeg />
+      </div>
+
+      <div className="card">
+        <h2><Icon name="gota" /> Meta de água</h2>
+        <label className="fld">
+          <span className="f">Meta diária (litros)</span>
+          <input type="number" inputMode="decimal" step="0.1" min="0.5" max="10" autoComplete="off" defaultValue={metaAgua(s) / 1000} onChange={(e) => {
+            const v = parseFloat(e.target.value.replace(',', '.'))
+            if (v >= 0.5 && v <= 10) update((x) => { x.perfil.metaAgua = Math.round(v * 1000) })
+          }} />
+        </label>
+        <p className="mut small">A ofensiva de água conta os dias seguidos em que você bate essa meta. Mudar a meta vale para todos os dias.</p>
       </div>
 
       <div className="card">

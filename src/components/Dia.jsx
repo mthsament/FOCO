@@ -72,7 +72,7 @@ export function MealList({ iso, compacto = false }) {
   )
 }
 
-// Creatina, whey e água do dia
+// Creatina e whey do dia (a água tem o card próprio em Agua.jsx)
 export function Habitos({ iso }) {
   const { s, update } = useApp()
   const l = s.logs.dieta[iso] || {}
@@ -80,9 +80,8 @@ export function Habitos({ iso }) {
     update((x) => {
       diaLog(x, iso)[k] = v
     })
-  const aguaL = (l.agua || 0) / 1000
   return (
-    <div className="grid c3">
+    <div className="grid c2">
       <div className="row">
         <Check on={!!l.creatina} onClick={() => set('creatina', !l.creatina)} label="Creatina" />
         <div>
@@ -98,15 +97,6 @@ export function Habitos({ iso }) {
               {n}
             </button>
           ))}
-        </div>
-      </div>
-      <div>
-        <div className="row small"><b>Água</b><span className="sp" /><span className="mut">{aguaL.toLocaleString('pt-BR')} / 3,5 L</span></div>
-        <Bar pct={aguaL / 3.5} cls="blue" />
-        <div className="row" style={{ marginTop: 6 }}>
-          <button className="btn sm" onClick={() => set('agua', Math.max(0, (l.agua || 0) - 250))}>−250</button>
-          <button className="btn sm" onClick={() => set('agua', (l.agua || 0) + 250)}>+250 ml</button>
-          <button className="btn sm" onClick={() => set('agua', (l.agua || 0) + 500)}>+500</button>
         </div>
       </div>
     </div>

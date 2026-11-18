@@ -49,8 +49,94 @@ h2 .ico { width: 1.05em; height: 1.05em; margin-right: 2px; color: var(--acc); }
 .chip .ico { width: 1em; height: 1em; }
 .check .ico { width: 18px; height: 18px; }
 .empty .em { color: var(--mut); }
-.streak { display: inline-flex; align-items: center; gap: 6px; }
+.streak { display: inline-flex; align-items: center; gap: 4px; }
 .streak .ico { width: .8em; height: .8em; }
+.streak-n { display: inline-block; animation: streak-pop 420ms var(--ease-out); }
+@keyframes streak-pop { 0% { transform: scale(.6); opacity: 0; } 60% { transform: scale(1.18); } 100% { transform: scale(1); opacity: 1; } }
+
+/* Foguinho da ofensiva (estilo "chama do Duolingo"): pequeno, com três camadas que dançam */
+.chama { width: .46em; height: .575em; flex: none; overflow: visible; filter: drop-shadow(0 1px 0 rgba(0,0,0,.12)); }
+.chama .ch-corpo, .chama .ch-miolo { transform-box: fill-box; transform-origin: 50% 100%; }
+.chama .ch-ext { fill: #ff9600; } .chama .ch-mid { fill: #ffc800; } .chama .ch-int { fill: #fff3b0; }
+.chama.azul .ch-ext { fill: #1cb0f6; } .chama.azul .ch-mid { fill: #55c8fb; } .chama.azul .ch-int { fill: #e3f6ff; }
+.chama:not(.on) { filter: none; opacity: .55; }
+.chama:not(.on) path { fill: var(--mut); }
+.chama:not(.on) .ch-mid { fill: var(--line); } .chama:not(.on) .ch-int { fill: var(--card2); }
+.chama.on .ch-corpo { animation: chama-corpo 1.5s ease-in-out infinite; }
+.chama.on .ch-miolo { animation: chama-miolo 1.1s ease-in-out infinite; }
+@keyframes chama-corpo {
+  0%, 100% { transform: scale(1, 1) rotate(0deg); }
+  25% { transform: scale(.95, 1.07) rotate(-2.5deg); }
+  55% { transform: scale(1.04, .96) rotate(1.5deg); }
+  80% { transform: scale(.97, 1.05) rotate(2.5deg); }
+}
+@keyframes chama-miolo {
+  0%, 100% { transform: scale(1) translateY(0); }
+  35% { transform: scale(.88, 1.1) translateY(-.4px); }
+  70% { transform: scale(1.06, .93) translateY(.2px); }
+}
+.kpi.fire .v .chama { width: .58em; height: .725em; margin-right: 1px; }
+.kpi.fire.azul .v { color: var(--blue); }
+
+/* ---------- Água: garrafa que enche + ofensiva ---------- */
+.agua { position: relative; overflow: hidden; display: flex; gap: 18px; align-items: center; padding: 16px; margin-bottom: 14px; border-radius: var(--r); background: var(--card); border: 1px solid var(--line); isolation: isolate; transition: background-color 500ms var(--ease-out), border-color 500ms var(--ease-out), color 500ms var(--ease-out); }
+.agua-garrafa { flex: none; width: 96px; position: relative; z-index: 1; }
+.agua-garrafa.pula { animation: garrafa-pula 700ms var(--ease-out); }
+@keyframes garrafa-pula { 0% { transform: scale(1); } 25% { transform: scale(1.14) rotate(-4deg); } 50% { transform: scale(.96) rotate(3deg); } 75% { transform: scale(1.05) rotate(-1.5deg); } 100% { transform: scale(1); } }
+.agua-info { flex: 1; min-width: 0; position: relative; z-index: 1; }
+.agua-info h2 { margin: 0; }
+.agua-v { font: 700 40px/1.05 var(--display); font-variant-numeric: tabular-nums; margin-top: 4px; }
+.agua-v b { color: var(--blue); transition: color 500ms var(--ease-out); } .agua-v span { font-size: 22px; color: var(--mut); }
+.agua-msg { color: var(--mut); font-size: 14px; margin: 2px 0 10px; }
+.agua-btns { gap: 8px; }
+.agua-sem { display: flex; gap: 4px; margin-top: 12px; }
+.agua-sem .dia { flex: 1; display: grid; justify-items: center; gap: 1px; color: var(--mut); opacity: .55; }
+.agua-sem .dia .ico { width: 20px; height: 20px; }
+.agua-sem .dia em { font-style: normal; font-size: 11.5px; font-weight: 600; }
+.agua-sem .dia.ok { color: var(--blue); opacity: 1; } .agua-sem .dia.ok .ico .d { fill-opacity: .75; }
+.agua-sem .dia.hoje em { color: var(--txt); text-decoration: underline; text-underline-offset: 3px; }
+.agua-rod { margin-top: 8px; font-size: 12.5px; color: var(--mut); }
+
+/* garrafa */
+.garrafa { display: block; width: 100%; height: auto; overflow: visible; }
+.g-vidro { fill: var(--card2); }
+.g-borda { fill: none; stroke: var(--ink); stroke-width: 3.2; stroke-linejoin: round; opacity: .9; }
+.g-sombra { fill: var(--ink); opacity: .12; }
+.g-tampa { fill: var(--blue); stroke: var(--ink); stroke-width: 3; }
+.g-tampa-l { stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; opacity: .35; fill: none; }
+.g-marca { stroke: var(--ink); stroke-width: 2; stroke-linecap: round; opacity: .22; fill: none; }
+.g-brilho { stroke: #fff; stroke-width: 4; stroke-linecap: round; opacity: .55; fill: none; }
+.g-nivel { transition: transform 900ms var(--ease-out), opacity 300ms var(--ease-out); }
+.g-onda { animation: onda 2.6s linear infinite; }
+.g-onda2 { animation-duration: 4.2s; animation-direction: reverse; }
+@keyframes onda { from { transform: translateX(0); } to { transform: translateX(-60px); } }
+.g-bolha { fill: #fff; opacity: .55; animation: bolha 3.4s ease-in infinite; }
+.g-bolha.b2 { animation-delay: -1.2s; animation-duration: 2.8s; } .g-bolha.b3 { animation-delay: -2.1s; animation-duration: 3.9s; }
+@keyframes bolha { 0% { transform: translateY(0); opacity: 0; } 15% { opacity: .6; } 100% { transform: translateY(-80px); opacity: 0; } }
+.garrafa.cheia .g-tampa { fill: #ffc800; }
+
+/* meta batida: fundo azul animado, texto claro */
+.agua.cheia { background: linear-gradient(160deg, #35c0ff 0%, #1a86ea 55%, #1259c9 100%); border-color: transparent; color: #fff; }
+.agua.cheia .mut, .agua.cheia .agua-msg, .agua.cheia .agua-v span, .agua.cheia .agua-rod { color: rgba(255,255,255,.86); }
+.agua.cheia .agua-v b { color: #fff; }
+.agua.cheia h2, .agua.cheia h2 .ico { color: #fff; }
+.agua.cheia .btn { background: rgba(255,255,255,.18); border-color: rgba(255,255,255,.35); color: #fff; }
+.agua.cheia .agua-sem .dia { color: #fff; opacity: .6; } .agua.cheia .agua-sem .dia.ok { opacity: 1; } .agua.cheia .agua-sem .dia.hoje em { color: #fff; }
+.agua.cheia .g-vidro { fill: rgba(255,255,255,.22); } .agua.cheia .g-borda, .agua.cheia .g-tampa, .agua.cheia .g-tampa-l { stroke: #fff; } .agua.cheia .g-sombra { fill: #0a3a8a; opacity: .3; }
+.agua-fundo { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.agua-fundo::before { content: ''; position: absolute; inset: -40% -20%; background: linear-gradient(105deg, transparent 38%, rgba(255,255,255,.22) 50%, transparent 62%); animation: brilho 5s ease-in-out infinite; }
+@keyframes brilho { 0% { transform: translateX(-60%); } 55%, 100% { transform: translateX(60%); } }
+.agua-fundo i { position: absolute; bottom: -24px; width: var(--s); height: var(--s); border-radius: 50%; border: 1.5px solid rgba(255,255,255,.7); background: rgba(255,255,255,.14); animation: sobe var(--d) linear infinite; animation-delay: var(--t); }
+@keyframes sobe { 0% { transform: translateY(0) translateX(0); opacity: 0; } 12% { opacity: 1; } 50% { transform: translateY(-90px) translateX(7px); } 100% { transform: translateY(-210px) translateX(-5px); opacity: 0; } }
+.agua-festa { position: absolute; left: 64px; top: 50%; z-index: 2; pointer-events: none; }
+.agua-festa i { position: absolute; width: var(--s); height: calc(var(--s) * 1.35); margin: -4px 0 0 -4px; background: #fff; border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%; opacity: 0; animation: gota 900ms var(--ease-out) forwards; animation-delay: var(--t); }
+@keyframes gota { 0% { transform: translate(0, 0) scale(.4); opacity: 1; } 70% { opacity: 1; } 100% { transform: translate(var(--x), calc(var(--y) + 38px)) scale(1); opacity: 0; } }
+@media (max-width: 380px) { .agua { gap: 12px; } .agua-garrafa { width: 74px; } .agua-v { font-size: 34px; } }
+@media (prefers-reduced-motion: reduce) {
+  .chama.on .ch-corpo, .chama.on .ch-miolo, .g-onda, .g-bolha, .agua-fundo::before, .agua-fundo i { animation: none !important; }
+  .agua-fundo i { opacity: .5; transform: translateY(-60px); }
+  .agua-festa { display: none; }
+}
 .week .d .wd { display: grid; place-items: center; height: 18px; }
 .week .d .wd .ico { width: 15px; height: 15px; }
 .week .d.ok .wd { color: var(--ok); } .week .d.miss .wd { color: var(--bad); }
@@ -258,3 +344,6 @@ tr.clicavel { cursor: pointer; }
 .live-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
 .live-grid b { display: block; font: 700 30px/1.1 var(--display); font-variant-numeric: tabular-nums; }
 .live-grid span { color: var(--mut); font-size: 12.5px; }
+.agua-info .streak { font: 700 22px/1 var(--display); color: var(--blue); }
+.agua.cheia .agua-info .streak { color: #fff; }
+.agua-info .streak .chama { width: 20px; height: 25px; }

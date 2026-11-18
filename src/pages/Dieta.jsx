@@ -6,6 +6,7 @@ import { metas } from '../lib/metrics.js'
 import { DayPicker, Empty, Seg, num, r0, r1 } from '../components/ui.jsx'
 import { Habitos, MealList } from '../components/Dia.jsx'
 import Icon from '../components/Icon.jsx'
+import Agua from '../components/Agua.jsx'
 
 export default function Dieta() {
   const { s } = useApp()
@@ -30,6 +31,7 @@ export default function Dieta() {
         <>
           <DayPicker iso={iso} onChange={setIso} />
           <div className="card"><MealList iso={iso} /></div>
+          <Agua iso={iso} />
           <div className="card"><h2>Hábitos</h2><Habitos iso={iso} /></div>
         </>
       )}
