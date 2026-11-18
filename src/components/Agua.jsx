@@ -47,6 +47,36 @@ export function Garrafa({ pct, className = '' }) {
   )
 }
 
+const SALPICO = [[-22, -26, 5, 0], [-12, -34, 6, 40], [0, -38, 5, 80], [13, -33, 6, 20], [23, -24, 5, 60], [-28, -10, 4, 100], [28, -12, 4, 120]]
+
+// Garrafinha da ofensiva (KPI). Enche com a água do dia; ao bater a meta, pula e solta gotas.
+export function GarrafaKpi({ pct, n }) {
+  const cheia = pct >= 1
+  const ant = useRef(cheia)
+  const [festa, setFesta] = useState(0)
+  useEffect(() => {
+    if (cheia && !ant.current) {
+      setFesta((k) => k + 1)
+      navigator.vibrate?.(40)
+    }
+    ant.current = cheia
+  }, [cheia])
+  return (
+    <span className="streak">
+      <span className={'gk' + (cheia ? ' cheia' : '') + (festa ? ' pula' : '')} key={festa ? 'f' + festa : 'n'}>
+        <Garrafa pct={pct} className="mini" />
+        {festa > 0 && (
+          <span className="gk-festa" aria-hidden="true">
+            {SALPICO.map(([x, y, s2, t], i) => <i key={i} style={{ '--x': `${x}px`, '--y': `${y}px`, '--s': `${s2}px`, '--t': `${t}ms` }} />)}
+          </span>
+        )}
+      </span>
+      {/* key: ao subir a ofensiva o número "pula" */}
+      <span key={n + (cheia ? 'c' : '')} className={'streak-n' + (festa ? ' festa' : '')}>{n}</span>
+    </span>
+  )
+}
+
 // Confete de gotas quando a meta é batida
 const GOTAS = Array.from({ length: 14 }, (_, i) => {
   const a = (i / 14) * Math.PI * 2 + (i % 2) * 0.2

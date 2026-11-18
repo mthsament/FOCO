@@ -4,6 +4,8 @@ import { useNav } from '../App.jsx'
 import { fmtBR, planWeek, todayISO, dateOf } from '../lib/dates.js'
 import { fmtDur, fmtRitmo, inicioDoPlano, ritmo } from '../lib/metrics.js'
 import { lerGps } from '../lib/gps.js'
+import { corridaDuplicada, registrarCorrida } from '../lib/registro.js'
+import { lerTexto } from '../lib/linkImport.js'
 import { DISTANCIAS, fmtSeg, kmPorMes, medalhas, nomeDist, recordes, resumoPeriodo } from '../lib/corrida.js'
 import RotaMapa from '../components/RotaMapa.jsx'
 import DetalheCorrida from '../components/DetalheCorrida.jsx'
@@ -48,14 +50,7 @@ export default function Corrida() {
   const feitas = Object.keys(s.logs.corridasFeitas).length
 
   // grava uma corrida; se a data cai numa sessão do plano, marca como feita
-  const gravarCorrida = (reg, x) => {
-    x.logs.corridas.push({ id: `c-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`, ...reg })
-    if (ini && c) {
-      const w = planWeek(reg.data, ini)
-      const dia = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sab'][new Date(reg.data + 'T12:00:00').getDay()]
-      if (w >= 1 && w <= c.semanas.length && ['qui', 'sab', 'dom'].includes(dia)) x.logs.corridasFeitas[`${w}|${dia}`] = true
-    }
-  }
+  const gravarCorrida = (reg, x) => registrarCorrida(x, reg)
 
   const salvar = () => {
     const min = num(form.min)
@@ -95,6 +90,26 @@ export default function Corrida() {
       setAba('atividades')
     } catch (e) {
       toast(e.message)
+    }
+  }
+
+  // Atalho do iPhone copia as corridas do Apple Saúde; aqui o app lê o que foi copiado.
+  const colarSaude = async () => {
+    try {
+      const r = lerTexto(await navigator.clipboard.readText())
+      if (r.erro || !r.corridas.length) return toast(r.erro || 'Nenhuma corrida válida no texto copiado.')
+      let novas = 0
+      update((x) => {
+        for (const reg of r.corridas) {
+          if (corridaDuplicada(x, reg)) continue
+          registrarCorrida(x, reg)
+          novas++
+        }
+      })
+      toast(novas ? `${novas} ${novas === 1 ? 'corrida importada' : 'corridas importadas'} do Apple Saúde` : 'Essas corridas já estavam no FOCO.')
+      setAba('atividades')
+    } catch {
+      toast('Não consegui ler o que foi copiado. Permita colar quando o iPhone perguntar.')
     }
   }
 
@@ -149,6 +164,7 @@ export default function Corrida() {
         <div className="row wrap" style={{ marginBottom: 14 }}>
           <button className="btn pri" onClick={() => { setGravando(true); window.scrollTo(0, 0) }}><Icon name="pin" /> Gravar com GPS</button>
           <button className="btn" onClick={() => fileRef.current?.click()}><Icon name="clip" /> Importar do relógio</button>
+          <button className="btn" onClick={colarSaude}><Icon name="clip" /> Colar do Apple Saúde</button>
         </div>
       )}
 

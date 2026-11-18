@@ -78,7 +78,14 @@ h2 .ico { width: 1.05em; height: 1.05em; margin-right: 2px; color: var(--acc); }
 .kpi.fire .v .chama { width: .58em; height: .725em; margin-right: 1px; }
 .kpi.fire.azul .v { color: var(--blue); }
 /* garrafinha da ofensiva de água no KPI: enche conforme a meta do dia */
-.garrafa.mini { display: inline-block; width: .44em; height: .8em; flex: none; margin-right: 4px; }
+.garrafa.mini { display: block; width: .6em; height: auto; flex: none; }
+.gk { position: relative; display: inline-flex; margin-right: 6px; transform-origin: 50% 90%; }
+.gk.cheia .garrafa.mini { filter: drop-shadow(0 0 5px rgba(28,176,246,.7)); }
+.gk.pula { animation: garrafa-pula 700ms var(--ease-out); }
+.gk-festa { position: absolute; left: 50%; top: 20%; pointer-events: none; z-index: 2; }
+.gk-festa i { position: absolute; width: var(--s); height: calc(var(--s) * 1.35); margin: -3px 0 0 -3px; background: #5ccbff; border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%; opacity: 0; animation: gota 800ms var(--ease-out) forwards; animation-delay: var(--t); }
+.streak-n.festa { animation: streak-pop 600ms var(--ease-out); }
+@media (prefers-reduced-motion: reduce) { .gk.pula, .streak-n.festa { animation: none; } .gk-festa { display: none; } }
 .garrafa.mini .g-borda { stroke-width: 7; }
 .garrafa.mini .g-tampa { stroke-width: 6; }
 .garrafa.mini .g-marca, .garrafa.mini .g-tampa-l, .garrafa.mini .g-sombra, .garrafa.mini .g-bolha { display: none; }
@@ -208,13 +215,22 @@ h3 { font-size: 15px; font-weight: 700; margin: 16px 0 6px; color: var(--mut); }
 .chip.acc { background: var(--acc-soft); color: var(--acc); border-color: var(--acc-line); }
 .chip.ok { color: var(--ok); border-color: rgba(30,142,90,.4); background: rgba(30,142,90,.08); }
 .chip.warn { color: var(--warn); border-color: rgba(184,110,0,.4); background: rgba(184,110,0,.08); }
-input[type=text], input[type=number], input[type=date], select, textarea { background: var(--card2); border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 11px; min-height: 44px; width: 100%; min-width: 0; }
+input[type=text], input[type=number], input[type=date], input[type=time], select, textarea { background: var(--card2); border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 11px; min-height: 44px; width: 100%; min-width: 0; }
 input, select, textarea { transition: border-color 150ms var(--ease-out), background-color 150ms var(--ease-out); }
 input:focus, select:focus, textarea:focus { border-color: var(--blue); outline: none; background: var(--card); }
 input[type=number] { -moz-appearance: textfield; }
 .fld { display: block; min-width: 0; }
 .f { display: block; font-size: 13px; font-weight: 600; color: var(--mut); margin-bottom: 4px; }
-.form { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; align-items: end; }
+.form { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(130px, 100%), 1fr)); gap: 10px; align-items: end; }
+/* iOS: campo de data ignora a largura e sobrepõe o vizinho; força o mesmo tamanho dos outros campos */
+input[type=date], input[type=time] { -webkit-appearance: none; appearance: none; display: block; max-width: 100%; height: 44px; text-align: left; }
+input[type=date]::-webkit-date-and-time-value, input[type=time]::-webkit-date-and-time-value { text-align: left; min-height: 1.2em; }
+
+/* lembretes */
+.lem-linha { padding: 10px 0; border-top: 1px solid var(--line); }
+.lem-campos { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(96px, 100%), 1fr)); gap: 8px; margin-top: 8px; }
+.lem-lista { display: grid; gap: 8px; margin-top: 8px; }
+.lem-supl { display: grid; grid-template-columns: 1fr 120px; gap: 8px; align-items: center; }
 
 .bar { height: 10px; border-radius: 99px; background: var(--card2); border: 1px solid var(--line); overflow: hidden; }
 .bar > i { display: block; height: 100%; background: var(--acc); border-radius: 99px; transition: width 400ms var(--ease-out); }

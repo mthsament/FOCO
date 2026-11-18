@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { useApp } from '../store.jsx'
 import { addDays, dateOf, fmtCurto, planWeek, todayISO } from '../lib/dates.js'
-import { Garrafa } from '../components/Agua.jsx'
+import { GarrafaKpi } from '../components/Agua.jsx'
 import { aderencia, aguaDoDia, metaAgua, historicoCarga, inicioDoPlano, kmPorSemana, metas, pesagensOrdenadas, pesoAtual, ritmo, sequencia, sequenciaAgua, statusDia } from '../lib/metrics.js'
 import { Kpi, Streak, num, r1, toast } from '../components/ui.jsx'
 
@@ -110,7 +110,7 @@ export default function Evolucao() {
         <Kpi cls="fire" v={<Streak n={seq.dieta.atual} />} l={`Dieta · melhor ${seq.dieta.melhor}`} />
         <Kpi
           cls="fire azul"
-          v={<span className="streak"><Garrafa pct={aguaDoDia(s, todayISO()) / metaAgua(s)} className="mini" /><span key={seqA.atual} className="streak-n">{seqA.atual}</span></span>}
+          v={<GarrafaKpi pct={aguaDoDia(s, todayISO()) / metaAgua(s)} n={seqA.atual} />}
           l={`Água · melhor ${seqA.melhor}`}
         />
         <Kpi v={pct(ad7.treino)} l="Treino, últimos 7 dias" />
