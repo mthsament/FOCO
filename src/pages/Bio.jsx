@@ -5,6 +5,7 @@ import { pesagensOrdenadas } from '../lib/metrics.js'
 import { conectarBalanca, lerCsv, suportaBluetooth } from '../lib/bluetooth.js'
 import { Kpi, num, r1, toast } from '../components/ui.jsx'
 import Icon from '../components/Icon.jsx'
+import DiagBluetooth from '../components/DiagBluetooth.jsx'
 
 const CAMPOS = [
   ['kg', 'Peso (kg)', 0.1],
@@ -124,7 +125,7 @@ export default function Bio() {
         </div>
         {!suporta ? (
           <div className="note warn">
-            Este navegador não tem Bluetooth na web. Use o Chrome ou o Edge no Android ou no computador. No iPhone, registre à mão ou importe o arquivo da balança abaixo.
+            Este navegador não tem Bluetooth na web. Use o Chrome ou o Edge no Android ou no computador. No iPhone, nem o Safari nem o Chrome liberam Bluetooth para sites: abra este endereço no navegador gratuito Bluefy (App Store) ou registre à mão abaixo.
           </div>
         ) : (
           <>
@@ -162,6 +163,8 @@ export default function Bio() {
           </>
         )}
       </div>
+
+      {suporta && <DiagBluetooth />}
 
       <div className="card">
         <h2>Registrar à mão</h2>

@@ -369,3 +369,5 @@ tr.clicavel { cursor: pointer; }
 .agua-info .streak { font: 700 22px/1 var(--display); color: var(--blue); }
 .agua.cheia .agua-info .streak { color: #fff; }
 .agua-info .streak .chama { width: 20px; height: 25px; }
+.diag-log { margin-top: 10px; max-height: 280px; overflow: auto; padding: 10px; border-radius: 10px; background: var(--card2); border: 1px solid var(--line); font: 12px/1.5 ui-monospace, Consolas, monospace; white-space: pre-wrap; word-break: break-all; user-select: text; }
+details.card > summary { cursor: pointer; list-style: none; } details.card > summary::-webkit-details-marker { display: none; }
