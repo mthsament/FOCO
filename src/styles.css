@@ -215,7 +215,7 @@ h3 { font-size: 15px; font-weight: 700; margin: 16px 0 6px; color: var(--mut); }
 .chip.acc { background: var(--acc-soft); color: var(--acc); border-color: var(--acc-line); }
 .chip.ok { color: var(--ok); border-color: rgba(30,142,90,.4); background: rgba(30,142,90,.08); }
 .chip.warn { color: var(--warn); border-color: rgba(184,110,0,.4); background: rgba(184,110,0,.08); }
-input[type=text], input[type=number], input[type=date], input[type=time], select, textarea { background: var(--card2); border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 11px; min-height: 44px; width: 100%; min-width: 0; }
+input[type=text], input[type=email], input[type=password], input[type=number], input[type=date], input[type=time], select, textarea { background: var(--card2); border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 11px; min-height: 44px; width: 100%; min-width: 0; }
 input, select, textarea { transition: border-color 150ms var(--ease-out), background-color 150ms var(--ease-out); }
 input:focus, select:focus, textarea:focus { border-color: var(--blue); outline: none; background: var(--card); }
 input[type=number] { -moz-appearance: textfield; }

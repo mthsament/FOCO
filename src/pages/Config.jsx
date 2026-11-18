@@ -7,6 +7,7 @@ import { metaAgua } from '../lib/metrics.js'
 import { useNav } from '../App.jsx'
 import Icon from '../components/Icon.jsx'
 import Lembretes from '../components/Lembretes.jsx'
+import Sincronia from '../components/Sincronia.jsx'
 
 const NOMES = { academia: 'Treino (Plano_Academia)', corrida: 'Corrida (Plano_Corrida)', alimentacao: 'Dieta e suplementação' }
 
@@ -83,6 +84,8 @@ export default function Config() {
         <ThemeSeg />
       </div>
 
+      <Sincronia />
+
       <div className="card">
         <h2><Icon name="gota" /> Meta de água</h2>
         <label className="fld">
@@ -142,7 +145,7 @@ export default function Config() {
         <ul className="clean small">
           <li><b>iPhone:</b> abra no Safari, toque em Compartilhar e depois em “Adicionar à Tela de Início”.</li>
           <li><b>PC (Chrome/Edge):</b> ícone de instalar na barra de endereço.</li>
-          <li>Os dados ficam guardados no aparelho. Celular e PC ainda não se sincronizam: use o backup para levar os dados de um para o outro.</li>
+          <li>Os dados ficam no aparelho e, se você entrar na conta em Sincronizar aparelhos, também na nuvem. Sem login, use o backup para levar os dados de um aparelho para outro.</li>
         </ul>
       </div>
 

@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { get, set } from 'idb-keyval'
 import { dateOf, planWeek, weekdayKey, DIAS, addDays } from './lib/dates.js'
 import { inicioDoPlano } from './lib/metrics.js'
+import { useSincronia } from './lib/sync.js'
 
 const KEY = 'foco-state-v1'
 
@@ -24,19 +25,32 @@ export const estadoInicial = () => ({
 const Ctx = createContext(null)
 export const useApp = () => useContext(Ctx)
 
+// Completa um estado salvo/baixado com os campos que faltam (versões antigas)
+function normalizar(saved, editadoEm) {
+  const base = estadoInicial()
+  const s = { ...base, ...saved, logs: { ...base.logs, ...saved.logs }, plan: { ...base.plan, ...saved.plan }, perfil: { ...base.perfil, ...saved.perfil } }
+  if (editadoEm) s.meta = { ...s.meta, editadoEm, sincEm: editadoEm }
+  return s
+}
+// Marca quando você mexeu (usado pela sincronização entre aparelhos)
+const carimbar = (s) => ({ ...s, meta: { ...s.meta, editadoEm: new Date().toISOString() } })
+
 export function AppProvider({ children }) {
-  const [state, setState] = useState(null)
+  const [state, setRaw] = useState(null)
   const timer = useRef(null)
+
+  // setState "de verdade" do app: toda alteração feita pelo usuário recebe o carimbo de edição
+  const setState = useCallback((arg) => setRaw((prev) => carimbar(typeof arg === 'function' ? arg(prev) : arg)), [])
+  const sync = useSincronia(state, setRaw, normalizar)
 
   useEffect(() => {
     let vivo = true
     get(KEY)
       .then((saved) => {
         if (!vivo) return
-        const base = estadoInicial()
-        setState(saved ? { ...base, ...saved, logs: { ...base.logs, ...saved.logs }, plan: { ...base.plan, ...saved.plan }, perfil: { ...base.perfil, ...saved.perfil } } : base)
+        setRaw(saved ? normalizar(saved) : estadoInicial())
       })
-      .catch(() => setState(estadoInicial()))
+      .catch(() => setRaw(estadoInicial()))
     navigator.storage?.persist?.().catch(() => {})
     return () => {
       vivo = false
@@ -56,9 +70,9 @@ export function AppProvider({ children }) {
       const r = fn(draft)
       return r || draft
     })
-  }, [])
+  }, [setState])
 
-  const value = useMemo(() => ({ s: state, update, setState }), [state, update])
+  const value = useMemo(() => ({ s: state, update, setState, sync }), [state, update, setState, sync])
   if (!state) return <div className="splash">FOCO</div>
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>
 }
