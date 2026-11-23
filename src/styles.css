@@ -560,3 +560,4 @@ details.card > summary { cursor: pointer; list-style: none; } details.card > sum
 .cal-leg i { display: inline-block; width: 11px; height: 11px; margin-right: 5px; border-radius: 50%; vertical-align: -1px; }
 .cal-leg i.ok { background: var(--cal); } .cal-leg i.miss { background: var(--bad); opacity: .7; } .cal-leg i.rest { background: var(--line); }
 @media (prefers-reduced-motion: reduce) { .med-brilho, .cal-folha, .cal-fundo { animation: none !important; } }
+.mc.compacto { margin: 28px 0 14px; } .mc.compacto .mc-balao { font-size: 15px; padding: 9px 13px; margin-bottom: 20px; }

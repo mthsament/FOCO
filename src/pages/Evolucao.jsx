@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { useApp } from '../store.jsx'
+import MascoteAba from '../components/MascoteAba.jsx'
 import { addDays, dateOf, fmtCurto, planWeek, todayISO } from '../lib/dates.js'
 import { GarrafaKpi } from '../components/Agua.jsx'
 import { aderencia, aguaDoDia, metaAgua, historicoCarga, inicioDoPlano, kmPorSemana, metas, pesagensOrdenadas, pesoAtual, ritmo, sequencia, sequenciaAgua, statusDia } from '../lib/metrics.js'
@@ -101,6 +102,7 @@ export default function Evolucao() {
     <>
       <h1>Evolução</h1>
       <p className="sub">Peso, composição, cargas, corrida e constância</p>
+      <MascoteAba aba="evolucao" />
 
       <div className="kpis">
         <Kpi v={ref ? `${r1(ref)} kg` : '–'} l="Peso atual" />

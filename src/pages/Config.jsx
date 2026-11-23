@@ -4,6 +4,7 @@ import { useApp, aplicarImportacao, estadoInicial } from '../store.jsx'
 import { lerPlanilha, resumir } from '../importer.js'
 import { ThemeSeg, toast } from '../components/ui.jsx'
 import { metaAgua } from '../lib/metrics.js'
+import MascoteAba from '../components/MascoteAba.jsx'
 import { useNav } from '../App.jsx'
 import Icon from '../components/Icon.jsx'
 import Lembretes from '../components/Lembretes.jsx'
@@ -79,6 +80,7 @@ export default function Config() {
     <>
       <h1>Ajustes</h1>
       <p className="sub">Importar planilhas, backup e integrações</p>
+      <MascoteAba aba="config" />
 
       <div className="card">
         <h2><Icon name="sun" /> Aparência</h2>

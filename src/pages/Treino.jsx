@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { useApp } from '../store.jsx'
+import MascoteAba from '../components/MascoteAba.jsx'
+import { reagir } from '../lib/mascoteEventos.js'
 import { fmtBR, fmtCurto, todayISO } from '../lib/dates.js'
 import { treinoDoDia, ultimaCarga, historicoCarga } from '../lib/metrics.js'
 import { Bar, DayPicker, Empty, Seg, num, toast } from '../components/ui.jsx'
@@ -17,9 +19,9 @@ export default function Treino() {
 
   if (!treinos) {
     return (
-      <Empty icon="treino" title="Nenhum treino importado">
+      <><MascoteAba aba="treino" /><Empty icon="treino" title="Nenhum treino importado">
         <button className="btn pri" onClick={() => go('config')}>Importar Plano_Academia.xlsx</button>
-      </Empty>
+      </Empty></>
     )
   }
 
@@ -51,6 +53,10 @@ export default function Treino() {
       cur.sets = Array.from({ length: ex.series }, (_, k) => !!cur.sets?.[k])
       cur.sets[i] = !cur.sets[i]
     })
+  const toggleSetComReacao = (ex, i) => {
+    if (!s.logs.treinos[iso]?.ex?.[ex.id]?.sets?.[i]) reagir('forca', ['Boa série!', 'É isso, mais uma!', 'Força total!', 'Mandou bem!'])
+    toggleSet(ex, i)
+  }
   const concluir = () =>
     update((x) => {
       const e = ensure(x)
@@ -69,6 +75,7 @@ export default function Treino() {
     <>
       <h1>Treino</h1>
       <p className="sub">{planejado ? `Hoje no plano: treino ${planejado}` : 'Sem musculação planejada neste dia'}</p>
+      <MascoteAba aba="treino" />
       <DayPicker iso={iso} onChange={(d) => { setIso(d); setForca(null) }} />
       <div style={{ marginBottom: 12 }}>
         <Seg value={letra} onChange={setForca} options={Object.values(treinos).map((x) => [x.letra, `Treino ${x.letra}`])} />
@@ -106,7 +113,7 @@ export default function Treino() {
               </div>
               <div className="sets">
                 {Array.from({ length: ex.series }, (_, i) => (
-                  <button key={i} className={'set' + (e.sets?.[i] ? ' on' : '')} onClick={() => toggleSet(ex, i)} aria-label={`Série ${i + 1} de ${ex.nome}`}>
+                  <button key={i} className={'set' + (e.sets?.[i] ? ' on' : '')} onClick={() => toggleSetComReacao(ex, i)} aria-label={`Série ${i + 1} de ${ex.nome}`}>
                     {i + 1}
                   </button>
                 ))}

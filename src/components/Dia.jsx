@@ -1,4 +1,5 @@
 import { useApp } from '../store.jsx'
+import { reagir } from '../lib/mascoteEventos.js'
 import { refeicoesDoDia } from '../lib/metrics.js'
 import { Bar, Check, r0 } from './ui.jsx'
 
@@ -17,6 +18,10 @@ export function MealList({ iso, compacto = false }) {
       l.feitas = l.feitas || {}
       l.feitas[key] = !l.feitas[key]
     })
+  const marcar = (key) => {
+    if (!refs.find((m) => m.key === key)?.feita) reagir('pula', ['Refeição feita!', 'Combustível no tanque.', 'Boa escolha!', 'Segue o plano!'])
+    toggle(key)
+  }
   const troca = (key, cod) =>
     update((x) => {
       const l = diaLog(x, iso)
@@ -47,7 +52,7 @@ export function MealList({ iso, compacto = false }) {
         const ops = d.opcoes[m.key] || []
         return (
           <div key={m.key} className={'meal' + (m.feita ? ' done' : '')}>
-            <Check on={m.feita} onClick={() => toggle(m.key)} label={`Marcar ${m.nome}`} />
+            <Check on={m.feita} onClick={() => marcar(m.key)} label={`Marcar ${m.nome}`} />
             <div className="body">
               <div className="t">
                 {m.nome} <span className="mut small">{m.hora} · ~{m.kcal} kcal{m.opcional ? ' · opcional' : ''}</span>

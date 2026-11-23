@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useApp } from '../store.jsx'
+import MascoteAba from '../components/MascoteAba.jsx'
 import { CATEGORIAS, NOME_TIER, TIERS, avaliar, fmtNum, unidade } from '../lib/conquistas.js'
 import { Bar } from '../components/ui.jsx'
 import Medalha from '../components/Medalha.jsx'
@@ -26,6 +27,7 @@ export default function Conquistas() {
     <>
       <h1>Conquistas</h1>
       <p className="sub">Metas, medalhas e troféus. Cada conquista evolui de bronze até platina.</p>
+      <MascoteAba aba="conquistas" />
 
       <div className="card cq-resumo">
         <div className="cq-anel" role="img" aria-label={`${pct}% das conquistas concluídas`}>

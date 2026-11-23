@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useApp } from '../store.jsx'
+import MascoteAba from '../components/MascoteAba.jsx'
 import { useNav } from '../App.jsx'
 import { fmtBR, planWeek, todayISO, dateOf } from '../lib/dates.js'
 import { fmtDur, fmtRitmo, inicioDoPlano, ritmo } from '../lib/metrics.js'
@@ -130,6 +131,7 @@ export default function Corrida() {
     <>
       <h1>Corrida</h1>
       <p className="sub">{c ? `${c.semanas.length} semanas até os 5 km · meta: ${c.meta5kMin} min` : 'Suas atividades, recordes e medalhas'}</p>
+      <MascoteAba aba="corrida" />
 
       {timer && (
         <IntervalTimer

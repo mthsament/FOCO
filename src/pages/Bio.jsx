@@ -1,5 +1,7 @@
 import { useRef, useState } from 'react'
 import { useApp } from '../store.jsx'
+import MascoteAba from '../components/MascoteAba.jsx'
+import { reagir } from '../lib/mascoteEventos.js'
 import { fmtBR, todayISO } from '../lib/dates.js'
 import { pesagensOrdenadas } from '../lib/metrics.js'
 import { conectarBalanca, lerCsv, suportaBluetooth } from '../lib/bluetooth.js'
@@ -72,6 +74,7 @@ export default function Bio() {
     gravar(reg)
     setLeitura(null)
     toast('Medição salva')
+    reagir('pula', ['Medição salva!', 'Dados novos, gráficos novos.', 'Registrado!'])
   }
 
   const salvarManual = () => {
@@ -85,6 +88,7 @@ export default function Bio() {
     gravar(reg)
     setF({ ...VAZIO, data: f.data })
     toast('Medição salva')
+    reagir('pula', ['Medição salva!', 'Dados novos, gráficos novos.', 'Registrado!'])
   }
 
   const importarCsv = async (ev) => {
@@ -110,6 +114,7 @@ export default function Bio() {
     <>
       <h1>Bioimpedância</h1>
       <p className="sub">Conecte a balança ou registre as medições. Tudo alimenta os gráficos da aba Evolução.</p>
+      <MascoteAba aba="bio" />
 
       <div className="kpis">
         <Kpi v={ult?.gordura != null ? `${r1(ult.gordura)}%` : '–'} l={`Gordura · ${fmtD(delta('gordura'), 'p.p.')}`} />
