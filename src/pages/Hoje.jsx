@@ -7,6 +7,8 @@ import { Bar, Check, Empty, Kpi, Streak, num, r1, toast } from '../components/ui
 import { Habitos, MealList } from '../components/Dia.jsx'
 import Icon from '../components/Icon.jsx'
 import Agua, { GarrafaKpi } from '../components/Agua.jsx'
+import Mascote from '../components/Mascote.jsx'
+import { mascoteDoDia } from '../lib/mascote.js'
 
 export default function Hoje() {
   const { s, update } = useApp()
@@ -20,6 +22,7 @@ export default function Hoje() {
       <>
         <h1>Bem-vindo ao FOCO</h1>
         <p className="sub">Dieta, treino e corrida num lugar só.</p>
+        <Mascote pose={1} anim="pula" altura={150} fala="Oi! Importe suas planilhas e eu monto o seu plano." />
         <Empty icon="upload" title="Importe suas planilhas para começar">
           <p>Traga Plano_Academia, Plano_Corrida e Plano_Alimentacao_Suplementacao. O app monta tudo sozinho.</p>
           <button className="btn pri" onClick={() => go('config')}>Importar planilhas</button>
@@ -74,6 +77,8 @@ export default function Hoje() {
         {fmtLongo(iso)}
         {semana && semana >= 1 ? ` · Semana ${semana} do plano` : ''}
       </p>
+
+      <Mascote {...mascoteDoDia(s, iso)} />
 
       <div className="kpis">
         <Kpi cls="fire" v={<Streak n={seqT.atual} />} l={`Ofensiva de treino (melhor: ${seqT.melhor})`} />

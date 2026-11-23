@@ -30,7 +30,6 @@ h1, h2 { text-wrap: balance; }
 .skip:focus { top: calc(10px + var(--safe-t)); }
 main:focus { outline: none; }
 :focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
-.splash { height: 100%; display: grid; place-items: center; font: 700 44px var(--display); letter-spacing: 8px; color: var(--acc); background: var(--ink); }
 
 .app { display: flex; flex-direction: column; min-height: 100%; }
 .top { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 10px; padding: calc(10px + var(--safe-t)) 16px 10px; background: var(--ink); color: var(--on-ink); }
@@ -371,3 +370,47 @@ tr.clicavel { cursor: pointer; }
 .agua-info .streak .chama { width: 20px; height: 25px; }
 .diag-log { margin-top: 10px; max-height: 280px; overflow: auto; padding: 10px; border-radius: 10px; background: var(--card2); border: 1px solid var(--line); font: 12px/1.5 ui-monospace, Consolas, monospace; white-space: pre-wrap; word-break: break-all; user-select: text; }
 details.card > summary { cursor: pointer; list-style: none; } details.card > summary::-webkit-details-marker { display: none; }
+
+/* ---------- Mascote (canguru) ---------- */
+.mc { display: flex; align-items: flex-end; gap: 14px; margin: 34px 0 16px; } /* folga em cima: o mascote pula sem cobrir o título */
+.mc-corpo { flex: none; position: relative; display: grid; align-items: end; justify-items: center; height: var(--mh); min-width: calc(var(--mh) * .62); padding: 0; border: 0; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.mc-corpo:focus-visible { border-radius: 14px; }
+.mc-sombra { position: absolute; left: 50%; bottom: -3px; width: 64%; height: 9px; margin-left: -32%; border-radius: 50%; background: rgba(8, 16, 26, .22); filter: blur(2.5px); }
+.mc-mov { display: block; transform-origin: 50% 100%; }
+.mc-img { display: block; height: var(--mh); width: auto; max-width: calc(var(--mh) * 1.25); object-fit: contain; object-position: bottom; transform-origin: 50% 100%; user-select: none; -webkit-user-drag: none; pointer-events: none; animation: mc-entra 520ms cubic-bezier(.34, 1.56, .64, 1) both, mc-respira 3.4s ease-in-out 520ms infinite; }
+@keyframes mc-entra { from { transform: scale(.7) translateY(12px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+@keyframes mc-respira { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(.992, 1.022); } }
+
+.a-pula .mc-mov { animation: mc-pulo 720ms cubic-bezier(.3, 0, .3, 1) 1; }
+.a-pula .mc-sombra { animation: mc-sombra-pulo 720ms cubic-bezier(.3, 0, .3, 1) 1; }
+@keyframes mc-pulo { 0% { transform: scale(1, 1); } 18% { transform: scale(1.1, .86); } 46% { transform: translateY(-26px) scale(.94, 1.08); } 72% { transform: translateY(0) scale(1.08, .9); } 86% { transform: scale(.98, 1.03); } 100% { transform: scale(1, 1); } }
+@keyframes mc-sombra-pulo { 0%, 100% { transform: scale(1); opacity: 1; } 46% { transform: scale(.62); opacity: .5; } 72% { transform: scale(1.1); } }
+
+.a-celebra .mc-mov { animation: mc-celebra 3s cubic-bezier(.3, 0, .3, 1) infinite; }
+.a-celebra .mc-sombra { animation: mc-sombra-celebra 3s cubic-bezier(.3, 0, .3, 1) infinite; }
+@keyframes mc-celebra {
+  0%, 84%, 100% { transform: scale(1, 1); }
+  8% { transform: scale(1.1, .87); } 22% { transform: translateY(-30px) rotate(-6deg) scale(.95, 1.07); } 36% { transform: translateY(0) rotate(0) scale(1.08, .9); }
+  46% { transform: scale(1.1, .87); } 60% { transform: translateY(-30px) rotate(6deg) scale(.95, 1.07); } 74% { transform: translateY(0) rotate(0) scale(1.06, .92); }
+}
+@keyframes mc-sombra-celebra { 0%, 84%, 100% { transform: scale(1); } 22%, 60% { transform: scale(.6); opacity: .5; } 36%, 74% { transform: scale(1.12); } }
+.mc-confete { position: absolute; left: 50%; top: 36%; width: 0; height: 0; pointer-events: none; z-index: 2; }
+.mc-confete i { position: absolute; width: 7px; height: 11px; margin: -5px 0 0 -3px; border-radius: 2px; background: var(--c); opacity: 0; animation: mc-conf 3s cubic-bezier(.2, .7, .3, 1) infinite; animation-delay: var(--t); }
+@keyframes mc-conf { 0% { transform: translate(0, 0) rotate(0); opacity: 0; } 4% { opacity: 1; } 34% { transform: translate(var(--x), var(--y)) rotate(var(--r)); opacity: 1; } 48% { transform: translate(var(--x), calc(var(--y) + 46px)) rotate(calc(var(--r) * 1.6)); opacity: 0; } 100% { opacity: 0; } }
+
+.a-corre .mc-mov { animation: mc-corre 520ms ease-in-out infinite; }
+.a-corre .mc-sombra { animation: mc-sombra-corre 520ms ease-in-out infinite; }
+@keyframes mc-corre { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-6px) rotate(-2deg); } }
+@keyframes mc-sombra-corre { 0%, 100% { transform: scale(1); } 50% { transform: scale(.82); opacity: .6; } }
+
+.a-treina .mc-mov { animation: mc-treina 1.7s cubic-bezier(.45, 0, .2, 1) infinite; }
+@keyframes mc-treina { 0%, 100% { transform: scale(1, 1) rotate(0); } 35% { transform: scale(1.06, .965) rotate(-1.5deg); } 55% { transform: scale(1.08, 1) rotate(1.5deg); } 75% { transform: scale(1.01, 1); } }
+
+/* balão de fala (estilo Duolingo) */
+.mc-balao { position: relative; flex: 1; min-width: 0; margin-bottom: 26px; padding: 11px 15px; border: 2px solid var(--line); border-radius: 18px; background: var(--card); color: var(--txt); font-weight: 600; font-size: 15.5px; line-height: 1.35; transform-origin: 0 100%; animation: mc-balao-in 440ms cubic-bezier(.34, 1.56, .64, 1) 180ms both; }
+.mc-balao::before { content: ''; position: absolute; left: -9px; bottom: 20px; width: 14px; height: 14px; background: var(--card); border-left: 2px solid var(--line); border-bottom: 2px solid var(--line); transform: rotate(45deg); border-bottom-left-radius: 4px; }
+@keyframes mc-balao-in { from { transform: scale(.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .mc *, .mc-balao { animation: none !important; }
+  .mc-confete { display: none; }
+}

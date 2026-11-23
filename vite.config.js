@@ -11,7 +11,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['apple-touch-icon.png', 'icon.svg'],
+      includeAssets: ['apple-touch-icon.png', 'icon.svg', 'mascote/*.png'],
       manifest: {
         name: 'FOCO',
         short_name: 'FOCO',

@@ -73,7 +73,20 @@ export function AppProvider({ children }) {
   }, [setState])
 
   const value = useMemo(() => ({ s: state, update, setState, sync }), [state, update, setState, sync])
-  if (!state) return <div className="splash">FOCO</div>
+  // Some com a tela de abertura (index.html) quando os dados estão prontos, sem deixá-la piscar:
+  // garante ~1 s de animação contando desde que a página começou a abrir.
+  const pronto = !!state
+  useEffect(() => {
+    if (!pronto) return
+    const el = document.getElementById('splash')
+    if (!el) return
+    const t = setTimeout(() => {
+      el.classList.add('sai')
+      setTimeout(() => el.remove(), 400)
+    }, Math.max(0, 1000 - performance.now()))
+    return () => clearTimeout(t)
+  }, [pronto])
+  if (!state) return null
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>
 }
 
