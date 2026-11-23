@@ -102,3 +102,18 @@ export function mascoteDaAba(aba, s, { sync } = {}) {
       return { pose: 3, anim: 'idle', fala: 'Foco!' }
   }
 }
+
+// ---------- Qual visual (sprite animado) mostrar ----------
+// Cada pose antiga tem um visual base. Por cima dele entram os visuais temáticos:
+//   celebra -> Campeão (medalha + confete) · treina -> Modo foco (faixa de suor)
+//   dezembro (até o dia 26) -> Natal · fim de semana em descanso -> Relax
+const VISUAL_DA_POSE = { 1: 'forca', 2: 'correndo', 3: 'confiante', 4: 'halter', 5: 'elastico', 6: 'yoga' }
+export function visualDe(pose = 3, anim = 'idle', data = new Date()) {
+  if (anim === 'celebra') return 'campeao'
+  if (anim === 'treina') return 'modo-foco'
+  if (anim === 'idle' && (pose === 3 || pose === 6)) {
+    if (data.getMonth() === 11 && data.getDate() <= 26) return 'natal'
+    if (data.getDay() === 0 || data.getDay() === 6) return 'relax'
+  }
+  return VISUAL_DA_POSE[pose] || 'confiante'
+}

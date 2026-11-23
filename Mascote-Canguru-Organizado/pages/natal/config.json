@@ -1,0 +1,41 @@
+{
+  "title": "Natal",
+  "template": "template.html",
+  "logic": "logic.js",
+  "assets": {
+    "0490587c-d5be-4f9c-af79-372baec29c09": {
+      "path": "../../assets/550faee56baed649088a.png",
+      "mime": "image/png"
+    },
+    "547d9458-f3f5-49f6-805d-b44fd8e36d15": {
+      "path": "../../assets/3bf93974bad1399ac565.png",
+      "mime": "image/png"
+    },
+    "485e8a30-e887-43d7-9232-4398024c8c8b": {
+      "path": "../../assets/00a6121902a91ff42527.js",
+      "mime": "text/javascript"
+    },
+    "05dd7943-becc-4570-9158-cb8dcd2c69e9": {
+      "path": "../../assets/d949f1c3687aedadceda.js",
+      "mime": "text/javascript"
+    },
+    "55546a78-81ab-4a18-ad87-c390e13060b9": {
+      "path": "../../assets/35f4f974f4b2bcd44da7.js",
+      "mime": "text/javascript"
+    },
+    "eff9b344-5de4-4d6a-af82-f60b517ad5f6": {
+      "path": "../../assets/ba344451eab25b217a16.woff2",
+      "mime": "font/woff2"
+    }
+  },
+  "externalResources": [
+    {
+      "id": "https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js",
+      "uuid": "05dd7943-becc-4570-9158-cb8dcd2c69e9"
+    },
+    {
+      "id": "https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js",
+      "uuid": "55546a78-81ab-4a18-ad87-c390e13060b9"
+    }
+  ]
+}

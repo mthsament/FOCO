@@ -1,0 +1,61 @@
+{
+  "title": "Correndo",
+  "template": "template.html",
+  "logic": "logic.js",
+  "assets": {
+    "beffa502-4d8a-442a-b9f5-e686c632faa9": {
+      "path": "../../assets/0b59678ed9335bc611de.png",
+      "mime": "image/png"
+    },
+    "29325465-b7f2-47e7-b2b8-c3e64bc073e0": {
+      "path": "../../assets/1cef3f4d5637c6b614db.png",
+      "mime": "image/png"
+    },
+    "add0187d-e715-47c6-86fc-8a5c275b3749": {
+      "path": "../../assets/8ba898450b0be0bc6519.png",
+      "mime": "image/png"
+    },
+    "9712e1e1-3452-4e0c-a2d5-2e185ab7273a": {
+      "path": "../../assets/0cefdaf850966aaf6956.png",
+      "mime": "image/png"
+    },
+    "fa697b81-895d-4c85-8657-dec8f5c19729": {
+      "path": "../../assets/d8bbca5d1cd74001419c.png",
+      "mime": "image/png"
+    },
+    "07f725a1-72d7-4154-83c0-77dda2797308": {
+      "path": "../../assets/110cd689becc73ab8b55.png",
+      "mime": "image/png"
+    },
+    "a4c6d887-1113-43d3-9b94-b0b3db877b98": {
+      "path": "../../assets/cbb220b549f6e5383199.png",
+      "mime": "image/png"
+    },
+    "2312cad8-2c7d-46aa-b26d-16070606c554": {
+      "path": "../../assets/00a6121902a91ff42527.js",
+      "mime": "text/javascript"
+    },
+    "3bb39d24-5f87-401b-8846-aaff8e84ecae": {
+      "path": "../../assets/d949f1c3687aedadceda.js",
+      "mime": "text/javascript"
+    },
+    "33a42c1d-e179-46e2-9a00-86b4c642fd5c": {
+      "path": "../../assets/35f4f974f4b2bcd44da7.js",
+      "mime": "text/javascript"
+    },
+    "8b7538db-21ff-442a-bbb2-ed90fabbb920": {
+      "path": "../../assets/ba344451eab25b217a16.woff2",
+      "mime": "font/woff2"
+    }
+  },
+  "externalResources": [
+    {
+      "id": "https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js",
+      "uuid": "3bb39d24-5f87-401b-8846-aaff8e84ecae"
+    },
+    {
+      "id": "https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js",
+      "uuid": "33a42c1d-e179-46e2-9a00-86b4c642fd5c"
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "pages": [
+    {
+      "slug": "referencias",
+      "title": "Referências originais",
+      "path": "pages/referencias/index.html",
+      "assets": 5,
+      "logic_bytes": 100,
+      "css_bytes": 6217
+    },
+    {
+      "slug": "playground",
+      "title": "Playground animado",
+      "path": "pages/playground/index.html",
+      "assets": 20,
+      "logic_bytes": 1344,
+      "css_bytes": 14220
+    },
+    {
+      "slug": "forca",
+      "title": "Força",
+      "path": "pages/forca/index.html",
+      "assets": 7,
+      "logic_bytes": 66,
+      "css_bytes": 6580
+    },
+    {
+      "slug": "correndo",
+      "title": "Correndo",
+      "path": "pages/correndo/index.html",
+      "assets": 11,
+      "logic_bytes": 66,
+      "css_bytes": 7660
+    },
+    {
+      "slug": "confiante",
+      "title": "Confiante",
+      "path": "pages/confiante/index.html",
+      "assets": 5,
+      "logic_bytes": 66,
+      "css_bytes": 6240
+    },
+    {
+      "slug": "halter",
+      "title": "Halter",
+      "path": "pages/halter/index.html",
+      "assets": 6,
+      "logic_bytes": 66,
+      "css_bytes": 6617
+    },
+    {
+      "slug": "elastico",
+      "title": "Elástico",
+      "path": "pages/elastico/index.html",
+      "assets": 5,
+      "logic_bytes": 66,
+      "css_bytes": 6486
+    },
+    {
+      "slug": "yoga",
+      "title": "Yoga",
+      "path": "pages/yoga/index.html",
+      "assets": 5,
+      "logic_bytes": 66,
+      "css_bytes": 6511
+    },
+    {
+      "slug": "campeao",
+      "title": "Campeão",
+      "path": "pages/campeao/index.html",
+      "assets": 7,
+      "logic_bytes": 66,
+      "css_bytes": 7601
+    },
+    {
+      "slug": "natal",
+      "title": "Natal",
+      "path": "pages/natal/index.html",
+      "assets": 6,
+      "logic_bytes": 66,
+      "css_bytes": 7408
+    },
+    {
+      "slug": "modo-foco",
+      "title": "Modo foco",
+      "path": "pages/modo-foco/index.html",
+      "assets": 6,
+      "logic_bytes": 66,
+      "css_bytes": 6607
+    },
+    {
+      "slug": "relax",
+      "title": "Relax",
+      "path": "pages/relax/index.html",
+      "assets": 5,
+      "logic_bytes": 66,
+      "css_bytes": 6402
+    }
+  ],
+  "unique_assets": 21,
+  "asset_total_bytes": 2182742,
+  "source_bytes": 7814333
+}

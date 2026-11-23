@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ouvir } from '../lib/mascoteEventos.js'
+import { visualDe } from '../lib/mascote.js'
+import MascoteSprite from './MascoteSprite.jsx'
 
 // Mascote do FOCO (o canguru). Cada pose é uma imagem; a animação é feita por CSS:
 //   idle    respira de leve e, de vez em quando, "olha em volta"
@@ -11,7 +13,6 @@ import { ouvir } from '../lib/mascoteEventos.js'
 //   forca   mostra a força (dois "flex")
 // Tocar no mascote faz uma dessas reações (sorteada) e solta uma frase.
 // Outras partes do app também podem pedir reações (ex.: beber água) pelo canal de eventos.
-const base = import.meta.env.BASE_URL
 const POSES = { 1: 'Mostrando os bíceps', 2: 'Correndo na esteira', 3: 'Braços cruzados', 4: 'Rosca com halter', 5: 'Pulando com elástico', 6: 'Alongando no tapete' }
 const FRASES = ['Foco!', 'Bora!', 'Um passo de cada vez.', 'Constância ganha de motivação.', 'Cada repetição conta.', 'Já bebeu água?', 'Você está indo bem.', 'Mais um dia, mais uma meta.']
 const REACOES = ['pula', 'giro', 'forca']
@@ -21,12 +22,25 @@ const CONFETE = Array.from({ length: 12 }, (_, i) => {
   return { x: Math.round(Math.cos(a) * d), y: Math.round(Math.sin(a) * d), r: (i * 67) % 360, c: ['#ff6b35', '#c6f432', '#5eaaff', '#ffffff', '#ffc800'][i % 5], t: (i % 4) * 40 }
 })
 
-export default function Mascote({ pose = 3, anim = 'idle', fala, altura = 130, frases = FRASES, className = '' }) {
+export default function Mascote({ pose = 3, anim = 'idle', visual, fala, altura = 130, frases = FRASES, className = '' }) {
   const [reacao, setReacao] = useState({ n: 0, anim: null, fala: null })
   const [micro, setMicro] = useState(0)
+  const [parado, setParado] = useState(false)
+  const raiz = useRef(null)
   const timer = useRef(null)
   const ultima = useRef(-1)
   useEffect(() => () => clearTimeout(timer.current), [])
+
+  // economiza bateria: pausa as animações em loop quando o mascote sai da tela ou a aba fica oculta
+  useEffect(() => {
+    const el = raiz.current
+    let visivel = true
+    const aplica = () => setParado(!visivel || document.visibilityState !== 'visible')
+    const io = typeof IntersectionObserver === 'function' ? new IntersectionObserver(([e]) => { visivel = e.isIntersecting; aplica() }) : null
+    io?.observe(el)
+    document.addEventListener('visibilitychange', aplica)
+    return () => { io?.disconnect(); document.removeEventListener('visibilitychange', aplica) }
+  }, [])
 
   const reagir = useCallback((efeito, texto) => {
     setReacao((r) => ({ n: r.n + 1, anim: efeito, fala: texto }))
@@ -62,8 +76,9 @@ export default function Mascote({ pose = 3, anim = 'idle', fala, altura = 130, f
 
   const texto = reacao.fala || fala
   const efeito = reacao.anim || anim
+  const vis = visual || visualDe(pose, anim)
   return (
-    <div className={`mc a-${efeito} ${className}`} style={{ '--mh': `${altura}px` }}>
+    <div ref={raiz} className={`mc a-${efeito}${parado ? ' parado' : ''} ${className}`} style={{ '--mh': `${altura}px` }}>
       <button type="button" className="mc-corpo" onClick={tocar} aria-label="Mascote do FOCO. Toque para animar.">
         <span className="mc-sombra" aria-hidden="true" />
         {anim === 'celebra' && (
@@ -71,9 +86,14 @@ export default function Mascote({ pose = 3, anim = 'idle', fala, altura = 130, f
             {CONFETE.map((c, i) => <i key={i} style={{ '--x': `${c.x}px`, '--y': `${c.y}px`, '--r': `${c.r}deg`, '--c': c.c, '--t': `${c.t}ms` }} />)}
           </span>
         )}
+        {reacao.n > 0 && reacao.anim && (
+          <span className="mc-brilho" key={'b' + reacao.n} aria-hidden="true">
+            {[0, 1, 2, 3, 4].map((i) => <i key={i} style={{ '--a': `${-70 + i * 35}deg`, '--t': `${i * 45}ms` }} />)}
+          </span>
+        )}
         <span className={'mc-micro' + (micro ? ' on' : '')} key={'m' + micro}>
           <span className="mc-mov" key={reacao.n}>
-            <img key={pose} className="mc-img" src={`${base}mascote/pose${pose}.png`} alt={POSES[pose]} draggable="false" />
+            {vis && <MascoteSprite key={vis} visual={vis} altura={altura} className="mc-sprite" rotulo={POSES[pose]} />}
           </span>
         </span>
       </button>

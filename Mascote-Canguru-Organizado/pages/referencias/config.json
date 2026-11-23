@@ -1,0 +1,37 @@
+{
+  "title": "Referências originais",
+  "template": "template.html",
+  "logic": "logic.js",
+  "assets": {
+    "e937641c-9601-47ad-9bd7-40e2f6184645": {
+      "path": "../../assets/33906a86af26fb9d2ccc.png",
+      "mime": "image/png"
+    },
+    "766de882-28a0-4319-9683-e509a243993f": {
+      "path": "../../assets/00a6121902a91ff42527.js",
+      "mime": "text/javascript"
+    },
+    "ad97448f-0aff-487e-9e70-4b969d829063": {
+      "path": "../../assets/d949f1c3687aedadceda.js",
+      "mime": "text/javascript"
+    },
+    "ddf61348-8001-42c0-a3bf-af2452ef3921": {
+      "path": "../../assets/35f4f974f4b2bcd44da7.js",
+      "mime": "text/javascript"
+    },
+    "e78f0613-88d1-4f4f-804d-a8d24fa0120a": {
+      "path": "../../assets/ba344451eab25b217a16.woff2",
+      "mime": "font/woff2"
+    }
+  },
+  "externalResources": [
+    {
+      "id": "https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js",
+      "uuid": "ad97448f-0aff-487e-9e70-4b969d829063"
+    },
+    {
+      "id": "https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js",
+      "uuid": "ddf61348-8001-42c0-a3bf-af2452ef3921"
+    }
+  ]
+}

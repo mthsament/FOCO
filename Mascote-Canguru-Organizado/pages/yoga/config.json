@@ -1,0 +1,37 @@
+{
+  "title": "Yoga",
+  "template": "template.html",
+  "logic": "logic.js",
+  "assets": {
+    "6e76a6c1-51cd-4c05-9322-10f59559f37a": {
+      "path": "../../assets/777a03f6288f74871265.png",
+      "mime": "image/png"
+    },
+    "2f642b19-b77a-4ece-8fa1-fa05420aefbe": {
+      "path": "../../assets/00a6121902a91ff42527.js",
+      "mime": "text/javascript"
+    },
+    "9cee1386-3ce0-4b90-b4b0-63e0c8f74d12": {
+      "path": "../../assets/d949f1c3687aedadceda.js",
+      "mime": "text/javascript"
+    },
+    "0f41c843-8228-4c68-8419-6848529a4c41": {
+      "path": "../../assets/35f4f974f4b2bcd44da7.js",
+      "mime": "text/javascript"
+    },
+    "f41be4c5-8779-4f2d-a49f-2c184fa2c3e4": {
+      "path": "../../assets/ba344451eab25b217a16.woff2",
+      "mime": "font/woff2"
+    }
+  },
+  "externalResources": [
+    {
+      "id": "https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js",
+      "uuid": "9cee1386-3ce0-4b90-b4b0-63e0c8f74d12"
+    },
+    {
+      "id": "https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js",
+      "uuid": "0f41c843-8228-4c68-8419-6848529a4c41"
+    }
+  ]
+}

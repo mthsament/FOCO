@@ -1,0 +1,41 @@
+{
+  "title": "Modo foco",
+  "template": "template.html",
+  "logic": "logic.js",
+  "assets": {
+    "c79829e1-2204-4db5-ba85-fc763d770db6": {
+      "path": "../../assets/93a487654c71aaecf909.png",
+      "mime": "image/png"
+    },
+    "0f3862a6-2d38-4a78-9564-ec172a129dda": {
+      "path": "../../assets/389263dbfe02df2702a0.png",
+      "mime": "image/png"
+    },
+    "9b1f22f8-c4ad-42fb-b0b2-043e304a7fb8": {
+      "path": "../../assets/00a6121902a91ff42527.js",
+      "mime": "text/javascript"
+    },
+    "df1a4fd0-f643-455a-bfc3-65a4eb744b6f": {
+      "path": "../../assets/d949f1c3687aedadceda.js",
+      "mime": "text/javascript"
+    },
+    "5c7a43ea-a1fb-44a1-a190-b66522c2f152": {
+      "path": "../../assets/35f4f974f4b2bcd44da7.js",
+      "mime": "text/javascript"
+    },
+    "5ca2097b-5b3d-43e9-bf9d-35efc3bddfe5": {
+      "path": "../../assets/ba344451eab25b217a16.woff2",
+      "mime": "font/woff2"
+    }
+  },
+  "externalResources": [
+    {
+      "id": "https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js",
+      "uuid": "df1a4fd0-f643-455a-bfc3-65a4eb744b6f"
+    },
+    {
+      "id": "https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js",
+      "uuid": "5c7a43ea-a1fb-44a1-a190-b66522c2f152"
+    }
+  ]
+}

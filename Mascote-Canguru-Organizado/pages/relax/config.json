@@ -1,0 +1,37 @@
+{
+  "title": "Relax",
+  "template": "template.html",
+  "logic": "logic.js",
+  "assets": {
+    "1fb120b5-a7db-4ab7-8036-c2dc295b5d9b": {
+      "path": "../../assets/550faee56baed649088a.png",
+      "mime": "image/png"
+    },
+    "50384310-3c81-4c55-ad11-297e5692cd52": {
+      "path": "../../assets/00a6121902a91ff42527.js",
+      "mime": "text/javascript"
+    },
+    "593fb148-689c-480c-8d39-69889f20aa33": {
+      "path": "../../assets/d949f1c3687aedadceda.js",
+      "mime": "text/javascript"
+    },
+    "80969421-7f2f-45e1-92c8-13d98e7f2e9d": {
+      "path": "../../assets/35f4f974f4b2bcd44da7.js",
+      "mime": "text/javascript"
+    },
+    "9d86b3bd-8a8a-41dc-a2e8-6cd470015735": {
+      "path": "../../assets/ba344451eab25b217a16.woff2",
+      "mime": "font/woff2"
+    }
+  },
+  "externalResources": [
+    {
+      "id": "https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js",
+      "uuid": "593fb148-689c-480c-8d39-69889f20aa33"
+    },
+    {
+      "id": "https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js",
+      "uuid": "80969421-7f2f-45e1-92c8-13d98e7f2e9d"
+    }
+  ]
+}

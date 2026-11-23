@@ -1,0 +1,41 @@
+{
+  "title": "Halter",
+  "template": "template.html",
+  "logic": "logic.js",
+  "assets": {
+    "ddf63870-4266-4dee-b527-772db26b16df": {
+      "path": "../../assets/389263dbfe02df2702a0.png",
+      "mime": "image/png"
+    },
+    "2083da2f-84c7-4208-bc89-f3e811786b24": {
+      "path": "../../assets/93a487654c71aaecf909.png",
+      "mime": "image/png"
+    },
+    "9038c429-4d4e-403b-a3fc-ec54eafe07ec": {
+      "path": "../../assets/00a6121902a91ff42527.js",
+      "mime": "text/javascript"
+    },
+    "00034515-be64-4493-9ffe-4f9d5603a7f8": {
+      "path": "../../assets/d949f1c3687aedadceda.js",
+      "mime": "text/javascript"
+    },
+    "78fcab4c-8cdc-42f3-b846-0993f07124cd": {
+      "path": "../../assets/35f4f974f4b2bcd44da7.js",
+      "mime": "text/javascript"
+    },
+    "04760598-c23f-43e4-8815-1dcb6cd78a71": {
+      "path": "../../assets/ba344451eab25b217a16.woff2",
+      "mime": "font/woff2"
+    }
+  },
+  "externalResources": [
+    {
+      "id": "https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js",
+      "uuid": "00034515-be64-4493-9ffe-4f9d5603a7f8"
+    },
+    {
+      "id": "https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js",
+      "uuid": "78fcab4c-8cdc-42f3-b846-0993f07124cd"
+    }
+  ]
+}

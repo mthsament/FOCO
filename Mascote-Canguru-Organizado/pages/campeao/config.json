@@ -1,0 +1,45 @@
+{
+  "title": "Campeão",
+  "template": "template.html",
+  "logic": "logic.js",
+  "assets": {
+    "22de6024-e236-49a0-bcb9-1c4355ce874f": {
+      "path": "../../assets/992d0c96d7482342257e.png",
+      "mime": "image/png"
+    },
+    "e8de6408-27c1-4a32-a8e1-f532db67a489": {
+      "path": "../../assets/04414589e59117528f3e.png",
+      "mime": "image/png"
+    },
+    "edbd06e3-be5c-470b-b21f-3173217a3523": {
+      "path": "../../assets/9c0b24c8415e3c25bf76.png",
+      "mime": "image/png"
+    },
+    "29500cde-021b-4c66-9610-c06c8828ef9d": {
+      "path": "../../assets/00a6121902a91ff42527.js",
+      "mime": "text/javascript"
+    },
+    "f353af06-b185-46d8-8def-e845e103da45": {
+      "path": "../../assets/d949f1c3687aedadceda.js",
+      "mime": "text/javascript"
+    },
+    "78cef22b-9eeb-4b38-9d4d-b111606c3ebd": {
+      "path": "../../assets/35f4f974f4b2bcd44da7.js",
+      "mime": "text/javascript"
+    },
+    "8871d8a7-e124-4b7e-83ff-bd26c8ed253c": {
+      "path": "../../assets/ba344451eab25b217a16.woff2",
+      "mime": "font/woff2"
+    }
+  },
+  "externalResources": [
+    {
+      "id": "https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js",
+      "uuid": "f353af06-b185-46d8-8def-e845e103da45"
+    },
+    {
+      "id": "https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js",
+      "uuid": "78cef22b-9eeb-4b38-9d4d-b111606c3ebd"
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "title": "Playground animado",
+  "template": "template.html",
+  "logic": "logic.js",
+  "assets": {
+    "d71de397-a5d4-430a-8ca4-d442c4a5ade2": {
+      "path": "../../assets/9c0b24c8415e3c25bf76.png",
+      "mime": "image/png"
+    },
+    "e32383d1-0ad8-493c-abc5-d94224ac86ac": {
+      "path": "../../assets/8ba898450b0be0bc6519.png",
+      "mime": "image/png"
+    },
+    "d383bd56-aa56-4772-ba1d-20468d541ad8": {
+      "path": "../../assets/3bf93974bad1399ac565.png",
+      "mime": "image/png"
+    },
+    "a0a97dd4-6eaf-49d8-9442-0eba0e33869d": {
+      "path": "../../assets/0cefdaf850966aaf6956.png",
+      "mime": "image/png"
+    },
+    "7dfaf3b2-5a54-4465-ad67-c6695f38f750": {
+      "path": "../../assets/110cd689becc73ab8b55.png",
+      "mime": "image/png"
+    },
+    "0d271357-1589-4059-93be-d0d38742e819": {
+      "path": "../../assets/cbb220b549f6e5383199.png",
+      "mime": "image/png"
+    },
+    "024d4933-8bca-4792-bc3a-f14386820b67": {
+      "path": "../../assets/1cef3f4d5637c6b614db.png",
+      "mime": "image/png"
+    },
+    "73311bce-76ed-4984-9ba6-c37ce648ca46": {
+      "path": "../../assets/d8bbca5d1cd74001419c.png",
+      "mime": "image/png"
+    },
+    "8d765abe-ac4a-4936-9b47-b617571d0521": {
+      "path": "../../assets/0b59678ed9335bc611de.png",
+      "mime": "image/png"
+    },
+    "ebc32076-a39c-4b5f-903f-bc0c55aac18e": {
+      "path": "../../assets/992d0c96d7482342257e.png",
+      "mime": "image/png"
+    },
+    "07097613-0249-47d0-9f05-62d5fba51bef": {
+      "path": "../../assets/0f3861060ad9bfe963f6.png",
+      "mime": "image/png"
+    },
+    "6f3e2583-1767-45b2-9840-d2f2232a78f0": {
+      "path": "../../assets/93a487654c71aaecf909.png",
+      "mime": "image/png"
+    },
+    "951c796e-cdf7-4881-a324-54a11290218d": {
+      "path": "../../assets/04414589e59117528f3e.png",
+      "mime": "image/png"
+    },
+    "d7c87cb4-e018-492e-b583-7ddc6cebf1c7": {
+      "path": "../../assets/550faee56baed649088a.png",
+      "mime": "image/png"
+    },
+    "63d14881-ecdb-4ad9-a47f-9f1b63774d72": {
+      "path": "../../assets/777a03f6288f74871265.png",
+      "mime": "image/png"
+    },
+    "86502fdd-0802-4ad0-bae3-fd2cac0f65be": {
+      "path": "../../assets/389263dbfe02df2702a0.png",
+      "mime": "image/png"
+    },
+    "dd5673c4-f099-4696-a1a0-5d790bda841b": {
+      "path": "../../assets/00a6121902a91ff42527.js",
+      "mime": "text/javascript"
+    },
+    "20c7b056-449d-4f2b-bef8-4bf861c55026": {
+      "path": "../../assets/d949f1c3687aedadceda.js",
+      "mime": "text/javascript"
+    },
+    "6737a734-3ad0-4159-82d0-568440b6bf79": {
+      "path": "../../assets/35f4f974f4b2bcd44da7.js",
+      "mime": "text/javascript"
+    },
+    "e95a7f8e-6494-4c46-9cad-bfbff241fc7a": {
+      "path": "../../assets/ba344451eab25b217a16.woff2",
+      "mime": "font/woff2"
+    }
+  },
+  "externalResources": [
+    {
+      "id": "https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js",
+      "uuid": "20c7b056-449d-4f2b-bef8-4bf861c55026"
+    },
+    {
+      "id": "https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js",
+      "uuid": "6737a734-3ad0-4159-82d0-568440b6bf79"
+    }
+  ]
+}

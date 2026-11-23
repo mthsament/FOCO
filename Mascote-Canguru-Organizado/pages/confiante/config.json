@@ -1,0 +1,37 @@
+{
+  "title": "Confiante",
+  "template": "template.html",
+  "logic": "logic.js",
+  "assets": {
+    "014dbaa5-3522-4518-9849-73c8af65a206": {
+      "path": "../../assets/550faee56baed649088a.png",
+      "mime": "image/png"
+    },
+    "9554d8cd-87dd-4e64-b2e6-29f553cce6f9": {
+      "path": "../../assets/00a6121902a91ff42527.js",
+      "mime": "text/javascript"
+    },
+    "e8147be0-22c7-46c0-b133-5d8d431ab2f8": {
+      "path": "../../assets/d949f1c3687aedadceda.js",
+      "mime": "text/javascript"
+    },
+    "6607d77d-a280-4ef6-9882-4a6936099eaa": {
+      "path": "../../assets/35f4f974f4b2bcd44da7.js",
+      "mime": "text/javascript"
+    },
+    "5546e95c-4d0e-4049-a308-c5b630043b4a": {
+      "path": "../../assets/ba344451eab25b217a16.woff2",
+      "mime": "font/woff2"
+    }
+  },
+  "externalResources": [
+    {
+      "id": "https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js",
+      "uuid": "e8147be0-22c7-46c0-b133-5d8d431ab2f8"
+    },
+    {
+      "id": "https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js",
+      "uuid": "6607d77d-a280-4ef6-9882-4a6936099eaa"
+    }
+  ]
+}

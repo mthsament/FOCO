@@ -1,0 +1,45 @@
+{
+  "title": "Força",
+  "template": "template.html",
+  "logic": "logic.js",
+  "assets": {
+    "19f15088-c17f-4b03-9752-1f2ab8f81a6d": {
+      "path": "../../assets/04414589e59117528f3e.png",
+      "mime": "image/png"
+    },
+    "bdd550d3-44ed-479c-98a3-556dbf3bba7d": {
+      "path": "../../assets/992d0c96d7482342257e.png",
+      "mime": "image/png"
+    },
+    "2970ad13-6e81-4f3e-a8d3-188b7bec5f6e": {
+      "path": "../../assets/9c0b24c8415e3c25bf76.png",
+      "mime": "image/png"
+    },
+    "4bb1e265-6fde-4c18-84bf-d42255f757bd": {
+      "path": "../../assets/00a6121902a91ff42527.js",
+      "mime": "text/javascript"
+    },
+    "f50ccb25-4e19-468c-bd1e-e60119425662": {
+      "path": "../../assets/d949f1c3687aedadceda.js",
+      "mime": "text/javascript"
+    },
+    "c940222a-df78-42ca-98e4-7af6d40f933f": {
+      "path": "../../assets/35f4f974f4b2bcd44da7.js",
+      "mime": "text/javascript"
+    },
+    "7fc51fc5-91da-4c7d-8889-5795d1248b48": {
+      "path": "../../assets/ba344451eab25b217a16.woff2",
+      "mime": "font/woff2"
+    }
+  },
+  "externalResources": [
+    {
+      "id": "https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js",
+      "uuid": "f50ccb25-4e19-468c-bd1e-e60119425662"
+    },
+    {
+      "id": "https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js",
+      "uuid": "c940222a-df78-42ca-98e4-7af6d40f933f"
+    }
+  ]
+}

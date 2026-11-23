@@ -1,0 +1,37 @@
+{
+  "title": "Elástico",
+  "template": "template.html",
+  "logic": "logic.js",
+  "assets": {
+    "1f797030-a81d-42b9-b7d4-ad1999b65173": {
+      "path": "../../assets/0f3861060ad9bfe963f6.png",
+      "mime": "image/png"
+    },
+    "dffdce34-0cff-4e0e-8bbe-b36c585a676c": {
+      "path": "../../assets/00a6121902a91ff42527.js",
+      "mime": "text/javascript"
+    },
+    "0abbc150-74ee-4a72-aa30-309ada110ece": {
+      "path": "../../assets/d949f1c3687aedadceda.js",
+      "mime": "text/javascript"
+    },
+    "94d507b2-8720-4128-88cb-a3aab5e625ee": {
+      "path": "../../assets/35f4f974f4b2bcd44da7.js",
+      "mime": "text/javascript"
+    },
+    "e6cfa8bb-f7d5-4207-86f4-6ad9accdd25a": {
+      "path": "../../assets/ba344451eab25b217a16.woff2",
+      "mime": "font/woff2"
+    }
+  },
+  "externalResources": [
+    {
+      "id": "https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js",
+      "uuid": "0abbc150-74ee-4a72-aa30-309ada110ece"
+    },
+    {
+      "id": "https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js",
+      "uuid": "94d507b2-8720-4128-88cb-a3aab5e625ee"
+    }
+  ]
+}
