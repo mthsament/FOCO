@@ -68,6 +68,22 @@ const G = {
   close: <path className="bold" d="M6.5 6.5l11 11M17.5 6.5l-11 11" />,
   minus: <path className="bold" d="M6 12h12" />,
   plus: <path d="M12 5v14M5 12h14" />,
+  calendario: (
+    <>
+      <rect className="d" x="3.5" y="5" width="17" height="15.5" rx="3.5" />
+      <rect x="3.5" y="5" width="17" height="15.5" rx="3.5" />
+      <path d="M3.5 10h17M8 3v4M16 3v4" />
+      {S(8.5, 14.2, 1.2)}{S(12, 14.2, 1.2)}{S(15.5, 14.2, 1.2)}{S(8.5, 17.3, 1.2)}{S(12, 17.3, 1.2)}
+    </>
+  ),
+  cadeado: (
+    <>
+      <rect className="d" x="5" y="10.5" width="14" height="10" rx="3" />
+      <rect x="5" y="10.5" width="14" height="10" rx="3" />
+      <path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5" />
+      {S(12, 15.5, 1.4)}
+    </>
+  ),
   gota: (
     <>
       {D('M12 3.2c3.6 4.4 6.2 7.3 6.2 10.8a6.2 6.2 0 0 1-12.4 0c0-3.5 2.6-6.4 6.2-10.8z')}

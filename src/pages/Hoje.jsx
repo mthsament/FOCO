@@ -8,6 +8,7 @@ import { Habitos, MealList } from '../components/Dia.jsx'
 import Icon from '../components/Icon.jsx'
 import Agua, { GarrafaKpi } from '../components/Agua.jsx'
 import Mascote from '../components/Mascote.jsx'
+import CalendarioOfensiva from '../components/CalendarioOfensiva.jsx'
 import { mascoteDoDia } from '../lib/mascote.js'
 
 export default function Hoje() {
@@ -16,6 +17,7 @@ export default function Hoje() {
   const iso = todayISO()
   const ini = inicioDoPlano(s)
   const [peso, setPeso] = useState('')
+  const [cal, setCal] = useState(false)
 
   if (!s.plan.treinos && !s.plan.dieta && !s.plan.corrida) {
     return (
@@ -72,11 +74,17 @@ export default function Hoje() {
 
   return (
     <>
-      <h1>Hoje</h1>
-      <p className="sub">
-        {fmtLongo(iso)}
-        {semana && semana >= 1 ? ` · Semana ${semana} do plano` : ''}
-      </p>
+      <div className="titulo-linha">
+        <div>
+          <h1>Hoje</h1>
+          <p className="sub">
+            {fmtLongo(iso)}
+            {semana && semana >= 1 ? ` · Semana ${semana} do plano` : ''}
+          </p>
+        </div>
+        <button className="iconbtn cal-btn" onClick={() => setCal(true)} aria-label="Abrir calendário de ofensivas" aria-haspopup="dialog"><Icon name="calendario" /></button>
+      </div>
+      {cal && <CalendarioOfensiva onFechar={() => setCal(false)} />}
 
       <Mascote {...mascoteDoDia(s, iso)} />
 

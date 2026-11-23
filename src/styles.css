@@ -468,3 +468,95 @@ details.card > summary { cursor: pointer; list-style: none; } details.card > sum
   .cel-raios, .cel-confete, .cel-estrela, .cel-mov, .cel-sombra, .mc-micro.on { animation: none !important; }
   .cel-confete, .cel-estrela { display: none; }
 }
+
+/* ---------- Medalhas ---------- */
+.med { position: relative; display: inline-block; flex: none; width: var(--md); height: calc(var(--md) * 1.12); }
+.med-svg { display: block; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 2px 3px rgba(8, 16, 26, .25)); }
+.med-ico { position: absolute; left: 50%; top: calc(var(--md) * .66); transform: translate(-50%, -50%); display: grid; color: var(--tinta); }
+.med-ico .ico { width: calc(var(--md) * .38); height: calc(var(--md) * .38); stroke-width: 2; margin: 0; filter: drop-shadow(0 1px 0 rgba(255, 255, 255, .55)); }
+.med-ico .ico .d { fill-opacity: .28; }
+.med.prev { opacity: .5; filter: saturate(.7); }
+.med-brilho { animation: med-brilho 3.4s ease-in-out infinite; }
+@keyframes med-brilho { 0%, 52% { transform: translateX(0); } 100% { transform: translateX(170px); } }
+.cel-medalha { animation: cel-pop 600ms cubic-bezier(.34, 1.56, .64, 1) 650ms both; filter: drop-shadow(0 6px 14px rgba(5, 15, 40, .35)); }
+
+/* ---------- Conquistas ---------- */
+.nav button { min-width: 0; }
+@media (max-width: 559px) { .nav button { font-size: 10px; letter-spacing: -.1px; } .nav button .ic { width: 40px; } }
+.cq-resumo { display: flex; align-items: center; gap: 18px; padding: 16px; }
+.cq-anel { position: relative; flex: none; width: 124px; height: 124px; }
+.cq-anel svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.cq-anel circle { fill: none; stroke-width: 9; }
+.cq-anel-fundo { stroke: var(--card2); }
+.cq-anel-valor { stroke: var(--acc); stroke-linecap: round; transition: stroke-dasharray 1100ms var(--ease-out); }
+.cq-anel-txt { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; }
+.cq-anel-txt b { font: 700 34px/1 var(--display); font-variant-numeric: tabular-nums; }
+.cq-anel-txt span { font-size: 12px; color: var(--mut); }
+.cq-info { flex: 1; min-width: 0; }
+.cq-trofeus { display: flex; align-items: baseline; gap: 6px; font-family: var(--display); }
+.cq-trofeus .ico { width: 26px; height: 26px; color: #e9a60c; align-self: center; }
+.cq-trofeus b { font-size: 42px; line-height: 1; font-variant-numeric: tabular-nums; }
+.cq-trofeus span { color: var(--mut); font: 600 16px var(--body); }
+.cq-tiers { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-top: 10px; }
+.cq-tier { display: grid; justify-items: center; gap: 1px; line-height: 1.15; }
+.cq-tier b { font: 700 17px var(--display); font-variant-numeric: tabular-nums; }
+.cq-tier span { font-size: 11px; color: var(--mut); }
+.cq-metas { display: grid; gap: 14px; }
+.cq-meta { display: flex; align-items: center; gap: 12px; }
+.cq-meta .sp { min-width: 0; display: grid; gap: 3px; }
+.bar.t-bronze > i { background: linear-gradient(90deg, #e39a5b, #b8672b); }
+.bar.t-prata > i { background: linear-gradient(90deg, #cfd8e0, #8d9bab); }
+.bar.t-ouro > i { background: linear-gradient(90deg, #ffd95a, #e8a009); }
+.bar.t-platina > i { background: linear-gradient(90deg, #b5ecfa, #4f9fd4); }
+.chips-sel { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 10px; scrollbar-width: none; }
+.chips-sel::-webkit-scrollbar { display: none; }
+.cq-chip-n { opacity: .65; font-size: 12px; margin-left: 2px; }
+.cq-grade { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+.cq-card { display: grid; gap: 12px; padding: 14px; border-radius: var(--r); background: var(--card); border: 1px solid var(--line); }
+.cq-card.max { border-color: #8fd8f0; box-shadow: 0 0 0 1px rgba(143, 216, 240, .35), 0 6px 22px rgba(79, 159, 212, .18); }
+.cq-card.zero .cq-txt b { color: var(--mut); }
+.cq-topo { display: flex; align-items: center; gap: 14px; }
+.cq-txt { flex: 1; min-width: 0; display: grid; gap: 3px; }
+.cq-txt b { font-size: 16.5px; }
+.cq-niveis { display: grid; grid-template-columns: repeat(4, 1fr); padding-top: 10px; border-top: 1px dashed var(--line); }
+.cq-nv { display: grid; justify-items: center; gap: 0; }
+.cq-nv em { font-style: normal; font-size: 12px; font-weight: 600; color: var(--mut); font-variant-numeric: tabular-nums; }
+.cq-nv.ok em { color: var(--txt); }
+@media (max-width: 380px) { .cq-resumo { gap: 12px; } .cq-anel { width: 104px; height: 104px; } .cq-trofeus b { font-size: 36px; } }
+
+/* ---------- Calendário de ofensivas ---------- */
+.titulo-linha { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.cal-btn { flex: none; margin-top: 4px; }
+.cal-fundo { position: fixed; inset: 0; z-index: 8000; display: grid; align-items: end; justify-items: center; background: rgba(5, 12, 22, .55); animation: cel-in 220ms var(--ease-out) both; }
+.cal-folha { width: 100%; max-width: 460px; max-height: 92dvh; overflow-y: auto; padding: 16px 16px calc(18px + var(--safe-b)); border-radius: 22px 22px 0 0; background: var(--card); color: var(--txt); box-shadow: 0 -10px 40px rgba(0, 0, 0, .3); animation: cal-sobe 340ms cubic-bezier(.32, .9, .3, 1) both; }
+@keyframes cal-sobe { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@media (min-width: 560px) { .cal-fundo { align-items: center; } .cal-folha { border-radius: 22px; padding-bottom: 18px; } }
+.cal-topo { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.cal-topo h2 { margin: 0; }
+.cal-tipos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 14px; }
+.cal-tipo { min-height: 38px; border: 1.5px solid var(--line); border-radius: 12px; background: var(--card2); color: var(--mut); font-weight: 600; font-size: 14px; cursor: pointer; transition: background-color 160ms var(--ease-out), color 160ms var(--ease-out), border-color 160ms var(--ease-out), transform 140ms var(--ease-out); }
+.cal-tipo:active { transform: scale(.96); }
+.cal-tipo.on { background: var(--tc); border-color: var(--tc); color: #fff; }
+.cal-resumo { display: flex; align-items: center; gap: 14px; padding: 10px 14px; margin-bottom: 14px; border-radius: 14px; background: var(--card2); border: 1px solid var(--line); }
+.cal-resumo .streak { font: 700 34px/1 var(--display); color: var(--cal); }
+.cal-resumo .streak .chama { width: 24px; height: 30px; }
+.cal-nav { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.cal-nav .iconbtn { width: 36px; height: 36px; } .cal-nav .iconbtn:disabled { opacity: .35; cursor: default; }
+.cal-mes { text-align: center; font: 700 19px var(--display); letter-spacing: .3px; }
+.cal-grade { display: grid; grid-template-columns: repeat(7, 1fr); }
+.cal-sem { padding: 6px 0; text-align: center; font-size: 12px; font-weight: 600; color: var(--mut); }
+.cal-d { position: relative; height: 46px; display: grid; place-items: center; }
+.cal-n { position: relative; z-index: 1; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--txt); }
+.cal-d.futuro .cal-n, .cal-d.rest .cal-n { color: var(--mut); opacity: .55; }
+.cal-d.miss .cal-n { color: var(--bad); background: color-mix(in srgb, var(--bad) 12%, transparent); }
+.cal-d.hoje .cal-n { box-shadow: inset 0 0 0 2px var(--cal); }
+.cal-d.ok::before { content: ''; position: absolute; top: 5px; bottom: 5px; left: 0; right: 0; background: color-mix(in srgb, var(--cal) 24%, transparent); }
+.cal-d.ok:not(.le)::before { left: 50%; } .cal-d.ok:not(.ld)::before { right: 50%; }
+.cal-d.ok .cal-n { background: color-mix(in srgb, var(--cal) 55%, var(--card)); color: #fff; }
+.cal-d.ok.atual .cal-n { background: var(--cal); box-shadow: 0 2px 0 color-mix(in srgb, var(--cal) 60%, #000); }
+.cal-d.ok.atual::before { background: color-mix(in srgb, var(--cal) 34%, transparent); }
+.cal-d.ok.hoje .cal-n { box-shadow: 0 0 0 3px color-mix(in srgb, var(--cal) 35%, transparent), 0 2px 0 color-mix(in srgb, var(--cal) 60%, #000); }
+.cal-leg { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 12px; font-size: 12.5px; color: var(--mut); }
+.cal-leg i { display: inline-block; width: 11px; height: 11px; margin-right: 5px; border-radius: 50%; vertical-align: -1px; }
+.cal-leg i.ok { background: var(--cal); } .cal-leg i.miss { background: var(--bad); opacity: .7; } .cal-leg i.rest { background: var(--line); }
+@media (prefers-reduced-motion: reduce) { .med-brilho, .cal-folha, .cal-fundo { animation: none !important; } }

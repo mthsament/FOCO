@@ -10,12 +10,14 @@ import { corridaDuplicada, registrarCorrida } from './lib/registro.js'
 import Icon from './components/Icon.jsx'
 import { AvisoAtualizacao } from './components/Atualizacao.jsx'
 import CelebracaoHost from './components/Celebracao.jsx'
+import ConquistasHost from './components/ConquistasHost.jsx'
 import Hoje from './pages/Hoje.jsx'
 import Treino from './pages/Treino.jsx'
 import Dieta from './pages/Dieta.jsx'
 import Corrida from './pages/Corrida.jsx'
 import Bio from './pages/Bio.jsx'
 import Evolucao from './pages/Evolucao.jsx'
+import Conquistas from './pages/Conquistas.jsx'
 import Config from './pages/Config.jsx'
 
 const TABS = [
@@ -25,6 +27,7 @@ const TABS = [
   ['corrida', 'Corrida', 'corrida', Corrida],
   ['bio', 'Bio', 'bio', Bio],
   ['evolucao', 'Evolução', 'evolucao', Evolucao],
+  ['conquistas', 'Conquistas', 'trofeu', Conquistas],
   ['config', 'Ajustes', 'config', Config],
 ]
 
@@ -137,6 +140,7 @@ export default function App() {
         </main>
         <AvisoAtualizacao />
         <CelebracaoHost />
+        <ConquistasHost />
         <Toaster />
       </div>
     </NavCtx.Provider>

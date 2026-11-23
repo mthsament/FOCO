@@ -6,12 +6,16 @@ import { fmtSeg, nomeDist, recordes } from '../lib/corrida.js'
 import { ouvir } from '../lib/mascoteEventos.js'
 import Chama from './Chama.jsx'
 import Icon from './Icon.jsx'
+import Medalha from './Medalha.jsx'
 
 // Tela de comemoração (estilo Duolingo): o canguru entra pulando, com confete, raios girando,
 // e a chama da ofensiva "sobe" de número. Abre sozinha quando você bate uma meta.
 const base = import.meta.env.BASE_URL
 const MARCOS = [3, 5, 7, 10, 14, 21, 30, 50, 100]
-const TEMAS = { azul: ['#3cc3ff', '#1259c9'], laranja: ['#ffa23d', '#e0451a'], verde: ['#6fdc7a', '#1b8a55'], ouro: ['#ffd447', '#d17f00'] }
+const TEMAS = {
+  azul: ['#3cc3ff', '#1259c9'], laranja: ['#ffa23d', '#e0451a'], verde: ['#6fdc7a', '#1b8a55'], ouro: ['#ffd447', '#d17f00'],
+  bronze: ['#e0a066', '#8a4a1c'], prata: ['#c6d0da', '#566679'], platina: ['#9ae6ff', '#3f6fb5'],
+}
 const CORES = ['#ffffff', '#ffd447', '#ff6b35', '#c6f432', '#5eaaff', '#ff8fb1']
 const CONFETE = Array.from({ length: 36 }, (_, i) => {
   const a = -Math.PI / 2 + ((i % 18) / 17 - 0.5) * 2.5
@@ -65,6 +69,7 @@ function Cena({ ev, onFechar }) {
           </div>
         )}
         {ev.icone && <div className="cel-selo"><Icon name={ev.icone} /></div>}
+        {ev.medalha && <div className="cel-medalha"><Medalha tier={ev.medalha.tier} icone={ev.medalha.icone} tamanho={112} /></div>}
         <h2 className="cel-titulo">{ev.titulo}</h2>
         {ev.sub && <p className="cel-sub">{ev.sub}</p>}
         <button className="cel-btn" onClick={onFechar}>Continuar</button>
