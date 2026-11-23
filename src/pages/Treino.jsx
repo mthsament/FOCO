@@ -7,6 +7,7 @@ import { treinoDoDia, ultimaCarga, historicoCarga } from '../lib/metrics.js'
 import { Bar, DayPicker, Empty, Seg, num, toast } from '../components/ui.jsx'
 import { useNav } from '../App.jsx'
 import Icon from '../components/Icon.jsx'
+import MontarTreino from '../components/MontarTreino.jsx'
 
 const arred = (kg) => Math.round(kg * 2) / 2
 
@@ -15,12 +16,19 @@ export default function Treino() {
   const { go } = useNav()
   const [iso, setIso] = useState(todayISO())
   const [forca, setForca] = useState(null)
+  const [montando, setMontando] = useState(false)
   const treinos = s.plan.treinos
+
+  if (montando) return <MontarTreino onFechar={() => { setMontando(false); setForca(null) }} />
 
   if (!treinos) {
     return (
-      <><MascoteAba aba="treino" /><Empty icon="treino" title="Nenhum treino importado">
-        <button className="btn pri" onClick={() => go('config')}>Importar Plano_Academia.xlsx</button>
+      <><MascoteAba aba="treino" /><Empty icon="treino" title="Nenhum treino ainda">
+        <p>Monte o seu treino do zero ou importe a planilha.</p>
+        <div className="row wrap" style={{ justifyContent: 'center' }}>
+          <button className="btn pri" onClick={() => setMontando(true)}>Montar meu treino</button>
+          <button className="btn" onClick={() => go('config')}>Importar Plano_Academia.xlsx</button>
+        </div>
       </Empty></>
     )
   }
@@ -73,7 +81,7 @@ export default function Treino() {
 
   return (
     <>
-      <h1>Treino</h1>
+      <div className="row"><h1 className="sp" style={{ margin: 0 }}>Treino</h1><button className="btn sm" onClick={() => setMontando(true)}>Editar treinos e semana</button></div>
       <p className="sub">{planejado ? `Hoje no plano: treino ${planejado}` : 'Sem musculação planejada neste dia'}</p>
       <MascoteAba aba="treino" />
       <DayPicker iso={iso} onChange={(d) => { setIso(d); setForca(null) }} />
@@ -130,14 +138,14 @@ export default function Treino() {
       </div>
 
       <div className="grid c2">
-        <div className="card">
+        {s.plan.regrasTreino.length > 0 && <div className="card">
           <h2>Regras do treino</h2>
           <ul className="clean">
             {s.plan.regrasTreino.map((r) => (
               <li key={r.titulo}><b>{r.titulo}:</b> <span className="mut">{r.texto}</span></li>
             ))}
           </ul>
-        </div>
+        </div>}
         <div className="card">
           <h2>Treinos recentes</h2>
           {recentes.length === 0 && <div className="mut">Nenhum treino concluído ainda.</div>}

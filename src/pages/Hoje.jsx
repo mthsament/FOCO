@@ -24,10 +24,13 @@ export default function Hoje() {
       <>
         <h1>Bem-vindo ao FOCO</h1>
         <p className="sub">Dieta, treino e corrida num lugar só.</p>
-        <Mascote pose={1} anim="pula" altura={150} fala="Oi! Importe suas planilhas e eu monto o seu plano." />
-        <Empty icon="upload" title="Importe suas planilhas para começar">
-          <p>Traga Plano_Academia, Plano_Corrida e Plano_Alimentacao_Suplementacao. O app monta tudo sozinho.</p>
-          <button className="btn pri" onClick={() => go('config')}>Importar planilhas</button>
+        <Mascote pose={1} anim="pula" altura={150} fala="Oi! Monte o seu treino ou importe suas planilhas." />
+        <Empty icon="upload" title="Comece montando o seu plano">
+          <p>Crie o seu treino e a sua semana direto no app, ou traga Plano_Academia, Plano_Corrida e Plano_Alimentacao_Suplementacao.</p>
+          <div className="row wrap" style={{ justifyContent: 'center' }}>
+            <button className="btn pri" onClick={() => go('treino')}>Montar meu treino</button>
+            <button className="btn" onClick={() => go('config')}>Importar planilhas</button>
+          </div>
         </Empty>
       </>
     )

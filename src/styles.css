@@ -427,6 +427,9 @@ details.card > summary { cursor: pointer; list-style: none; } details.card > sum
 @media (prefers-reduced-motion: reduce) {
   .mc *, .mc-balao { animation: none !important; }
   .mc-confete, .mc-brilho { display: none; }
+  /* sem animação as pálpebras ficariam sobre os olhos e as faíscas paradas na tela */
+  .mv .mv-lid { transform: scaleY(0); }
+  .mv .mv-spark { display: none; }
 }
 
 /* ---------- Mascote: visuais animados (camadas) ---------- */
@@ -459,15 +462,15 @@ details.card > summary { cursor: pointer; list-style: none; } details.card > sum
 .mc-micro { display: block; transform-origin: 50% 100%; }
 .mc-micro.on { animation: mc-olha 1.15s ease-in-out 1; }
 @keyframes mc-olha { 0%, 100% { transform: rotate(0) translateX(0); } 20% { transform: rotate(-4deg) translateX(-3px) scale(1.01); } 50% { transform: rotate(4deg) translateX(3px) scale(1.01); } 76% { transform: rotate(-1.5deg) translateX(-1px); } }
-.a-giro .mc-mov { animation: mc-giro 900ms cubic-bezier(.3, 0, .3, 1) 1; }
+.a-giro .mc-mov { transform-origin: 50% 52%; animation: mc-giro 900ms cubic-bezier(.3, 0, .3, 1) 1; } /* gira pelo centro do corpo, não pelos pés */
 .a-giro .mc-sombra { animation: mc-sombra-pulo 900ms cubic-bezier(.3, 0, .3, 1) 1; }
 @keyframes mc-giro {
   0% { transform: scale(1, 1); animation-timing-function: ease-out; }
-  14% { transform: translateY(2px) scale(1.12, .85); animation-timing-function: cubic-bezier(.2, .7, .3, 1); }
-  50% { transform: translateY(-38px) rotate(200deg) scale(.94, 1.09); animation-timing-function: cubic-bezier(.5, 0, .7, 1); }
-  78% { transform: translateY(0) rotate(360deg) scale(1.1, .88); animation-timing-function: ease-out; }
-  90% { transform: rotate(360deg) scale(.98, 1.03); }
-  100% { transform: rotate(360deg) scale(1, 1); }
+  16% { transform: translateY(3px) scale(1.12, .85); animation-timing-function: cubic-bezier(.2, .7, .3, 1); }
+  46% { transform: translateY(-34px) rotate(-180deg) scale(.95, 1.08); animation-timing-function: cubic-bezier(.3, 0, .6, 1); }
+  76% { transform: translateY(0) rotate(-360deg) scale(1.1, .88); animation-timing-function: ease-out; }
+  90% { transform: rotate(-360deg) scale(.98, 1.03); }
+  100% { transform: rotate(-360deg) scale(1, 1); }
 }
 .a-forca .mc-mov { animation: mc-forca 760ms cubic-bezier(.3, 0, .3, 1) 1; }
 @keyframes mc-forca {
@@ -655,3 +658,50 @@ details.card > summary { cursor: pointer; list-style: none; } details.card > sum
 .of-meta button:active { transform: scale(.96); }
 .of-meta button.on { border-color: var(--c1); background: color-mix(in srgb, var(--c1) 25%, transparent); }
 .of-btn:disabled { opacity: .45; cursor: not-allowed; }
+
+/* ---------- Montar treino ---------- */
+.ico.r90 { transform: rotate(90deg); }
+.mt-abas { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 10px; margin-bottom: 4px; scrollbar-width: thin; }
+.mt-aba { flex: none; display: grid; justify-items: start; gap: 0; min-width: 92px; max-width: 170px; padding: 8px 12px; border: 1.5px solid var(--line); border-radius: 12px; background: var(--card); color: var(--mut); cursor: pointer; text-align: left; transition: border-color 150ms var(--ease-out), background-color 150ms var(--ease-out), transform 160ms var(--ease-out); }
+.mt-aba b { font: 700 22px/1 var(--display); color: var(--txt); }
+.mt-aba span { font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.mt-aba.on { border-color: var(--acc); background: var(--acc-soft); } .mt-aba.on b { color: var(--acc); }
+.mt-aba.novo { border-style: dashed; justify-items: center; align-content: center; }
+.mt-aba:active { transform: scale(.97); }
+.mt-ex { border-top: 1px solid var(--line); padding: 12px 0; margin-top: 10px; }
+.mt-n { flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--acc-soft); color: var(--acc); font: 700 16px var(--display); }
+.mt-semana { display: grid; gap: 4px; }
+.mt-dia { display: grid; gap: 6px; padding: 10px 0; border-top: 1px solid var(--line); }
+.mt-dia:first-child { border-top: 0; }
+.mt-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.mt-chip { min-width: 44px; min-height: 40px; padding: 6px 14px; border: 2px solid var(--line); border-radius: 12px; background: var(--card); color: var(--mut); font: 700 17px var(--display); cursor: pointer; transition: background-color 150ms var(--ease-out), border-color 150ms var(--ease-out), color 150ms var(--ease-out), transform 160ms var(--ease-out); }
+.mt-chip:active { transform: scale(.95); }
+.mt-chip.on { background: var(--acc); border-color: var(--acc); color: var(--acc-ink); }
+
+/* ---------- Gráficos da Evolução ---------- */
+.gper { display: flex; align-items: center; gap: 12px; margin: 22px 0 12px; flex-wrap: wrap; } .gper h2 { margin: 0; } .gper .seg { min-width: 220px; }
+.gc { position: relative; overflow: hidden; }
+.gc::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 3px; background: linear-gradient(90deg, var(--gc, var(--acc)), transparent 80%); }
+.gc-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 4px; }
+.gc-tit { min-width: 0; } .gc-tit h2 { margin-bottom: 2px; }
+.gc-val { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px 8px; }
+.gc-val b { font: 700 38px/1 var(--display); letter-spacing: .01em; color: var(--txt); animation: gc-num 520ms var(--ease-out) both; font-variant-numeric: tabular-nums; }
+.gc-val > span:not(.gd) { color: var(--mut); font-size: 14px; }
+@keyframes gc-num { from { transform: translateY(6px); opacity: 0; } to { transform: none; opacity: 1; } }
+.gc-plot { width: 100%; margin-top: 6px; animation: gc-in 600ms var(--ease-out) both; }
+@keyframes gc-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.gc-vazio { padding: 26px 8px; text-align: center; color: var(--mut); font-size: 14px; border: 1.5px dashed var(--line); border-radius: 12px; margin-top: 8px; }
+.gc-sel { max-width: 190px; min-height: 38px; padding: 6px 10px; font-size: 14px; }
+.gd { display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px; border-radius: 99px; font-size: 13px; font-weight: 700; background: var(--card2); color: var(--mut); border: 1px solid var(--line); }
+.gd.bom { color: var(--ok); background: rgba(30, 142, 90, .1); border-color: rgba(30, 142, 90, .35); }
+.gd.ruim { color: var(--bad); background: rgba(198, 40, 40, .08); border-color: rgba(198, 40, 40, .3); }
+.gtt { min-width: 140px; padding: 9px 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); box-shadow: 0 8px 24px rgba(0, 0, 0, .22); font-size: 13px; }
+.gtt-t { color: var(--mut); font-weight: 700; margin-bottom: 4px; }
+.gtt-l { display: flex; align-items: center; gap: 7px; padding: 1px 0; } .gtt-l i { width: 9px; height: 9px; border-radius: 50%; flex: none; } .gtt-l span { color: var(--mut); flex: 1; } .gtt-l b { font-variant-numeric: tabular-nums; }
+.aneis { display: flex; justify-content: space-around; gap: 8px; flex-wrap: wrap; margin: 6px 0 4px; }
+.anel { display: grid; justify-items: center; gap: 4px; font-size: 12.5px; color: var(--mut); text-align: center; }
+.anel-fundo { fill: none; stroke: var(--card2); stroke-width: 10; } .anel-v { fill: none; stroke: var(--cor); stroke-width: 10; stroke-linecap: round; stroke-dashoffset: var(--to); animation: anel-enche 1s var(--ease-out) both; filter: drop-shadow(0 0 4px color-mix(in srgb, var(--cor) 45%, transparent)); }
+.anel-n { fill: var(--txt); font: 700 22px var(--display); }
+@keyframes anel-enche { from { stroke-dashoffset: var(--c); } to { stroke-dashoffset: var(--to); } }
+@media (prefers-reduced-motion: reduce) { .gc-val b, .gc-plot, .anel-v { animation: none !important; } }
+.recharts-surface { overflow: visible; }
