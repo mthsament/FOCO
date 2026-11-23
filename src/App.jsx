@@ -8,6 +8,8 @@ import { aguaDoDia, metaAgua } from './lib/metrics.js'
 import { todayISO } from './lib/dates.js'
 import { corridaDuplicada, registrarCorrida } from './lib/registro.js'
 import Icon from './components/Icon.jsx'
+import { AvisoAtualizacao } from './components/Atualizacao.jsx'
+import CelebracaoHost from './components/Celebracao.jsx'
 import Hoje from './pages/Hoje.jsx'
 import Treino from './pages/Treino.jsx'
 import Dieta from './pages/Dieta.jsx'
@@ -133,6 +135,8 @@ export default function App() {
         <main id="conteudo" tabIndex={-1}>
           <Page key={tab} />
         </main>
+        <AvisoAtualizacao />
+        <CelebracaoHost />
         <Toaster />
       </div>
     </NavCtx.Provider>

@@ -8,6 +8,7 @@ import { useNav } from '../App.jsx'
 import Icon from '../components/Icon.jsx'
 import Lembretes from '../components/Lembretes.jsx'
 import Sincronia from '../components/Sincronia.jsx'
+import { CardVersao } from '../components/Atualizacao.jsx'
 
 const NOMES = { academia: 'Treino (Plano_Academia)', corrida: 'Corrida (Plano_Corrida)', alimentacao: 'Dieta e suplementação' }
 
@@ -139,6 +140,8 @@ export default function Config() {
         <p className="small"><b>Balança de bioimpedância:</b> use a aba Bio para conectar por Bluetooth, importar o CSV do app da balança ou digitar as medidas.</p>
         <div className="note">No iPhone, um app instalado pelo Safari não lê o Apple Health nem usa Bluetooth. Por isso a integração direta precisa de uma camada extra, que está no roadmap.</div>
       </div>
+
+      <CardVersao />
 
       <div className="card">
         <h2><Icon name="phone" /> Instalar no celular</h2>

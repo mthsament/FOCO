@@ -2,7 +2,8 @@ import { useEffect, useId, useRef, useState } from 'react'
 import { useApp } from '../store.jsx'
 import { addDays, todayISO } from '../lib/dates.js'
 import { aguaDoDia, metaAgua, sequenciaAgua } from '../lib/metrics.js'
-import { Streak, toast } from './ui.jsx'
+import { Streak } from './ui.jsx'
+import { emitir } from '../lib/mascoteEventos.js'
 import Icon from './Icon.jsx'
 
 const L = (ml) => (ml / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 2 })
@@ -87,6 +88,11 @@ const BOLHAS = [
   [8, 14, 7.2, 0], [20, 9, 9, 1.8], [34, 18, 6.4, 0.7], [47, 11, 8.6, 3.1], [61, 15, 7, 1.2], [74, 8, 9.4, 2.4], [86, 17, 6.8, 0.3], [94, 12, 8, 3.6],
 ]
 
+const FRASES_AGUA = [
+  ['Glub, glub! Boa!', 'Hidratação subindo.', 'Mais um gole pro seu foco.'],
+  ['Meio litro de uma vez? Uau!', 'Isso é que é gole!', 'Garrafa enchendo rápido!'],
+]
+
 export default function Agua({ iso }) {
   const { s, update } = useApp()
   const meta = metaAgua(s)
@@ -103,16 +109,18 @@ export default function Agua({ iso }) {
     if (cheia && !ant.current) {
       setFesta((n) => n + 1)
       navigator.vibrate?.([30, 40, 60])
-      toast('Meta de água batida!')
     }
     ant.current = cheia
   }, [cheia])
 
-  const add = (v) =>
+  const add = (v) => {
+    // o mascote da tela Hoje reage a cada gole (a meta batida tem a tela de comemoração própria)
+    if (v > 0 && ml + v < meta) emitir({ tipo: 'reagir', anim: v >= 500 ? 'forca' : 'pula', fala: FRASES_AGUA[v >= 500 ? 1 : 0][Math.floor(Math.random() * 3)] })
     update((x) => {
       const d = (x.logs.dieta[iso] = x.logs.dieta[iso] || {})
       d.agua = Math.max(0, (d.agua || 0) + v)
     })
+  }
 
   const dias = Array.from({ length: 7 }, (_, i) => {
     const d = addDays(iso, i - 6)
