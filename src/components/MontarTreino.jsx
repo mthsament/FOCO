@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useApp } from '../store.jsx'
 import { DIAS, DIAS_LONGO, mondayOf, todayISO } from '../lib/dates.js'
 import { inicioDoPlano } from '../lib/metrics.js'
@@ -23,6 +23,29 @@ export default function MontarTreino({ onFechar }) {
   const atual = sel && treinos[sel] ? sel : letras[0] || null
 
   const mexe = (fn) => update((x) => { x.plan.treinos = x.plan.treinos || {}; fn(x) })
+
+  // Foto do plano ao abrir: "Cancelar" volta a ela e descarta tudo o que foi mexido aqui.
+  const foto = useRef(null)
+  if (!foto.current) {
+    const { plan, perfil } = s
+    foto.current = structuredClone({ treinos: plan.treinos, rodizio: plan.rodizio, rotina: plan.rotina, rotinaFds: plan.rotinaFds, inicio: perfil.inicio })
+  }
+  const mudou = () => JSON.stringify({ treinos: s.plan.treinos, rodizio: s.plan.rodizio, rotina: s.plan.rotina, rotinaFds: s.plan.rotinaFds, inicio: s.perfil.inicio }) !== JSON.stringify(foto.current)
+  const cancelar = () => {
+    if (mudou()) {
+      if (!confirm('Descartar as alterações feitas nesta edição?')) return
+      const f = structuredClone(foto.current)
+      update((x) => {
+        x.plan.treinos = f.treinos
+        x.plan.rodizio = f.rodizio
+        x.plan.rotina = f.rotina
+        x.plan.rotinaFds = f.rotinaFds
+        x.perfil.inicio = f.inicio
+      })
+      toast('Alterações descartadas')
+    }
+    onFechar()
+  }
 
   const criarTreino = () => {
     const letra = [...LETRAS].find((l) => !treinos[l])
@@ -65,9 +88,10 @@ export default function MontarTreino({ onFechar }) {
     <>
       <div className="row" style={{ marginBottom: 6 }}>
         <h1 className="sp" style={{ margin: 0 }}>Montar treino</h1>
-        <button className="btn sm" onClick={onFechar}><Icon name="check" /> Pronto</button>
+        <button className="btn sm ghost" onClick={cancelar}>Cancelar</button>
+        <button className="btn sm pri" onClick={onFechar}><Icon name="check" /> Pronto</button>
       </div>
-      <p className="sub">Crie seus treinos, escolha os dias da semana e monte a rotina. Salva sozinho.</p>
+      <p className="sub">Crie seus treinos, escolha os dias da semana e monte a rotina. Toque em Pronto para manter ou em Cancelar para descartar.</p>
       <div style={{ marginBottom: 14, overflowX: 'auto' }}>
         <Seg value={aba} onChange={setAba} options={[['treinos', 'Treinos'], ['semana', 'Semana'], ['rotina', 'Rotina do dia']]} />
       </div>
