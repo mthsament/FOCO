@@ -2,22 +2,15 @@ import { useState } from 'react'
 import { useApp } from '../store.jsx'
 import { DIAS, DIAS_LONGO, mondayOf, todayISO } from '../lib/dates.js'
 import { inicioDoPlano } from '../lib/metrics.js'
+import { CATEGORIAS, categoriaDe, exerciciosDe } from '../lib/exercicios.js'
 import { Seg, num, toast } from './ui.jsx'
 import Icon from './Icon.jsx'
 
 // Editor do plano: monta os treinos (exercícios), define em quais dias cada um cai
 // e escreve a rotina do dia. Tudo vira o mesmo formato que a importação da planilha gera.
 const LETRAS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-const SUGESTOES = [
-  'Supino reto', 'Supino inclinado', 'Crucifixo', 'Crossover', 'Flexão de braço',
-  'Puxada frontal', 'Remada curvada', 'Remada baixa', 'Barra fixa', 'Levantamento terra',
-  'Agachamento livre', 'Leg press', 'Cadeira extensora', 'Mesa flexora', 'Stiff', 'Afundo', 'Panturrilha em pé', 'Elevação pélvica',
-  'Desenvolvimento com halteres', 'Elevação lateral', 'Elevação frontal', 'Encolhimento',
-  'Rosca direta', 'Rosca martelo', 'Tríceps pulley', 'Tríceps testa', 'Mergulho no banco',
-  'Abdominal', 'Prancha', 'Abdominal infra',
-]
 const novoId = () => `ex-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`
-const exVazio = () => ({ id: novoId(), nome: '', series: 3, reps: '8-12', descanso: '60s', obs: '' })
+const exVazio = () => ({ id: novoId(), grupo: '', nome: '', series: 3, reps: '8-12', descanso: '60s', obs: '' })
 const diaVazio = () => Object.fromEntries(DIAS.map((d) => [d, null]))
 
 export default function MontarTreino({ onFechar }) {
@@ -108,12 +101,13 @@ export default function MontarTreino({ onFechar }) {
                   <button className="btn sm ghost danger" onClick={() => apagarTreino(atual)}>Apagar</button>
                 </div>
 
-                <datalist id="mt-sugestoes">{SUGESTOES.map((n) => <option key={n} value={n} />)}</datalist>
                 {t.exercicios.map((ex, i) => (
                   <div className="mt-ex" key={ex.id}>
                     <div className="row">
                       <span className="mt-n">{i + 1}</span>
-                      <input className="sp" type="text" list="mt-sugestoes" autoComplete="off" placeholder="Exercício" value={ex.nome} onChange={(e) => setEx(atual, i, 'nome', e.target.value)} aria-label={`Nome do exercício ${i + 1}`} />
+                      <div className="mt-escolha sp">
+                        <EscolherExercicio ex={ex} n={i + 1} onChange={(campos) => mexe((x) => Object.assign(x.plan.treinos[atual].exercicios[i], campos))} />
+                      </div>
                       <button className="iconbtn" onClick={() => move(atual, i, -1)} disabled={i === 0} aria-label="Subir"><Icon name="chevL" className="r90" /></button>
                       <button className="iconbtn" onClick={() => move(atual, i, 1)} disabled={i === t.exercicios.length - 1} aria-label="Descer"><Icon name="chevR" className="r90" /></button>
                       <button className="iconbtn" onClick={() => delEx(atual, i)} aria-label="Remover exercício"><Icon name="trash" /></button>
@@ -243,6 +237,34 @@ function RotinaDia() {
         ))}
         <button className="btn" style={{ marginTop: 12 }} onClick={addF}>+ Adicionar</button>
       </div>
+    </>
+  )
+}
+
+const OUTRO = '__outro__'
+
+// Escolhe primeiro a categoria e depois o exercício dela (ou digita um que não está na lista)
+function EscolherExercicio({ ex, n, onChange }) {
+  const grupo = ex.grupo || categoriaDe(ex.nome)
+  const lista = exerciciosDe(grupo)
+  const personalizado = ex.outro || (!!ex.nome && !lista.includes(ex.nome))
+  return (
+    <>
+      <select value={grupo} onChange={(e) => onChange({ grupo: e.target.value, nome: lista.includes(ex.nome) && e.target.value === grupo ? ex.nome : '', outro: false })} aria-label={`Categoria do exercício ${n}`}>
+        <option value="">Categoria…</option>
+        {CATEGORIAS.map((c) => <option key={c.nome} value={c.nome}>{c.nome}</option>)}
+      </select>
+      {(grupo || !personalizado) && <select
+        value={personalizado ? OUTRO : ex.nome}
+        disabled={!grupo}
+        onChange={(e) => (e.target.value === OUTRO ? onChange({ outro: true, nome: personalizado ? ex.nome : '' }) : onChange({ outro: false, nome: e.target.value }))}
+        aria-label={`Exercício ${n}`}
+      >
+        <option value="">{grupo ? 'Escolha o exercício…' : 'Escolha a categoria primeiro'}</option>
+        {lista.map((nome) => <option key={nome} value={nome}>{nome}</option>)}
+        {grupo && <option value={OUTRO}>Outro (digitar)…</option>}
+      </select>}
+      {personalizado && <input type="text" autoComplete="off" placeholder="Nome do exercício" value={ex.nome} onChange={(e) => onChange({ nome: e.target.value, outro: true })} aria-label={`Nome do exercício ${n}`} />}
     </>
   )
 }

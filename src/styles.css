@@ -698,3 +698,9 @@ details.card > summary { cursor: pointer; list-style: none; } details.card > sum
 @keyframes anel-enche { from { stroke-dashoffset: var(--c); } to { stroke-dashoffset: var(--to); } }
 @media (prefers-reduced-motion: reduce) { .gc-val b, .gc-plot, .anel-v { animation: none !important; } }
 .recharts-surface { overflow: visible; }
+.mt-escolha { display: grid; gap: 6px; min-width: 0; }
+.mt-escolha select, .mt-escolha input { width: 100%; min-width: 0; }
+.mt-ex > .row { align-items: flex-start; }
+.mt-ex > .row { flex-wrap: wrap; align-items: center; }
+.mt-ex > .row .mt-n { margin-right: auto; }
+.mt-ex > .row .mt-escolha { flex: 1 1 100%; order: 9; margin-top: 6px; }
