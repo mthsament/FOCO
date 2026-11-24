@@ -1,13 +1,17 @@
 import { useApp } from '../store.jsx'
 import { reagir } from '../lib/mascoteEventos.js'
 import { refeicoesDoDia } from '../lib/metrics.js'
+import { PERIODOS, periodoDaRefeicao, usePeriodoAgora } from '../lib/periodos.js'
 import { Bar, Check, r0 } from './ui.jsx'
 
 const diaLog = (draft, iso) => (draft.logs.dieta[iso] = draft.logs.dieta[iso] || {})
 
-// Refeições do dia com marcação, troca de opção e totais
-export function MealList({ iso, compacto = false }) {
+// Refeições do dia com marcação, troca de opção e totais.
+//   periodo="agora": só as refeições do período atual (manhã, tarde ou noite); os totais continuam sendo do dia inteiro
+//   agrupar: todas as refeições, separadas por período (o atual fica marcado)
+export function MealList({ iso, compacto = false, periodo, agrupar = false, aoVerTodas }) {
   const { s, update } = useApp()
+  const agora = usePeriodoAgora()
   const refs = refeicoesDoDia(s, iso)
   const d = s.plan.dieta
   if (!d || !refs.length) return <div className="mut">Sem refeições planejadas para este dia.</div>
@@ -36,6 +40,36 @@ export function MealList({ iso, compacto = false }) {
   const kcalPlan = core.reduce((a, m) => a + m.kcal, 0)
   const protPlan = core.reduce((a, m) => a + m.prot, 0)
 
+  // quais refeições aparecem
+  const doPeriodo = periodo === 'agora' ? refs.filter((m) => periodoDaRefeicao(m).id === agora.id) : refs
+  const mostrar = periodo === 'agora' && doPeriodo.length ? doPeriodo : refs // sem refeição no período: mostra tudo
+
+  const cartao = (m) => {
+    const ops = d.opcoes[m.key] || []
+    return (
+      <div key={m.key} className={'meal' + (m.feita ? ' done' : '')}>
+        <Check on={m.feita} onClick={() => marcar(m.key)} label={`Marcar ${m.nome}`} />
+        <div className="body">
+          <div className="t">
+            {m.nome} <span className="mut small">{m.hora} · ~{m.kcal} kcal{m.opcional ? ' · opcional' : ''}</span>
+          </div>
+          <div className="d">{m.desc || 'Escolha uma opção'}</div>
+          {!compacto && ops.length > 0 && (
+            <select value={m.cod || ''} onChange={(e) => troca(m.key, e.target.value)} aria-label={`Trocar opção de ${m.nome}`}>
+              {m.key === 'pre' && <option value="Refeição livre">Refeição livre</option>}
+              {ops.map((o) => (
+                <option key={o.cod} value={o.cod}>
+                  {o.cod} · {o.desc.slice(0, 60)}
+                  {o.desc.length > 60 ? '…' : ''}
+                </option>
+              ))}
+            </select>
+          )}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div>
       <div className="grid c2" style={{ marginBottom: 6 }}>
@@ -48,31 +82,30 @@ export function MealList({ iso, compacto = false }) {
           <Bar pct={prot / (protPlan || 1)} cls="blue" />
         </div>
       </div>
-      {refs.map((m) => {
-        const ops = d.opcoes[m.key] || []
-        return (
-          <div key={m.key} className={'meal' + (m.feita ? ' done' : '')}>
-            <Check on={m.feita} onClick={() => marcar(m.key)} label={`Marcar ${m.nome}`} />
-            <div className="body">
-              <div className="t">
-                {m.nome} <span className="mut small">{m.hora} · ~{m.kcal} kcal{m.opcional ? ' · opcional' : ''}</span>
+      {periodo === 'agora' && (
+        <div className="periodo-topo">
+          <span className="chip acc">{agora.nome}</span>
+          <span className="mut small">{mostrar === refs && doPeriodo.length === 0 ? 'Todas as refeições' : `${mostrar.filter((m) => m.feita).length}/${mostrar.length} feitas neste período`}</span>
+          <span className="sp" />
+          {aoVerTodas && <button className="btn sm ghost" onClick={aoVerTodas}>Ver todas</button>}
+        </div>
+      )}
+      {agrupar
+        ? PERIODOS.map((p) => {
+            const lista = refs.filter((m) => periodoDaRefeicao(m).id === p.id)
+            if (!lista.length) return null
+            return (
+              <div key={p.id} className="periodo-bloco">
+                <div className="periodo-titulo">
+                  <b>{p.nome}</b>
+                  {p.id === agora.id && <span className="chip acc">agora</span>}
+                  <span className="mut small">{lista.filter((m) => m.feita).length}/{lista.length}</span>
+                </div>
+                {lista.map(cartao)}
               </div>
-              <div className="d">{m.desc || 'Escolha uma opção'}</div>
-              {!compacto && ops.length > 0 && (
-                <select value={m.cod || ''} onChange={(e) => troca(m.key, e.target.value)} aria-label={`Trocar opção de ${m.nome}`}>
-                  {m.key === 'pre' && <option value="Refeição livre">Refeição livre</option>}
-                  {ops.map((o) => (
-                    <option key={o.cod} value={o.cod}>
-                      {o.cod} · {o.desc.slice(0, 60)}
-                      {o.desc.length > 60 ? '…' : ''}
-                    </option>
-                  ))}
-                </select>
-              )}
-            </div>
-          </div>
-        )
-      })}
+            )
+          })
+        : mostrar.map(cartao)}
     </div>
   )
 }

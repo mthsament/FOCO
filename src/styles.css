@@ -719,3 +719,10 @@ details.card > summary { cursor: pointer; list-style: none; } details.card > sum
 .combo-item mark { background: none; color: var(--acc); font-weight: 700; }
 .combo-vazio { padding: 12px; text-align: center; color: var(--mut); font-size: 14px; }
 @media (prefers-reduced-motion: reduce) { .combo-lista { animation: none; } }
+
+/* ---------- Refeições por período ---------- */
+.periodo-topo { display: flex; align-items: center; gap: 8px; margin: 10px 0 6px; flex-wrap: wrap; }
+.periodo-bloco + .periodo-bloco { margin-top: 6px; }
+.periodo-titulo { display: flex; align-items: center; gap: 8px; margin: 14px 0 4px; font-size: 15px; }
+.periodo-titulo b { font: 700 19px var(--display); letter-spacing: .02em; }
+.periodo-titulo .mut { margin-left: auto; }

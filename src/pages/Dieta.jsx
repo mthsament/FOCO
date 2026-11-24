@@ -32,7 +32,7 @@ export default function Dieta() {
       {aba === 'dia' && (
         <>
           <DayPicker iso={iso} onChange={setIso} />
-          <div className="card"><MealList iso={iso} /></div>
+          <div className="card"><MealList iso={iso} agrupar /></div>
           <Agua iso={iso} />
           <div className="card"><h2>Hábitos</h2><Habitos iso={iso} /></div>
         </>

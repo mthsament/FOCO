@@ -3,7 +3,7 @@ import { useApp } from '../store.jsx'
 import { useNav } from '../App.jsx'
 import { DIAS, DIAS_LABEL, addDays, fmtLongo, mondayOf, planWeek, todayISO } from '../lib/dates.js'
 import { aguaDoDia, corridaDoDia, inicioDoPlano, metaAgua, metas, pesoAtual, sequencia, sequenciaAgua, statusDia, treinoDoDia } from '../lib/metrics.js'
-import { Bar, Check, Empty, Kpi, Streak, num, r1, toast } from '../components/ui.jsx'
+import { Bar, Check, Empty, Kpi, Streak, r1 } from '../components/ui.jsx'
 import { Habitos, MealList } from '../components/Dia.jsx'
 import Icon from '../components/Icon.jsx'
 import Agua, { GarrafaKpi } from '../components/Agua.jsx'
@@ -16,7 +16,6 @@ export default function Hoje() {
   const { go } = useNav()
   const iso = todayISO()
   const ini = inicioDoPlano(s)
-  const [peso, setPeso] = useState('')
   const [cal, setCal] = useState(false)
 
   if (!s.plan.treinos && !s.plan.dieta && !s.plan.corrida) {
@@ -56,18 +55,6 @@ export default function Hoje() {
     const di = addDays(segunda, i)
     return { d, di, st: statusDia(s, di).treino, rest: statusDia(s, di).treino === 'rest' }
   })
-
-  const salvarPeso = () => {
-    const kg = num(peso)
-    if (!kg) return
-    update((x) => {
-      const i = x.logs.pesagens.findIndex((p) => p.data === iso)
-      if (i >= 0) x.logs.pesagens[i].kg = kg
-      else x.logs.pesagens.push({ data: iso, kg })
-    })
-    setPeso('')
-    toast('Peso salvo')
-  }
 
   const toggleCor = () =>
     update((x) => {
@@ -156,7 +143,7 @@ export default function Hoje() {
 
       <div className="card">
         <h2><Icon name="dieta" /> Refeições de hoje</h2>
-        <MealList iso={iso} />
+        <MealList iso={iso} periodo="agora" aoVerTodas={() => go('dieta')} />
       </div>
 
       <Agua iso={iso} />
@@ -164,15 +151,6 @@ export default function Hoje() {
       <div className="card">
         <h2>Hábitos do dia</h2>
         <Habitos iso={iso} />
-      </div>
-
-      <div className="card">
-        <h2><Icon name="bio" /> Pesagem de hoje</h2>
-        <div className="row">
-          <input type="number" inputMode="decimal" step="0.1" placeholder="Peso em kg, em jejum…" aria-label="Peso em kg" autoComplete="off" value={peso} onChange={(e) => setPeso(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && salvarPeso()} />
-          <button className="btn pri" onClick={salvarPeso}>Salvar</button>
-        </div>
-        <div className="mut small" style={{ marginTop: 6 }}>O plano pede 3 pesagens por semana, em jejum. Gordura e massa magra entram na aba Bio.</div>
       </div>
     </>
   )
