@@ -8,6 +8,8 @@ import { Bar, DayPicker, Empty, Seg, num, toast } from '../components/ui.jsx'
 import { useNav } from '../App.jsx'
 import Icon from '../components/Icon.jsx'
 import MontarTreino from '../components/MontarTreino.jsx'
+import AnimacaoLazy from '../components/AnimacaoLazy.jsx'
+import { categoriaDe } from '../lib/exercicios.js'
 
 const arred = (kg) => Math.round(kg * 2) / 2
 
@@ -17,6 +19,7 @@ export default function Treino() {
   const [iso, setIso] = useState(todayISO())
   const [forca, setForca] = useState(null)
   const [montando, setMontando] = useState(false)
+  const [verMov, setVerMov] = useState(null) // exercício com a animação aberta
   const treinos = s.plan.treinos
 
   if (montando) return <MontarTreino onFechar={() => { setMontando(false); setForca(null) }} />
@@ -119,6 +122,14 @@ export default function Treino() {
                 {ultima && <button className="btn sm ghost" onClick={() => setKg(ex.id, ultima.kg)}>usar {ultima.kg}</button>}
                 {ultima && <button className="btn sm ghost" onClick={() => setKg(ex.id, arred(ultima.kg * 1.03))} title="Se fechou o topo das repetições em todas as séries: +2 a 5%">+3%: {arred(ultima.kg * 1.03)}</button>}
               </div>
+              {ex.nome && (
+                <div className="mt-mov">
+                  <button className="btn sm ghost" aria-expanded={verMov === ex.id} onClick={() => setVerMov(verMov === ex.id ? null : ex.id)}>
+                    <Icon name={verMov === ex.id ? 'close' : 'play'} /> {verMov === ex.id ? 'Fechar movimento' : 'Ver movimento'}
+                  </button>
+                  {verMov === ex.id && <AnimacaoLazy nome={ex.nome} grupo={ex.grupo || categoriaDe(ex.nome)} legenda={false} />}
+                </div>
+              )}
               <div className="sets">
                 {Array.from({ length: ex.series }, (_, i) => (
                   <button key={i} className={'set' + (e.sets?.[i] ? ' on' : '')} onClick={() => toggleSetComReacao(ex, i)} aria-label={`Série ${i + 1} de ${ex.nome}`}>

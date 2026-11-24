@@ -3,6 +3,7 @@ import { useApp } from '../store.jsx'
 import { DIAS, DIAS_LONGO, mondayOf, todayISO } from '../lib/dates.js'
 import { inicioDoPlano } from '../lib/metrics.js'
 import { CATEGORIAS, categoriaDe, exerciciosDe } from '../lib/exercicios.js'
+import AnimacaoLazy from './AnimacaoLazy.jsx'
 import Combo from './Combo.jsx'
 import { Seg, num, toast } from './ui.jsx'
 import Icon from './Icon.jsx'
@@ -130,18 +131,21 @@ export default function MontarTreino({ onFechar }) {
                   <div className="mt-ex" key={ex.id}>
                     <div className="row">
                       <span className="mt-n">{i + 1}</span>
-                      <div className="mt-escolha sp">
-                        <EscolherExercicio ex={ex} n={i + 1} onChange={(campos) => mexe((x) => Object.assign(x.plan.treinos[atual].exercicios[i], campos))} />
-                      </div>
                       <button className="iconbtn" onClick={() => move(atual, i, -1)} disabled={i === 0} aria-label="Subir"><Icon name="chevL" className="r90" /></button>
                       <button className="iconbtn" onClick={() => move(atual, i, 1)} disabled={i === t.exercicios.length - 1} aria-label="Descer"><Icon name="chevR" className="r90" /></button>
                       <button className="iconbtn" onClick={() => delEx(atual, i)} aria-label="Remover exercício"><Icon name="trash" /></button>
                     </div>
-                    <div className="form" style={{ marginTop: 8 }}>
+                    <div className="mt-corpo">
+                      <div className="mt-escolha">
+                        <EscolherExercicio ex={ex} n={i + 1} onChange={(campos) => mexe((x) => Object.assign(x.plan.treinos[atual].exercicios[i], campos))} />
+                      </div>
+                    <div className="form" style={{ marginTop: 10 }}>
                       <label className="fld"><span className="f">Séries</span><input type="number" inputMode="numeric" min="1" max="12" value={ex.series} onChange={(e) => setEx(atual, i, 'series', Math.min(12, Math.max(1, num(e.target.value) || 1)))} /></label>
                       <label className="fld"><span className="f">Repetições</span><input type="text" autoComplete="off" placeholder="8-12" value={ex.reps} onChange={(e) => setEx(atual, i, 'reps', e.target.value)} /></label>
                       <label className="fld"><span className="f">Descanso</span><input type="text" autoComplete="off" placeholder="60s" value={ex.descanso} onChange={(e) => setEx(atual, i, 'descanso', e.target.value)} /></label>
                       <label className="fld" style={{ gridColumn: '1 / -1' }}><span className="f">Observação (opcional)</span><input type="text" autoComplete="off" placeholder="Ex.: descida lenta, 3 s" value={ex.obs || ''} onChange={(e) => setEx(atual, i, 'obs', e.target.value)} /></label>
+                    </div>
+                      {ex.nome && <AnimacaoLazy nome={ex.nome} grupo={ex.grupo || categoriaDe(ex.nome)} />}
                     </div>
                   </div>
                 ))}
