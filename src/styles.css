@@ -421,8 +421,11 @@ details.card > summary { cursor: pointer; list-style: none; } details.card > sum
 @keyframes mc-treina { 0%, 100% { transform: scale(1, 1) rotate(0); } 30% { transform: scale(1.05, .97) rotate(-1.2deg); } 50% { transform: scale(1.07, 1) rotate(1.2deg); } 72% { transform: scale(1.01, 1.005); } }
 
 /* balão de fala (estilo Duolingo) */
-.mc-balao { position: relative; flex: 1; min-width: 0; margin-bottom: 26px; padding: 11px 15px; border: 2px solid var(--line); border-radius: 18px; background: var(--card); color: var(--txt); font-weight: 600; font-size: 15.5px; line-height: 1.35; transform-origin: 0 100%; animation: mc-balao-in 440ms cubic-bezier(.34, 1.56, .64, 1) 180ms both; }
-.mc-balao::before { content: ''; position: absolute; left: -9px; bottom: 20px; width: 14px; height: 14px; background: var(--card); border-left: 2px solid var(--line); border-bottom: 2px solid var(--line); transform: rotate(45deg); border-bottom-left-radius: 4px; }
+.mc-balao { position: relative; flex: 1; min-width: 0; margin-bottom: 26px; padding: 11px 15px; border: 2px solid var(--line); border-radius: 16px; background: var(--card); color: var(--txt); font-weight: 600; font-size: 15.5px; line-height: 1.35; transform-origin: 0 100%; animation: mc-balao-in 440ms cubic-bezier(.34, 1.56, .64, 1) 180ms both; }
+/* seta: um triângulo na cor da borda e outro, menor, na cor do balão por cima (cobre a borda no encaixe, sem quebrar a linha) */
+.mc-balao::before, .mc-balao::after { content: ''; position: absolute; top: 50%; pointer-events: none; clip-path: polygon(0 50%, 100% 0, 100% 100%); }
+.mc-balao::before { left: -14px; width: 14px; height: 20px; margin-top: -10px; background: var(--line); }
+.mc-balao::after { left: -10px; width: 13px; height: 18.6px; margin-top: -9.3px; background: var(--card); }
 @keyframes mc-balao-in { from { transform: scale(.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 @media (prefers-reduced-motion: reduce) {
   .mc *, .mc-balao { animation: none !important; }

@@ -71,9 +71,11 @@ for (const nome of VISUAIS) {
   })
   fig = fig
     .replace(/sc-camel-view-box=/g, 'viewBox=')
-    .replace(/<div aria-label="[^"]*" class="" role="img" style="[^"]*">/, '<div class="mv-raiz">')
+    .replace(/<div aria-label="[^"]*" class="" role="img" style="[^"]*">/, '<div class="raiz">')
     .replace(/\saria-hidden="true"/g, ' aria-hidden="true" focusable="false"')
     .replace(/class="([^"]*)"/g, (_, c) => `class="${c.split(/\s+/).filter(Boolean).map((x) => 'mv-' + x).join(' ')}"`)
+    // a origem da pálpebra agora vem do CSS (topo do próprio elemento)
+    .replace(/(class="mv-lid[^"]*") style="transform-origin: [^"]*"/g, '$1')
     // ids de clipPath únicos por visual
     .replace(/id="([\w-]+)"/g, `id="mv-${nome}-$1"`)
     // sombra em % do quadro, para escalar com a altura
@@ -85,7 +87,12 @@ for (const nome of VISUAIS) {
   let estilo = readFileSync(join(dir, 'styles.css'), 'utf8')
   estilo = estilo.slice(estilo.indexOf('body{margin:0}') + 'body{margin:0}'.length)
   estilo = estilo.replace(/url\(#([\w-]+)\)/g, `url(#mv-${nome}-$1)`)
-  cssTotal += `/* ${nome} */\n` + css(estilo, nome)
+  // pálpebra: invisível por padrão e só aparece dentro da animação de piscar.
+  // Assim, se a animação não rodar (movimento reduzido, pausa, navegador antigo), o olho fica aberto.
+  const cssV = css(estilo, nome)
+    .replace(/(@keyframes mv-[\w-]+-blink\{)[^\n]*\n/, (_, k) => `${k}0%,90%,100%{transform:scaleY(0);opacity:0}91%{opacity:1}93%,95%{transform:scaleY(1);opacity:1}96%{opacity:0}}\n`)
+    .replace(/\.mv-([\w-]+) \.mv-lid\{transform-box:view-box;/, '.mv-$1 .mv-lid{opacity:0;transform-box:fill-box;transform-origin:50% 0;')
+  cssTotal += `/* ${nome} */\n` + cssV
   sprites[nome] = { w: +W, h: +H, html: fig }
 }
 

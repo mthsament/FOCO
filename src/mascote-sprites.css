@@ -3,9 +3,9 @@
 .mv-forca .mv-ink{stroke:#3A1E10;stroke-width:5;stroke-linejoin:round;stroke-linecap:round}
 .mv-forca .mv-ink3{stroke:#3A1E10;stroke-width:3.5;stroke-linejoin:round;stroke-linecap:round}
 .mv-forca .mv-lash{fill:none;stroke:#5A1E10;stroke-width:4;stroke-linecap:round}
-.mv-forca .mv-lid{transform-box:view-box;animation:mv-forca-blink 4.2s infinite}
+.mv-forca .mv-lid{opacity:0;transform-box:fill-box;transform-origin:50% 0;animation:mv-forca-blink 4.2s infinite}
 .mv-forca .mv-lid.mv-slow{animation-duration:6s}
-@keyframes mv-forca-blink{0%,90%,100%{transform:scaleY(0)}93%,95%{transform:scaleY(1)}}
+@keyframes mv-forca-blink{0%,90%,100%{transform:scaleY(0);opacity:0}91%{opacity:1}93%,95%{transform:scaleY(1);opacity:1}96%{opacity:0}}
 .mv-forca .mv-spark{transform-box:fill-box;transform-origin:center;animation:mv-forca-pop 1.8s ease-in-out infinite}
 @keyframes mv-forca-pop{0%,100%{transform:scale(0) rotate(0);opacity:0}40%{transform:scale(1) rotate(45deg);opacity:1}70%{transform:scale(.4) rotate(90deg);opacity:0}}
 .mv-forca .mv-body{transform-origin:51% 97%;animation:mv-forca-pump 1.4s ease-in-out infinite}
@@ -18,9 +18,9 @@
 .mv-correndo .mv-ink{stroke:#3A1E10;stroke-width:5;stroke-linejoin:round;stroke-linecap:round}
 .mv-correndo .mv-ink3{stroke:#3A1E10;stroke-width:3.5;stroke-linejoin:round;stroke-linecap:round}
 .mv-correndo .mv-lash{fill:none;stroke:#5A1E10;stroke-width:4;stroke-linecap:round}
-.mv-correndo .mv-lid{transform-box:view-box;animation:mv-correndo-blink 4.2s infinite}
+.mv-correndo .mv-lid{opacity:0;transform-box:fill-box;transform-origin:50% 0;animation:mv-correndo-blink 4.2s infinite}
 .mv-correndo .mv-lid.mv-slow{animation-duration:6s}
-@keyframes mv-correndo-blink{0%,90%,100%{transform:scaleY(0)}93%,95%{transform:scaleY(1)}}
+@keyframes mv-correndo-blink{0%,90%,100%{transform:scaleY(0);opacity:0}91%{opacity:1}93%,95%{transform:scaleY(1);opacity:1}96%{opacity:0}}
 .mv-correndo .mv-spark{transform-box:fill-box;transform-origin:center;animation:mv-correndo-pop 1.8s ease-in-out infinite}
 @keyframes mv-correndo-pop{0%,100%{transform:scale(0) rotate(0);opacity:0}40%{transform:scale(1) rotate(45deg);opacity:1}70%{transform:scale(.4) rotate(90deg);opacity:0}}
 .mv-correndo .mv-belt{stroke:#9AA3AB;stroke-width:5;stroke-linecap:round;stroke-dasharray:26 30;animation:mv-correndo-belt .3s linear infinite}
@@ -47,9 +47,9 @@
 .mv-confiante .mv-ink{stroke:#3A1E10;stroke-width:5;stroke-linejoin:round;stroke-linecap:round}
 .mv-confiante .mv-ink3{stroke:#3A1E10;stroke-width:3.5;stroke-linejoin:round;stroke-linecap:round}
 .mv-confiante .mv-lash{fill:none;stroke:#5A1E10;stroke-width:4;stroke-linecap:round}
-.mv-confiante .mv-lid{transform-box:view-box;animation:mv-confiante-blink 4.2s infinite}
+.mv-confiante .mv-lid{opacity:0;transform-box:fill-box;transform-origin:50% 0;animation:mv-confiante-blink 4.2s infinite}
 .mv-confiante .mv-lid.mv-slow{animation-duration:6s}
-@keyframes mv-confiante-blink{0%,90%,100%{transform:scaleY(0)}93%,95%{transform:scaleY(1)}}
+@keyframes mv-confiante-blink{0%,90%,100%{transform:scaleY(0);opacity:0}91%{opacity:1}93%,95%{transform:scaleY(1);opacity:1}96%{opacity:0}}
 .mv-confiante .mv-spark{transform-box:fill-box;transform-origin:center;animation:mv-confiante-pop 1.8s ease-in-out infinite}
 @keyframes mv-confiante-pop{0%,100%{transform:scale(0) rotate(0);opacity:0}40%{transform:scale(1) rotate(45deg);opacity:1}70%{transform:scale(.4) rotate(90deg);opacity:0}}
 .mv-confiante .mv-fig{transform-origin:46% 97%;animation:mv-confiante-breath 3s ease-in-out infinite}
@@ -58,9 +58,9 @@
 .mv-halter .mv-ink{stroke:#3A1E10;stroke-width:5;stroke-linejoin:round;stroke-linecap:round}
 .mv-halter .mv-ink3{stroke:#3A1E10;stroke-width:3.5;stroke-linejoin:round;stroke-linecap:round}
 .mv-halter .mv-lash{fill:none;stroke:#5A1E10;stroke-width:4;stroke-linecap:round}
-.mv-halter .mv-lid{transform-box:view-box;animation:mv-halter-blink 4.2s infinite}
+.mv-halter .mv-lid{opacity:0;transform-box:fill-box;transform-origin:50% 0;animation:mv-halter-blink 4.2s infinite}
 .mv-halter .mv-lid.mv-slow{animation-duration:6s}
-@keyframes mv-halter-blink{0%,90%,100%{transform:scaleY(0)}93%,95%{transform:scaleY(1)}}
+@keyframes mv-halter-blink{0%,90%,100%{transform:scaleY(0);opacity:0}91%{opacity:1}93%,95%{transform:scaleY(1);opacity:1}96%{opacity:0}}
 .mv-halter .mv-spark{transform-box:fill-box;transform-origin:center;animation:mv-halter-pop 1.8s ease-in-out infinite}
 @keyframes mv-halter-pop{0%,100%{transform:scale(0) rotate(0);opacity:0}40%{transform:scale(1) rotate(45deg);opacity:1}70%{transform:scale(.4) rotate(90deg);opacity:0}}
 .mv-halter .mv-fig,.mv-halter .mv-arm{transform-origin:42% 96%}
@@ -74,9 +74,9 @@
 .mv-elastico .mv-ink{stroke:#3A1E10;stroke-width:5;stroke-linejoin:round;stroke-linecap:round}
 .mv-elastico .mv-ink3{stroke:#3A1E10;stroke-width:3.5;stroke-linejoin:round;stroke-linecap:round}
 .mv-elastico .mv-lash{fill:none;stroke:#5A1E10;stroke-width:4;stroke-linecap:round}
-.mv-elastico .mv-lid{transform-box:view-box;animation:mv-elastico-blink 4.2s infinite}
+.mv-elastico .mv-lid{opacity:0;transform-box:fill-box;transform-origin:50% 0;animation:mv-elastico-blink 4.2s infinite}
 .mv-elastico .mv-lid.mv-slow{animation-duration:6s}
-@keyframes mv-elastico-blink{0%,90%,100%{transform:scaleY(0)}93%,95%{transform:scaleY(1)}}
+@keyframes mv-elastico-blink{0%,90%,100%{transform:scaleY(0);opacity:0}91%{opacity:1}93%,95%{transform:scaleY(1);opacity:1}96%{opacity:0}}
 .mv-elastico .mv-spark{transform-box:fill-box;transform-origin:center;animation:mv-elastico-pop 1.8s ease-in-out infinite}
 @keyframes mv-elastico-pop{0%,100%{transform:scale(0) rotate(0);opacity:0}40%{transform:scale(1) rotate(45deg);opacity:1}70%{transform:scale(.4) rotate(90deg);opacity:0}}
 .mv-elastico .mv-fig{transform-origin:40% 93%;animation:mv-elastico-hop .8s cubic-bezier(.3,0,.4,1) infinite}
@@ -87,9 +87,9 @@
 .mv-yoga .mv-ink{stroke:#3A1E10;stroke-width:5;stroke-linejoin:round;stroke-linecap:round}
 .mv-yoga .mv-ink3{stroke:#3A1E10;stroke-width:3.5;stroke-linejoin:round;stroke-linecap:round}
 .mv-yoga .mv-lash{fill:none;stroke:#5A1E10;stroke-width:4;stroke-linecap:round}
-.mv-yoga .mv-lid{transform-box:view-box;animation:mv-yoga-blink 4.2s infinite}
+.mv-yoga .mv-lid{opacity:0;transform-box:fill-box;transform-origin:50% 0;animation:mv-yoga-blink 4.2s infinite}
 .mv-yoga .mv-lid.mv-slow{animation-duration:6s}
-@keyframes mv-yoga-blink{0%,90%,100%{transform:scaleY(0)}93%,95%{transform:scaleY(1)}}
+@keyframes mv-yoga-blink{0%,90%,100%{transform:scaleY(0);opacity:0}91%{opacity:1}93%,95%{transform:scaleY(1);opacity:1}96%{opacity:0}}
 .mv-yoga .mv-spark{transform-box:fill-box;transform-origin:center;animation:mv-yoga-pop 1.8s ease-in-out infinite}
 @keyframes mv-yoga-pop{0%,100%{transform:scale(0) rotate(0);opacity:0}40%{transform:scale(1) rotate(45deg);opacity:1}70%{transform:scale(.4) rotate(90deg);opacity:0}}
 .mv-yoga .mv-fig{transform-origin:50% 93%;animation:mv-yoga-yoga 4.5s ease-in-out infinite}
@@ -104,9 +104,9 @@
 .mv-campeao .mv-ink{stroke:#3A1E10;stroke-width:5;stroke-linejoin:round;stroke-linecap:round}
 .mv-campeao .mv-ink3{stroke:#3A1E10;stroke-width:3.5;stroke-linejoin:round;stroke-linecap:round}
 .mv-campeao .mv-lash{fill:none;stroke:#5A1E10;stroke-width:4;stroke-linecap:round}
-.mv-campeao .mv-lid{transform-box:view-box;animation:mv-campeao-blink 4.2s infinite}
+.mv-campeao .mv-lid{opacity:0;transform-box:fill-box;transform-origin:50% 0;animation:mv-campeao-blink 4.2s infinite}
 .mv-campeao .mv-lid.mv-slow{animation-duration:6s}
-@keyframes mv-campeao-blink{0%,90%,100%{transform:scaleY(0)}93%,95%{transform:scaleY(1)}}
+@keyframes mv-campeao-blink{0%,90%,100%{transform:scaleY(0);opacity:0}91%{opacity:1}93%,95%{transform:scaleY(1);opacity:1}96%{opacity:0}}
 .mv-campeao .mv-spark{transform-box:fill-box;transform-origin:center;animation:mv-campeao-pop 1.8s ease-in-out infinite}
 @keyframes mv-campeao-pop{0%,100%{transform:scale(0) rotate(0);opacity:0}40%{transform:scale(1) rotate(45deg);opacity:1}70%{transform:scale(.4) rotate(90deg);opacity:0}}
 .mv-campeao .mv-body{transform-origin:51% 97%;animation:mv-campeao-pump 1.4s ease-in-out infinite}
@@ -137,9 +137,9 @@
 .mv-natal .mv-ink{stroke:#3A1E10;stroke-width:5;stroke-linejoin:round;stroke-linecap:round}
 .mv-natal .mv-ink3{stroke:#3A1E10;stroke-width:3.5;stroke-linejoin:round;stroke-linecap:round}
 .mv-natal .mv-lash{fill:none;stroke:#5A1E10;stroke-width:4;stroke-linecap:round}
-.mv-natal .mv-lid{transform-box:view-box;animation:mv-natal-blink 4.2s infinite}
+.mv-natal .mv-lid{opacity:0;transform-box:fill-box;transform-origin:50% 0;animation:mv-natal-blink 4.2s infinite}
 .mv-natal .mv-lid.mv-slow{animation-duration:6s}
-@keyframes mv-natal-blink{0%,90%,100%{transform:scaleY(0)}93%,95%{transform:scaleY(1)}}
+@keyframes mv-natal-blink{0%,90%,100%{transform:scaleY(0);opacity:0}91%{opacity:1}93%,95%{transform:scaleY(1);opacity:1}96%{opacity:0}}
 .mv-natal .mv-spark{transform-box:fill-box;transform-origin:center;animation:mv-natal-pop 1.8s ease-in-out infinite}
 @keyframes mv-natal-pop{0%,100%{transform:scale(0) rotate(0);opacity:0}40%{transform:scale(1) rotate(45deg);opacity:1}70%{transform:scale(.4) rotate(90deg);opacity:0}}
 .mv-natal .mv-fig,.mv-natal .mv-ears{transform-origin:46% 97%;animation:mv-natal-breath 3s ease-in-out infinite}
@@ -170,9 +170,9 @@
 .mv-modo-foco .mv-ink{stroke:#3A1E10;stroke-width:5;stroke-linejoin:round;stroke-linecap:round}
 .mv-modo-foco .mv-ink3{stroke:#3A1E10;stroke-width:3.5;stroke-linejoin:round;stroke-linecap:round}
 .mv-modo-foco .mv-lash{fill:none;stroke:#5A1E10;stroke-width:4;stroke-linecap:round}
-.mv-modo-foco .mv-lid{transform-box:view-box;animation:mv-modo-foco-blink 4.2s infinite}
+.mv-modo-foco .mv-lid{opacity:0;transform-box:fill-box;transform-origin:50% 0;animation:mv-modo-foco-blink 4.2s infinite}
 .mv-modo-foco .mv-lid.mv-slow{animation-duration:6s}
-@keyframes mv-modo-foco-blink{0%,90%,100%{transform:scaleY(0)}93%,95%{transform:scaleY(1)}}
+@keyframes mv-modo-foco-blink{0%,90%,100%{transform:scaleY(0);opacity:0}91%{opacity:1}93%,95%{transform:scaleY(1);opacity:1}96%{opacity:0}}
 .mv-modo-foco .mv-spark{transform-box:fill-box;transform-origin:center;animation:mv-modo-foco-pop 1.8s ease-in-out infinite}
 @keyframes mv-modo-foco-pop{0%,100%{transform:scale(0) rotate(0);opacity:0}40%{transform:scale(1) rotate(45deg);opacity:1}70%{transform:scale(.4) rotate(90deg);opacity:0}}
 .mv-modo-foco .mv-body{transform-origin:42% 96%;animation:mv-modo-foco-bob 1.2s ease-in-out infinite}
@@ -186,9 +186,9 @@
 .mv-relax .mv-ink{stroke:#3A1E10;stroke-width:5;stroke-linejoin:round;stroke-linecap:round}
 .mv-relax .mv-ink3{stroke:#3A1E10;stroke-width:3.5;stroke-linejoin:round;stroke-linecap:round}
 .mv-relax .mv-lash{fill:none;stroke:#5A1E10;stroke-width:4;stroke-linecap:round}
-.mv-relax .mv-lid{transform-box:view-box;animation:mv-relax-blink 4.2s infinite}
+.mv-relax .mv-lid{opacity:0;transform-box:fill-box;transform-origin:50% 0;animation:mv-relax-blink 4.2s infinite}
 .mv-relax .mv-lid.mv-slow{animation-duration:6s}
-@keyframes mv-relax-blink{0%,90%,100%{transform:scaleY(0)}93%,95%{transform:scaleY(1)}}
+@keyframes mv-relax-blink{0%,90%,100%{transform:scaleY(0);opacity:0}91%{opacity:1}93%,95%{transform:scaleY(1);opacity:1}96%{opacity:0}}
 .mv-relax .mv-spark{transform-box:fill-box;transform-origin:center;animation:mv-relax-pop 1.8s ease-in-out infinite}
 @keyframes mv-relax-pop{0%,100%{transform:scale(0) rotate(0);opacity:0}40%{transform:scale(1) rotate(45deg);opacity:1}70%{transform:scale(.4) rotate(90deg);opacity:0}}
 .mv-relax .mv-fig{transform-origin:46% 97%;animation:mv-relax-chill 2.4s ease-in-out infinite}
