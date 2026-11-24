@@ -387,8 +387,8 @@ details.card > summary { cursor: pointer; list-style: none; } details.card > sum
   0% { transform: scale(1, 1); animation-timing-function: ease-out; }
   16% { transform: translateY(2px) scale(1.12, .84); animation-timing-function: cubic-bezier(.2, .7, .3, 1); }
   42% { transform: translateY(-30px) scale(.92, 1.12); animation-timing-function: ease-in-out; }
-  56% { transform: translateY(-33px) rotate(-2deg) scale(.96, 1.06); animation-timing-function: cubic-bezier(.5, 0, .9, .6); }
-  78% { transform: translateY(0) rotate(0) scale(1.1, .88); animation-timing-function: ease-out; }
+  56% { transform: translateY(-33px) scale(.96, 1.06); animation-timing-function: cubic-bezier(.5, 0, .9, .6); }
+  78% { transform: translateY(0) scale(1.1, .88); animation-timing-function: ease-out; }
   90% { transform: scale(.97, 1.04); animation-timing-function: ease-in-out; }
   100% { transform: scale(1, 1); }
 }
@@ -399,12 +399,12 @@ details.card > summary { cursor: pointer; list-style: none; } details.card > sum
 @keyframes mc-celebra {
   0%, 86%, 100% { transform: scale(1, 1); }
   7% { transform: translateY(2px) scale(1.11, .85); animation-timing-function: cubic-bezier(.2, .7, .3, 1); }
-  21% { transform: translateY(-32px) rotate(-7deg) scale(.93, 1.1); animation-timing-function: cubic-bezier(.5, 0, .9, .6); }
-  35% { transform: translateY(0) rotate(0) scale(1.09, .89); animation-timing-function: ease-out; }
+  21% { transform: translateY(-32px) scale(.93, 1.1); animation-timing-function: cubic-bezier(.5, 0, .9, .6); }
+  35% { transform: translateY(0) scale(1.09, .89); animation-timing-function: ease-out; }
   41% { transform: scale(.98, 1.03); animation-timing-function: ease-in-out; }
   47% { transform: translateY(2px) scale(1.11, .85); animation-timing-function: cubic-bezier(.2, .7, .3, 1); }
-  61% { transform: translateY(-32px) rotate(7deg) scale(.93, 1.1); animation-timing-function: cubic-bezier(.5, 0, .9, .6); }
-  75% { transform: translateY(0) rotate(0) scale(1.08, .9); animation-timing-function: ease-out; }
+  61% { transform: translateY(-32px) scale(.93, 1.1); animation-timing-function: cubic-bezier(.5, 0, .9, .6); }
+  75% { transform: translateY(0) scale(1.08, .9); animation-timing-function: ease-out; }
   81% { transform: scale(.99, 1.02); }
 }
 @keyframes mc-sombra-celebra { 0%, 84%, 100% { transform: scale(1); } 22%, 60% { transform: scale(.6); opacity: .5; } 36%, 74% { transform: scale(1.12); } }
@@ -465,16 +465,6 @@ details.card > summary { cursor: pointer; list-style: none; } details.card > sum
 .mc-micro { display: block; transform-origin: 50% 100%; }
 .mc-micro.on { animation: mc-olha 1.15s ease-in-out 1; }
 @keyframes mc-olha { 0%, 100% { transform: rotate(0) translateX(0); } 20% { transform: rotate(-4deg) translateX(-3px) scale(1.01); } 50% { transform: rotate(4deg) translateX(3px) scale(1.01); } 76% { transform: rotate(-1.5deg) translateX(-1px); } }
-.a-giro .mc-mov { transform-origin: 50% 52%; animation: mc-giro 900ms cubic-bezier(.3, 0, .3, 1) 1; } /* gira pelo centro do corpo, não pelos pés */
-.a-giro .mc-sombra { animation: mc-sombra-pulo 900ms cubic-bezier(.3, 0, .3, 1) 1; }
-@keyframes mc-giro {
-  0% { transform: scale(1, 1); animation-timing-function: ease-out; }
-  16% { transform: translateY(3px) scale(1.12, .85); animation-timing-function: cubic-bezier(.2, .7, .3, 1); }
-  46% { transform: translateY(-34px) rotate(-180deg) scale(.95, 1.08); animation-timing-function: cubic-bezier(.3, 0, .6, 1); }
-  76% { transform: translateY(0) rotate(-360deg) scale(1.1, .88); animation-timing-function: ease-out; }
-  90% { transform: rotate(-360deg) scale(.98, 1.03); }
-  100% { transform: rotate(-360deg) scale(1, 1); }
-}
 .a-forca .mc-mov { animation: mc-forca 760ms cubic-bezier(.3, 0, .3, 1) 1; }
 @keyframes mc-forca {
   0%, 100% { transform: scale(1, 1); }

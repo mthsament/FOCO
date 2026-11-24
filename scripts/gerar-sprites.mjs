@@ -49,6 +49,16 @@ function css(txt, nome) {
   return out
 }
 
+
+// O desenho dos olhos nas imagens "halter" e "modo foco" é borrado (arte gerada). Por isso
+// desenhamos olhos limpos em SVG por cima, na mesma posição; as pálpebras do piscar ficam por cima deles.
+const OLHOS = (n) => `<g class="mv-olhos"><clipPath id="mv-${n}-ocl"><ellipse cx="321" cy="149" rx="14.5" ry="12.5"/></clipPath><clipPath id="mv-${n}-ocr"><ellipse cx="379" cy="150" rx="11.5" ry="11.5"/></clipPath>`
+  + `<ellipse cx="321" cy="149" rx="19.5" ry="15.5" fill="#F3653D"/><ellipse cx="379" cy="150" rx="14" ry="14.5" fill="#F3653D"/>`
+  + `<ellipse cx="321" cy="149" rx="14.5" ry="12.5" fill="#fff"/><g clip-path="url(#mv-${n}-ocl)"><circle cx="324.5" cy="150.5" r="8.8" fill="#8A4521"/><circle cx="325" cy="150.5" r="4.9" fill="#1B0E08"/><circle cx="328" cy="146.6" r="2.5" fill="#fff"/></g><ellipse cx="321" cy="149" rx="14.5" ry="12.5" fill="none" stroke="#3A1E10" stroke-width="3"/>`
+  + `<ellipse cx="379" cy="150" rx="11.5" ry="11.5" fill="#fff"/><g clip-path="url(#mv-${n}-ocr)"><circle cx="381.5" cy="151.5" r="7.2" fill="#8A4521"/><circle cx="381.8" cy="151.5" r="4" fill="#1B0E08"/><circle cx="384" cy="148.6" r="2" fill="#fff"/></g><ellipse cx="379" cy="150" rx="11.5" ry="11.5" fill="none" stroke="#3A1E10" stroke-width="3"/>`
+  + `<path d="M304 133 L339 141" fill="none" stroke="#3A1E10" stroke-width="5" stroke-linecap="round"/><path d="M366 141 L393 134" fill="none" stroke="#3A1E10" stroke-width="4.6" stroke-linecap="round"/></g>`
+const COM_OLHOS = new Set(['halter', 'modo-foco'])
+
 const sprites = {}
 let cssTotal = ''
 const copiados = new Set()
@@ -83,6 +93,8 @@ for (const nome of VISUAIS) {
       const g = (k) => parseFloat(st.match(new RegExp(`${k}: (-?[\\d.]+)px`))[1])
       return `${p}position: absolute; left: ${(g('left') / W * 100).toFixed(2)}%; top: ${(g('top') / H * 100).toFixed(2)}%; width: ${(g('width') / W * 100).toFixed(2)}%; height: ${(g('height') / H * 100).toFixed(2)}%; border-radius: 50%; background: rgba(31, 42, 51, .14)"`
     })
+
+  if (COM_OLHOS.has(nome)) fig = fig.replace('<g class="mv-lid"', OLHOS(nome) + '<g class="mv-lid"')
 
   let estilo = readFileSync(join(dir, 'styles.css'), 'utf8')
   estilo = estilo.slice(estilo.indexOf('body{margin:0}') + 'body{margin:0}'.length)

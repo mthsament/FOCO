@@ -9,13 +9,12 @@ import MascoteSprite from './MascoteSprite.jsx'
 //   celebra pulos repetidos com confete
 //   corre   balanço de corrida
 //   treina  pulsa como quem levanta peso
-//   giro    pulo com giro completo
 //   forca   mostra a força (dois "flex")
 // Tocar no mascote faz uma dessas reações (sorteada) e solta uma frase.
 // Outras partes do app também podem pedir reações (ex.: beber água) pelo canal de eventos.
 const POSES = { 1: 'Mostrando os bíceps', 2: 'Correndo na esteira', 3: 'Braços cruzados', 4: 'Rosca com halter', 5: 'Pulando com elástico', 6: 'Alongando no tapete' }
 const FRASES = ['Foco!', 'Bora!', 'Um passo de cada vez.', 'Constância ganha de motivação.', 'Cada repetição conta.', 'Já bebeu água?', 'Você está indo bem.', 'Mais um dia, mais uma meta.']
-const REACOES = ['pula', 'giro', 'forca']
+const REACOES = ['pula'] // ao tocar: só o pulo
 const CONFETE = Array.from({ length: 12 }, (_, i) => {
   const a = -Math.PI / 2 + ((i - 5.5) / 5.5) * 1.15
   const d = 56 + (i % 3) * 22
