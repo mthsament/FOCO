@@ -3,6 +3,7 @@ import { useApp } from '../store.jsx'
 import { DIAS, DIAS_LONGO, mondayOf, todayISO } from '../lib/dates.js'
 import { inicioDoPlano } from '../lib/metrics.js'
 import { CATEGORIAS, categoriaDe, exerciciosDe } from '../lib/exercicios.js'
+import Combo from './Combo.jsx'
 import { Seg, num, toast } from './ui.jsx'
 import Icon from './Icon.jsx'
 
@@ -241,30 +242,30 @@ function RotinaDia() {
   )
 }
 
-const OUTRO = '__outro__'
+// Escolhe a categoria e o exercício, ambos com busca. Sem categoria, a busca olha todos os exercícios.
+const CATS = CATEGORIAS.map((c) => ({ chave: c.nome, valor: c.nome }))
+const TODOS = CATEGORIAS.flatMap((c) => c.exercicios.map((n) => ({ chave: `${c.nome}|${n}`, valor: n, sub: c.nome, grupo: c.nome })))
 
-// Escolhe primeiro a categoria e depois o exercício dela (ou digita um que não está na lista)
 function EscolherExercicio({ ex, n, onChange }) {
   const grupo = ex.grupo || categoriaDe(ex.nome)
-  const lista = exerciciosDe(grupo)
-  const personalizado = ex.outro || (!!ex.nome && !lista.includes(ex.nome))
+  const opcoes = grupo ? exerciciosDe(grupo).map((nome) => ({ chave: `${grupo}|${nome}`, valor: nome, grupo })) : TODOS
   return (
     <>
-      <select value={grupo} onChange={(e) => onChange({ grupo: e.target.value, nome: lista.includes(ex.nome) && e.target.value === grupo ? ex.nome : '', outro: false })} aria-label={`Categoria do exercício ${n}`}>
-        <option value="">Categoria…</option>
-        {CATEGORIAS.map((c) => <option key={c.nome} value={c.nome}>{c.nome}</option>)}
-      </select>
-      {(grupo || !personalizado) && <select
-        value={personalizado ? OUTRO : ex.nome}
-        disabled={!grupo}
-        onChange={(e) => (e.target.value === OUTRO ? onChange({ outro: true, nome: personalizado ? ex.nome : '' }) : onChange({ outro: false, nome: e.target.value }))}
-        aria-label={`Exercício ${n}`}
-      >
-        <option value="">{grupo ? 'Escolha o exercício…' : 'Escolha a categoria primeiro'}</option>
-        {lista.map((nome) => <option key={nome} value={nome}>{nome}</option>)}
-        {grupo && <option value={OUTRO}>Outro (digitar)…</option>}
-      </select>}
-      {personalizado && <input type="text" autoComplete="off" placeholder="Nome do exercício" value={ex.nome} onChange={(e) => onChange({ nome: e.target.value, outro: true })} aria-label={`Nome do exercício ${n}`} />}
+      <Combo
+        value={grupo}
+        options={CATS}
+        placeholder="Categoria (ex.: Peito)"
+        ariaLabel={`Categoria do exercício ${n}`}
+        onPick={(o) => onChange({ grupo: o.valor, nome: exerciciosDe(o.valor).includes(ex.nome) ? ex.nome : '', outro: false })}
+      />
+      <Combo
+        value={ex.nome}
+        options={opcoes}
+        livre
+        placeholder={grupo ? `Buscar em ${grupo}…` : 'Buscar exercício…'}
+        ariaLabel={`Exercício ${n}`}
+        onPick={(o) => (o.livre ? onChange({ nome: o.valor, outro: true }) : onChange({ nome: o.valor, grupo: o.grupo || grupo, outro: false }))}
+      />
     </>
   )
 }
