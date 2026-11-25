@@ -749,3 +749,43 @@ details.card > summary { cursor: pointer; list-style: none; } details.card > sum
 @media (min-width: 760px) { .mt-corpo { grid-template-columns: minmax(0, 1fr) 280px; grid-template-areas: 'esc anim' 'form anim'; grid-template-rows: auto 1fr; gap: 12px 18px; } .mt-corpo > .ca { justify-self: end; max-width: 280px; } }
 .mt-mov { margin-top: 10px; }
 .mt-mov .ca { margin: 10px auto 2px; }
+
+/* ---------- Evolução + Bio: painel do corpo ---------- */
+.corpo-hero { position: relative; overflow: hidden; border-radius: 22px; padding: 18px; margin-bottom: 14px; color: var(--on-ink); background: linear-gradient(135deg, var(--ink) 0%, var(--ink2) 100%); box-shadow: 0 10px 30px rgba(15, 27, 45, .18); }
+.corpo-hero::after { content: ''; position: absolute; right: -60px; top: -80px; width: 260px; height: 260px; border-radius: 50%; background: radial-gradient(circle, var(--acc-soft) 0%, transparent 70%); pointer-events: none; }
+.ch-topo { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 16px; align-items: stretch; }
+.ch-main { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.ch-rot { text-transform: uppercase; letter-spacing: .12em; font-size: 12px; font-weight: 700; color: var(--on-ink-mut); }
+.ch-num { display: flex; align-items: baseline; gap: 6px; }
+.ch-num b { font: 700 76px/.95 var(--display); font-variant-numeric: tabular-nums; animation: gc-num 520ms var(--ease-out) both; }
+.ch-num span { font-size: 22px; color: var(--on-ink-mut); }
+.ch-linha { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.ch-sub { color: var(--on-ink-mut); font-size: 13.5px; }
+.ch-btn { margin-top: 10px; }
+.ch-spark { min-height: 130px; border-radius: 16px; background: rgba(255, 255, 255, .045); border: 1px solid rgba(255, 255, 255, .07); overflow: hidden; }
+.ch-vazio { height: 100%; min-height: 130px; display: grid; place-items: center; padding: 12px; text-align: center; color: var(--on-ink-mut); font-size: 13.5px; }
+.ch-stats { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 14px 0 0; }
+@media (min-width: 760px) { .ch-stats { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+.ch-stats > div { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 10px 12px; border-radius: 14px; background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .08); }
+.ch-stats dt { font-size: 12px; color: var(--on-ink-mut); }
+.ch-stats dd { margin: 0; font: 700 24px/1.1 var(--display); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.corpo-hero .gd { background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .16); color: var(--on-ink-mut); font-size: 12px; padding: 1px 8px; }
+.corpo-hero .gd.bom { color: #3ddc97; background: rgba(61, 220, 151, .12); border-color: rgba(61, 220, 151, .35); }
+.corpo-hero .gd.ruim { color: #ff7b7b; background: rgba(255, 123, 123, .12); border-color: rgba(255, 123, 123, .35); }
+.ev-abas { margin-bottom: 14px; }
+.medir { align-items: start; }
+.medir .col { display: grid; gap: 14px; align-content: start; min-width: 0; }
+.medir .col > .card { margin-bottom: 0; }
+@media (max-width: 560px) { .ch-topo { grid-template-columns: minmax(0, 1fr); } .ch-spark, .ch-vazio { min-height: 110px; height: 110px; } .ch-num b { font-size: 66px; } }
+@media (prefers-reduced-motion: reduce) { .ch-num b { animation: none; } }
+
+.hist-lista { list-style: none; margin: 8px 0 0; padding: 0; }
+.hist-lista li { display: grid; grid-template-columns: 64px 84px minmax(0, 1fr) auto; align-items: center; gap: 4px 12px; padding: 12px 4px; border-top: 1px solid var(--line); }
+.hist-lista li:first-child { border-top: 0; }
+.hl-data { display: flex; flex-direction: column; line-height: 1.15; }
+.hl-data b { font: 700 22px var(--display); }
+.hl-data span { font-size: 12px; color: var(--mut); text-transform: capitalize; }
+.hl-peso { display: flex; align-items: baseline; gap: 3px; } .hl-peso b { font: 700 28px/1 var(--display); font-variant-numeric: tabular-nums; } .hl-peso small { color: var(--mut); }
+.hl-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.hl-chips .chip { padding: 2px 9px; font-size: 12.5px; } .hl-chips .chip em { font-style: normal; color: var(--mut); } .hl-chips .chip b { color: var(--txt); }
+@media (max-width: 560px) { .hist-lista li { grid-template-columns: 64px minmax(0, 1fr) auto; } .hist-lista li > .btn { grid-column: 3; grid-row: 1; } .hl-chips { grid-column: 1 / -1; grid-row: 2; } }

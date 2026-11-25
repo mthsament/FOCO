@@ -139,7 +139,7 @@ export default function Config() {
       <div className="card">
         <h2><Icon name="watch" /> Relógio e balança</h2>
         <p className="small"><b>Relógio (Fitbeing):</b> exporte a corrida do Fitbeing ou do Strava em GPX/TCX e importe na aba Corrida (botão “Importar GPX/TCX”). Distância, tempo e FC média entram sozinhos.</p>
-        <p className="small"><b>Balança de bioimpedância:</b> use a aba Bio para conectar por Bluetooth, importar o CSV do app da balança ou digitar as medidas.</p>
+        <p className="small"><b>Balança de bioimpedância:</b> use a aba Evolução, seção Medir, para conectar por Bluetooth, importar o CSV do app da balança ou digitar as medidas.</p>
         <div className="note">No iPhone, um app instalado pelo Safari não lê o Apple Health nem usa Bluetooth. Por isso a integração direta precisa de uma camada extra, que está no roadmap.</div>
       </div>
 

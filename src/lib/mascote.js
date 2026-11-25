@@ -68,15 +68,12 @@ export function mascoteDaAba(aba, s, { sync } = {}) {
       }
       return { pose: 2, anim: 'idle', fala: 'Grave pelo GPS ou importe do relógio para eu acompanhar suas corridas.' }
     }
-    case 'bio': {
+    case 'evolucao': {
       const pes = pesagensOrdenadas(s)
       const u = pes[pes.length - 1]
-      if (!u) return { pose: 3, anim: 'idle', fala: 'Suba na balança em jejum, 3 vezes por semana, e registre aqui.' }
+      if (!u) return { pose: 3, anim: 'idle', fala: 'Suba na balança em jejum, 3 vezes por semana, e registre na seção Medir.' }
       const dias = diffDays(iso, u.data)
-      const gord = u.gordura != null ? ` · ${v(u.gordura)}% de gordura` : ''
-      return { pose: 3, anim: 'idle', fala: `Última pesagem: ${v(u.kg)} kg${gord}${dias >= 4 ? `, há ${dias} dias. Hora de pesar!` : '.'}` }
-    }
-    case 'evolucao': {
+      if (dias >= 4) return { pose: 3, anim: 'idle', fala: `Última pesagem há ${dias} dias (${v(u.kg)} kg). Hora de pesar!` }
       const base = s.perfil.pesoInicial || pesagensOrdenadas(s)[0]?.kg
       const atual = pesoAtual(s)
       if (base && atual && Math.abs(atual - base) >= 0.1) {

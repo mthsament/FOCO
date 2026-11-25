@@ -15,7 +15,6 @@ import Hoje from './pages/Hoje.jsx'
 import Treino from './pages/Treino.jsx'
 import Dieta from './pages/Dieta.jsx'
 import Corrida from './pages/Corrida.jsx'
-import Bio from './pages/Bio.jsx'
 import Evolucao from './pages/Evolucao.jsx'
 import Conquistas from './pages/Conquistas.jsx'
 import Config from './pages/Config.jsx'
@@ -25,7 +24,6 @@ const TABS = [
   ['treino', 'Treino', 'treino', Treino],
   ['dieta', 'Dieta', 'dieta', Dieta],
   ['corrida', 'Corrida', 'corrida', Corrida],
-  ['bio', 'Bio', 'bio', Bio],
   ['evolucao', 'Evolução', 'evolucao', Evolucao],
   ['conquistas', 'Conquistas', 'trofeu', Conquistas],
   ['config', 'Ajustes', 'config', Config],
@@ -36,6 +34,7 @@ export const useNav = () => useContext(NavCtx)
 
 const tabFromHash = () => {
   const h = location.hash.replace('#', '')
+  if (h === 'bio') return 'evolucao' // a Bio foi para dentro da Evolução
   return TABS.some((t) => t[0] === h) ? h : 'hoje'
 }
 

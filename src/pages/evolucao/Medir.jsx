@@ -1,13 +1,11 @@
 import { useRef, useState } from 'react'
-import { useApp } from '../store.jsx'
-import MascoteAba from '../components/MascoteAba.jsx'
-import { reagir } from '../lib/mascoteEventos.js'
-import { fmtBR, todayISO } from '../lib/dates.js'
-import { pesagensOrdenadas } from '../lib/metrics.js'
-import { conectarBalanca, lerCsv, suportaBluetooth } from '../lib/bluetooth.js'
-import { Kpi, num, r1, toast } from '../components/ui.jsx'
-import Icon from '../components/Icon.jsx'
-import DiagBluetooth from '../components/DiagBluetooth.jsx'
+import { useApp } from '../../store.jsx'
+import { reagir } from '../../lib/mascoteEventos.js'
+import { todayISO } from '../../lib/dates.js'
+import { conectarBalanca, lerCsv, suportaBluetooth } from '../../lib/bluetooth.js'
+import { num, r1, toast } from '../../components/ui.jsx'
+import Icon from '../../components/Icon.jsx'
+import DiagBluetooth from '../../components/DiagBluetooth.jsx'
 
 const CAMPOS = [
   ['kg', 'Peso (kg)', 0.1],
@@ -16,10 +14,11 @@ const CAMPOS = [
   ['agua', 'Água (%)', 0.1],
   ['musculo', 'Músculo (%)', 0.1],
   ['visceral', 'Gordura visceral', 1],
+  ['cintura', 'Cintura (cm)', 0.5],
 ]
-const VAZIO = { data: todayISO(), kg: '', gordura: '', massaMagra: '', agua: '', musculo: '', visceral: '' }
+const VAZIO = { data: todayISO(), kg: '', gordura: '', massaMagra: '', agua: '', musculo: '', visceral: '', cintura: '' }
 
-export default function Bio() {
+export default function Medir() {
   const { s, update } = useApp()
   const [f, setF] = useState(VAZIO)
   const [status, setStatus] = useState('')
@@ -28,12 +27,6 @@ export default function Bio() {
   const [leitura, setLeitura] = useState(null)
   const csvRef = useRef(null)
   const suporta = suportaBluetooth()
-
-  const hist = pesagensOrdenadas(s).filter((p) => p.gordura != null || p.massaMagra != null || p.agua != null || p.musculo != null)
-  const ult = hist[hist.length - 1]
-  const ant = hist[hist.length - 2]
-  const delta = (k) => (ult?.[k] != null && ant?.[k] != null ? ult[k] - ant[k] : null)
-  const fmtD = (d, un) => (d == null ? 'sem comparação' : `${d > 0 ? '+' : ''}${r1(d)} ${un} vs. anterior`)
 
   const gravar = (reg) =>
     update((x) => {
@@ -79,13 +72,20 @@ export default function Bio() {
 
   const salvarManual = () => {
     const kg = num(f.kg)
-    if (!kg) return toast('Informe o peso')
+    if (!kg && !num(f.cintura)) return toast('Informe o peso ou a cintura')
     const reg = { data: f.data, kg }
     for (const [k] of CAMPOS.slice(1)) {
+      if (k === 'cintura') continue
       const v = num(f[k])
       if (v != null) reg[k] = v
     }
-    gravar(reg)
+    if (kg) gravar(reg)
+    const cm = num(f.cintura)
+    if (cm) update((x) => {
+      const i = x.logs.cintura.findIndex((c) => c.data === f.data)
+      if (i >= 0) x.logs.cintura[i].cm = cm
+      else x.logs.cintura.push({ data: f.data, cm })
+    })
     setF({ ...VAZIO, data: f.data })
     toast('Medição salva')
     reagir('pula', ['Medição salva!', 'Dados novos, gráficos novos.', 'Registrado!'])
@@ -107,22 +107,11 @@ export default function Bio() {
     toast(`${regs.length} medições importadas`)
   }
 
-  const apagar = (data) => update((x) => { x.logs.pesagens = x.logs.pesagens.filter((p) => p.data !== data) })
   const campo = (k) => (e) => setF({ ...f, [k]: e.target.value })
 
   return (
-    <>
-      <h1>Bioimpedância</h1>
-      <p className="sub">Conecte a balança ou registre as medições. Tudo alimenta os gráficos da aba Evolução.</p>
-      <MascoteAba aba="bio" />
-
-      <div className="kpis">
-        <Kpi v={ult?.gordura != null ? `${r1(ult.gordura)}%` : '–'} l={`Gordura · ${fmtD(delta('gordura'), 'p.p.')}`} />
-        <Kpi v={ult?.massaMagra != null ? `${r1(ult.massaMagra)} kg` : '–'} l={`Massa magra · ${fmtD(delta('massaMagra'), 'kg')}`} />
-        <Kpi v={ult?.agua != null ? `${r1(ult.agua)}%` : '–'} l="Água corporal" />
-        <Kpi v={ult?.musculo != null ? `${r1(ult.musculo)}%` : '–'} l="Músculo" />
-      </div>
-
+    <div className="grid c2 medir">
+      <div className="col">
       <div className="card">
         <div className="row">
           <h2 className="sp"><Icon name="bluetooth" /> Balança por Bluetooth</h2>
@@ -170,9 +159,12 @@ export default function Bio() {
       </div>
 
       {suporta && <DiagBluetooth />}
+      </div>
+      <div className="col">
 
       <div className="card">
-        <h2>Registrar à mão</h2>
+        <h2><Icon name="save" /> Registrar medição</h2>
+        <p className="mut small" style={{ margin: '0 0 10px' }}>Só o peso já basta. Gordura, massa magra, água, músculo e cintura são opcionais.</p>
         <div className="form">
           <label className="fld"><span className="f">Data</span><input autoComplete="off" type="date" value={f.data} onChange={campo('data')} /></label>
           {CAMPOS.map(([k, l, st]) => (
@@ -188,36 +180,7 @@ export default function Bio() {
           O CSV precisa de cabeçalho com colunas de data e peso. Gordura, massa magra, água, músculo e gordura visceral entram se existirem.
         </p>
       </div>
-
-      <div className="card">
-        <h2>Histórico</h2>
-        {hist.length === 0 ? (
-          <div className="mut small">Nenhuma medição de composição ainda. Quando você registrar a primeira, ela aparece aqui.</div>
-        ) : (
-          <div className="scroll">
-            <table>
-              <thead>
-                <tr><th>Data</th><th>Peso</th><th>Gordura</th><th>Magra</th><th>Água</th><th>Músculo</th><th><span className="sr">Apagar</span></th></tr>
-              </thead>
-              <tbody>
-                {[...hist].reverse().map((p) => (
-                  <tr key={p.data}>
-                    <td>{fmtBR(p.data)}</td>
-                    <td>{r1(p.kg)}</td>
-                    <td>{p.gordura != null ? `${r1(p.gordura)}%` : '–'}</td>
-                    <td>{p.massaMagra != null ? `${r1(p.massaMagra)} kg` : '–'}</td>
-                    <td>{p.agua != null ? `${r1(p.agua)}%` : '–'}</td>
-                    <td>{p.musculo != null ? `${r1(p.musculo)}%` : '–'}</td>
-                    <td>
-                      <button className="btn sm ghost danger" onClick={() => apagar(p.data)} aria-label={`Apagar medição de ${fmtBR(p.data)}`}><Icon name="trash" /></button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
       </div>
-    </>
+    </div>
   )
 }
