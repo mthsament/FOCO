@@ -1,6 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useApp } from '../store.jsx'
-import MascoteAba from '../components/MascoteAba.jsx'
 import { reagir } from '../lib/mascoteEventos.js'
 import { fmtBR, fmtCurto, todayISO } from '../lib/dates.js'
 import { treinoDoDia, ultimaCarga, historicoCarga } from '../lib/metrics.js'
@@ -13,26 +12,27 @@ import { categoriaDe } from '../lib/exercicios.js'
 
 const arred = (kg) => Math.round(kg * 2) / 2
 
-export default function Treino() {
+export default function Treino({ onFoco }) {
   const { s, update } = useApp()
   const { go } = useNav()
   const [iso, setIso] = useState(todayISO())
   const [forca, setForca] = useState(null)
   const [montando, setMontando] = useState(false)
   const [verMov, setVerMov] = useState(null) // exercício com a animação aberta
+  useEffect(() => { onFoco?.(montando); return () => onFoco?.(false) }, [montando, onFoco])
   const treinos = s.plan.treinos
 
   if (montando) return <MontarTreino onFechar={() => { setMontando(false); setForca(null) }} />
 
   if (!treinos) {
     return (
-      <><MascoteAba aba="treino" /><Empty icon="treino" title="Nenhum treino ainda">
+      <Empty icon="treino" title="Nenhum treino ainda">
         <p>Monte o seu treino do zero ou importe a planilha.</p>
         <div className="row wrap" style={{ justifyContent: 'center' }}>
           <button className="btn pri" onClick={() => setMontando(true)}>Montar meu treino</button>
           <button className="btn" onClick={() => go('config')}>Importar Plano_Academia.xlsx</button>
         </div>
-      </Empty></>
+      </Empty>
     )
   }
 
@@ -84,9 +84,10 @@ export default function Treino() {
 
   return (
     <>
-      <div className="row"><h1 className="sp" style={{ margin: 0 }}>Treino</h1><button className="btn sm" onClick={() => setMontando(true)}>Editar treinos e semana</button></div>
-      <p className="sub">{planejado ? `Hoje no plano: treino ${planejado}` : 'Sem musculação planejada neste dia'}</p>
-      <MascoteAba aba="treino" />
+      <div className="row" style={{ marginBottom: 6 }}>
+        <p className="sub sp" style={{ margin: 0 }}>{planejado ? `Hoje no plano: treino ${planejado}` : 'Sem musculação planejada neste dia'}</p>
+        <button className="btn sm" onClick={() => setMontando(true)}>Editar treinos e semana</button>
+      </div>
       <DayPicker iso={iso} onChange={(d) => { setIso(d); setForca(null) }} />
       <div style={{ marginBottom: 12 }}>
         <Seg value={letra} onChange={setForca} options={Object.values(treinos).map((x) => [x.letra, `Treino ${x.letra}`])} />

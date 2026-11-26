@@ -12,18 +12,14 @@ import { AvisoAtualizacao } from './components/Atualizacao.jsx'
 import CelebracaoHost from './components/Celebracao.jsx'
 import ConquistasHost from './components/ConquistasHost.jsx'
 import Hoje from './pages/Hoje.jsx'
-import Treino from './pages/Treino.jsx'
-import Dieta from './pages/Dieta.jsx'
-import Corrida from './pages/Corrida.jsx'
+import Plano from './pages/Plano.jsx'
 import Evolucao from './pages/Evolucao.jsx'
 import Conquistas from './pages/Conquistas.jsx'
 import Config from './pages/Config.jsx'
 
 const TABS = [
   ['hoje', 'Hoje', 'hoje', Hoje],
-  ['treino', 'Treino', 'treino', Treino],
-  ['dieta', 'Dieta', 'dieta', Dieta],
-  ['corrida', 'Corrida', 'corrida', Corrida],
+  ['plano', 'Plano', 'lista', Plano],
   ['evolucao', 'Evolução', 'evolucao', Evolucao],
   ['conquistas', 'Conquistas', 'trofeu', Conquistas],
   ['config', 'Ajustes', 'config', Config],
@@ -32,10 +28,16 @@ const TABS = [
 const NavCtx = createContext(null)
 export const useNav = () => useContext(NavCtx)
 
+// Abas que foram juntadas em outras: treino, dieta e corrida viraram seções do Plano; a bio foi para a Evolução
+const FUNDIDAS = { treino: ['plano', 'treino'], dieta: ['plano', 'dieta'], corrida: ['plano', 'corrida'], bio: ['evolucao', 'medir'] }
 const tabFromHash = () => {
   const h = location.hash.replace('#', '')
-  if (h === 'bio') return 'evolucao' // a Bio foi para dentro da Evolução
+  if (FUNDIDAS[h]) return FUNDIDAS[h][0]
   return TABS.some((t) => t[0] === h) ? h : 'hoje'
+}
+const paramsFromHash = () => {
+  const f = FUNDIDAS[location.hash.replace('#', '')]
+  return f ? { secao: f[1] } : {}
 }
 
 // Importa corridas que chegam por link (?importar=corrida...), vindas do Atalho do iPhone.
@@ -88,11 +90,13 @@ function useSincronizarLembretes() {
 
 export default function App() {
   const [tab, setTab] = useState(tabFromHash)
-  const [params, setParams] = useState({})
+  const [params, setParams] = useState(paramsFromHash)
   useImportarLink()
   useSincronizarLembretes()
 
   const go = useCallback((t, p = {}) => {
+    const f = FUNDIDAS[t] // go('treino'), go('dieta'), go('corrida') e go('bio') continuam valendo
+    if (f) { t = f[0]; p = { secao: f[1], ...p } }
     setParams(p)
     setTab(t)
     history.replaceState(null, '', '#' + t)
@@ -100,7 +104,7 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    const h = () => setTab(tabFromHash())
+    const h = () => { setTab(tabFromHash()); setParams(paramsFromHash()) }
     window.addEventListener('hashchange', h)
     return () => window.removeEventListener('hashchange', h)
   }, [])

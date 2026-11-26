@@ -23,7 +23,7 @@ export default function Historico() {
         <span className="chip">{datas.length}</span>
       </div>
       {datas.length === 0 ? (
-        <div className="mut small">Nenhuma medição ainda. Registre a primeira na aba Medir.</div>
+        <div className="mut small">Nenhuma medição ainda. Registre a primeira na seção Medir.</div>
       ) : (
         <ul className="hist-lista">
           {datas.map((d) => {

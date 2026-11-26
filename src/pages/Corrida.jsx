@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import { useApp } from '../store.jsx'
-import MascoteAba from '../components/MascoteAba.jsx'
 import { useNav } from '../App.jsx'
 import { fmtBR, planWeek, todayISO, dateOf } from '../lib/dates.js'
 import { fmtDur, fmtRitmo, inicioDoPlano, ritmo } from '../lib/metrics.js'
@@ -19,7 +18,7 @@ import Icon from '../components/Icon.jsx'
 const DIAS_CORRIDA = [['qui', 'Quinta'], ['sab', 'Sábado'], ['dom', 'Domingo']]
 const vazio = () => ({ data: todayISO(), min: '', km: '', fc: '', esforco: '', obs: '' })
 
-export default function Corrida() {
+export default function Corrida({ onFoco }) {
   const { s, update } = useApp()
   const { go, params } = useNav()
   const [aba, setAba] = useState('atividades')
@@ -125,13 +124,12 @@ export default function Corrida() {
   const tipoTip = { background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 10, color: 'var(--txt)' }
 
   const aberta = detalhe && corridas.find((x) => x.id === detalhe)
+  useEffect(() => { onFoco?.(!!aberta); return () => onFoco?.(false) }, [aberta, onFoco])
   if (aberta) return <DetalheCorrida c={aberta} todas={corridas} onFechar={() => setDetalhe(null)} onApagar={() => apagar(aberta.id)} />
 
   return (
     <>
-      <h1>Corrida</h1>
       <p className="sub">{c ? `${c.semanas.length} semanas até os 5 km · meta: ${c.meta5kMin} min` : 'Suas atividades, recordes e medalhas'}</p>
-      <MascoteAba aba="corrida" />
 
       {timer && (
         <IntervalTimer

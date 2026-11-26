@@ -147,7 +147,7 @@ export default function VisaoGeral() {
           valor={ult(comp, 'gordura') != null ? r1(ult(comp, 'gordura')) : null} un="% gordura"
           delta={<Delta de={prim(comp, 'gordura')} para={ult(comp, 'gordura')} melhor="menor" un=" pp" />}
           sub={ult(comp, 'massaMagra') != null ? `Massa magra ${r1(ult(comp, 'massaMagra'))} kg` : null}
-          vazio={comp.length < 1 && 'Sem dados de bioimpedância ainda. Registre na aba Medir.'}
+          vazio={comp.length < 1 && 'Sem dados de bioimpedância ainda. Registre na seção Medir.'}
         >
           <ComposedChart data={comp}>
             <defs><Grad id="g-gord" cor={COR.warn} /></defs>

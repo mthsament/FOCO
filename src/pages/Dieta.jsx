@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useApp } from '../store.jsx'
-import MascoteAba from '../components/MascoteAba.jsx'
 import { useNav } from '../App.jsx'
 import { DIAS, DIAS_LABEL, todayISO } from '../lib/dates.js'
 import { metas } from '../lib/metrics.js'
@@ -16,16 +15,14 @@ export default function Dieta() {
   const [iso, setIso] = useState(todayISO())
   if (!s.plan.dieta) {
     return (
-      <><MascoteAba aba="dieta" /><Empty icon="dieta" title="Nenhuma dieta importada">
+      <Empty icon="dieta" title="Nenhuma dieta importada">
         <button className="btn pri" onClick={() => go('config')}>Importar Plano_Alimentacao_Suplementacao.xlsx</button>
-      </Empty></>
+      </Empty>
     )
   }
   return (
     <>
-      <h1>Dieta</h1>
       <p className="sub">Refeições, cardápio da semana, opções e metas</p>
-      <MascoteAba aba="dieta" />
       <div style={{ marginBottom: 14, overflowX: 'auto' }}>
         <Seg value={aba} onChange={setAba} options={[['dia', 'Dia'], ['cardapio', 'Cardápio'], ['opcoes', 'Opções'], ['metas', 'Metas e rotina']]} />
       </div>

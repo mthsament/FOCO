@@ -789,3 +789,29 @@ details.card > summary { cursor: pointer; list-style: none; } details.card > sum
 .hl-chips { display: flex; flex-wrap: wrap; gap: 5px; }
 .hl-chips .chip { padding: 2px 9px; font-size: 12.5px; } .hl-chips .chip em { font-style: normal; color: var(--mut); } .hl-chips .chip b { color: var(--txt); }
 @media (max-width: 560px) { .hist-lista li { grid-template-columns: 64px minmax(0, 1fr) auto; } .hist-lista li > .btn { grid-column: 3; grid-row: 1; } .hl-chips { grid-column: 1 / -1; grid-row: 2; } }
+
+/* ---------- Plano: treino + dieta + corrida ---------- */
+.plano-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }
+.plano-tile { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto auto; align-items: center; column-gap: 10px; row-gap: 10px; padding: 12px; text-align: left; border: 1.5px solid var(--line); border-radius: 18px; background: var(--card); color: var(--txt); cursor: pointer; box-shadow: var(--shadow); transition: border-color 160ms var(--ease-out), background-color 160ms var(--ease-out), transform 160ms var(--ease-out), box-shadow 160ms var(--ease-out); }
+.plano-tile:active { transform: scale(.98); }
+.plano-tile.on { border-color: var(--acc); background: linear-gradient(160deg, var(--acc-soft), var(--card) 70%); box-shadow: 0 6px 22px rgba(0, 0, 0, .14); }
+.pt-ico { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 13px; background: var(--card2); color: var(--mut); transition: background-color 160ms var(--ease-out), color 160ms var(--ease-out); }
+.pt-ico .ico { width: 22px; height: 22px; }
+.plano-tile.on .pt-ico { background: var(--acc); color: var(--acc-ink); }
+.pt-txt { display: flex; flex-direction: column; min-width: 0; line-height: 1.2; }
+.pt-txt small { font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--mut); font-weight: 700; }
+.pt-txt b { font: 700 20px/1.1 var(--display); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pt-txt em { font-style: normal; font-size: 12.5px; color: var(--mut); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pt-bar { grid-column: 1 / -1; }
+.pt-bar .bar { height: 6px; }
+.pt-ok, .pt-extra { position: absolute; top: 10px; right: 10px; }
+.pt-ok { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--ok); color: #fff; } .pt-ok .ico { width: 14px; height: 14px; }
+.pt-extra { font-size: 11.5px; font-weight: 700; color: var(--mut); }
+.plano-tile.ok { border-color: color-mix(in srgb, var(--ok) 55%, var(--line)); }
+@media (max-width: 640px) {
+  .plano-tiles { gap: 8px; }
+  .plano-tile { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto auto; justify-items: start; padding: 10px; row-gap: 8px; }
+  .pt-ico { width: 34px; height: 34px; border-radius: 11px; } .pt-ico .ico { width: 19px; height: 19px; }
+  .pt-txt { width: 100%; } .pt-txt small { font-size: 10.5px; } .pt-txt b { font-size: 17px; white-space: normal; } .pt-txt em { display: none; }
+  .pt-bar { width: 100%; }
+}
