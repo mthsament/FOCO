@@ -12,7 +12,7 @@ import { CardVersao } from '../../components/Atualizacao.jsx'
 const NOMES = { academia: 'Treino (Plano_Academia)', corrida: 'Corrida (Plano_Corrida)', alimentacao: 'Dieta e suplementação' }
 
 export default function Ajustes() {
-  const { s, setState, update } = useApp()
+  const { s, setState, update, sync } = useApp()
   const { go } = useNav()
   const [lidos, setLidos] = useState([])
   const [sobrescrever, setSobrescrever] = useState(false)
@@ -67,9 +67,13 @@ export default function Ajustes() {
     }
   }
   const apagar = async () => {
-    if (!confirm('Apagar TODOS os dados deste aparelho? Isso não pode ser desfeito. Faça um backup antes.')) return
+    const nuvem = !!sync.sessao
+    if (!confirm(nuvem ? 'Apagar TODOS os seus dados, neste aparelho e na nuvem da sua conta? Isso não pode ser desfeito. Faça um backup antes.' : 'Apagar TODOS os dados deste aparelho? Isso não pode ser desfeito. Faça um backup antes.')) return
     await del('foco-state-v1')
-    setState(estadoInicial())
+    const novo = estadoInicial()
+    // com conta: marca como "já sincronizado" para a nuvem receber o vazio, em vez de devolver os dados antigos
+    if (nuvem) novo.meta = { ...novo.meta, donoId: sync.sessao.id, sincEm: new Date().toISOString() }
+    setState(novo)
     toast('Dados apagados')
   }
 

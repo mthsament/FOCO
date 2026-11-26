@@ -217,7 +217,8 @@ export function usePerfilPublico(s, sessao, atualizar) {
   const meta = sessao?.meta
   const ultimo = useRef('')
   const priv = s ? privacidade(s) : null
-  const campos = s
+  const meu = !!s && s.meta?.donoId === uid // dados deste aparelho são desta conta?
+  const campos = s && meu
     ? {
         ...(s.perfil.apelido ? { apelido: s.perfil.apelido.slice(0, 24) } : {}),
         bio: priv.foto ? (s.perfil.sobre || '').slice(0, 160) || null : null,
@@ -238,14 +239,23 @@ export function usePerfilPublico(s, sessao, atualizar) {
           await criarPerfil(uid, { usuario: meta.usuario, apelido: meta.apelido })
           eu = await meuPerfil(uid)
         }
+        // IDs antigos (formato FOCO-XXXXXX) viram o ID numérico de 8 dígitos
+        if (eu && (soDigitos(eu.codigo).length !== 8 || /\D/.test(eu.codigo))) {
+          for (let i = 0; i < 5; i++) {
+            const novo = novoId()
+            const { error } = await supabase.from('perfis').update({ codigo: novo }).eq('user_id', uid)
+            if (!error) { eu.codigo = novo; break }
+            if (error.code !== '23505') break
+          }
+        }
         if (eu && vivo) {
           ativarAmigos(uid)
-          if (!s.perfil.apelido && eu.apelido) atualizar((x) => { x.perfil.apelido = eu.apelido })
+          if (meu && !s.perfil.apelido && eu.apelido) atualizar((x) => { x.perfil.apelido = eu.apelido })
         }
       } catch { /* sem o SQL ainda: o perfil local continua funcionando */ }
     })()
     return () => { vivo = false }
-  }, [uid, !!s])
+  }, [uid, !!s, meu])
 
   // 2) mudanças no perfil local sobem para o perfil público
   useEffect(() => {

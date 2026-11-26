@@ -68,11 +68,23 @@ export function useSincronia(state, setRaw, normalizar) {
     setInfo({ status: 'ok', msg: '', ultima: agora() })
   }, [setRaw, normalizar])
 
+  // Os dados deste aparelho pertencem a UMA conta (meta.donoId). Se outra conta entra aqui, ela começa limpa
+  // e baixa os próprios dados da nuvem: nunca herda nem envia os dados de quem usou antes.
+  const donoDosDados = useCallback((uid) => {
+    let local = ref.current
+    const dono = local.meta?.donoId
+    if (dono === uid) return local
+    local = dono ? normalizar({ meta: { donoId: uid } }) : { ...local, meta: { ...local.meta, donoId: uid } }
+    ref.current = local
+    setRaw(() => local)
+    return local
+  }, [setRaw, normalizar])
+
   const puxar = useCallback((uid) => rodar(async () => {
     setInfo((i) => ({ ...i, status: 'baixando', msg: '' }))
     const { data: row, error } = await supabase.from('estados').select('dados, atualizado_em').maybeSingle()
     if (error) throw error
-    const local = ref.current
+    const local = donoDosDados(uid)
     if (!row) {
       if (!vazio(local)) await enviar(uid)
       else setInfo({ status: 'ok', msg: '', ultima: agora() })
@@ -96,7 +108,7 @@ export function useSincronia(state, setRaw, normalizar) {
     } else if (remotoNovo) aplicarNuvem(row)
     else if (localSujo) await enviar(uid)
     else setInfo({ status: 'ok', msg: '', ultima: agora() })
-  }), [rodar, enviar, aplicarNuvem])
+  }), [rodar, enviar, aplicarNuvem, donoDosDados])
 
   // sessão de login
   useEffect(() => {
@@ -149,7 +161,14 @@ export function useSincronia(state, setRaw, normalizar) {
     const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname })
     if (error) throw new Error(traduzir(error))
   }
-  const sair = () => supabase.auth.signOut()
+  // antes de sair, manda o que ainda não subiu (para a próxima conta que usar este aparelho não apagar nada)
+  const sair = async () => {
+    const m = ref.current?.meta
+    if (sessao && m?.donoId === sessao.id && (m.editadoEm || '') > (m.sincEm || '')) {
+      try { await enviar(sessao.id) } catch { /* sem conexão: sai assim mesmo */ }
+    }
+    await supabase.auth.signOut()
+  }
   const agoraSync = () => sessao && puxar(sessao.id)
   const usarNuvem = () => { aplicarNuvem(conf); setConf(null) }
   const usarLocal = () => {
