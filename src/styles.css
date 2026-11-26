@@ -899,3 +899,5 @@ details.card > summary { cursor: pointer; list-style: none; } details.card > sum
 .ph-criar { border: 1.5px dashed var(--acc); background: var(--acc-soft); color: var(--acc); font-weight: 700; font-size: 14px; padding: 4px 12px; border-radius: 99px; cursor: pointer; }
 .crie-arroba .fld { display: block; }
 .perfil-grid .cartao-arroba-pendente { order: -1; border-color: var(--acc-line); background: linear-gradient(160deg, var(--acc-soft), var(--card) 60%); }
+.conta-card { display: flex; align-items: center; justify-content: space-between; gap: 14px 18px; flex-wrap: wrap; margin-top: 14px; }
+.conta-info { flex: 1 1 280px; min-width: 0; } .conta-info h2 { margin-bottom: 4px; }

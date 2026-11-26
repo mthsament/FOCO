@@ -33,6 +33,7 @@ export default function Perfil() {
   const [carregou, setCarregou] = useState(false)
   const [semSql, setSemSql] = useState(false) // faltam as tabelas / colunas do Supabase
   const [trocando, setTrocando] = useState(false) // formulário de trocar o @ aberto
+  const [saindo, setSaindo] = useState(false)
   const fotoRef = useRef(null)
   const priv = privacidade(s)
 
@@ -75,6 +76,12 @@ export default function Perfil() {
     const texto = `Me adiciona no FOCO! Meu @ é @${eu.usuario} e meu ID é ${fmtId(eu.codigo)}.`
     if (navigator.share) { try { await navigator.share({ title: 'FOCO', text: texto, url: location.origin + location.pathname }); return } catch { /* cancelou */ } }
     copiar(`${texto} ${location.origin}${location.pathname}`, 'Convite copiado')
+  }
+  const sairDaConta = async () => {
+    if (!confirm('Sair da conta? Seus dados continuam salvos neste aparelho e na nuvem. Para voltar, é só entrar de novo.')) return
+    setSaindo(true)
+    try { await sync.sair() } catch { toast('Não consegui sair. Tente de novo.') }
+    setSaindo(false)
   }
   const setPriv = (k, v) => update((x) => { x.perfil.privacidade = { ...privacidade(x), [k]: v } })
 
@@ -148,6 +155,16 @@ export default function Perfil() {
               <div className="gc-vazio">Carregando…</div>
             )}
           </div>
+        </div>
+      )}
+
+      {secao === 'perfil' && sessao && (
+        <div className="card conta-card">
+          <div className="conta-info">
+            <h2><Icon name="cadeado" /> Sua conta</h2>
+            <p className="mut small" style={{ margin: 0 }}>Conectado como <b>{sessao.email}</b>. Ao sair, seus dados continuam salvos na nuvem e neste aparelho, e você volta para a tela de entrada.</p>
+          </div>
+          <button className="btn danger" onClick={sairDaConta} disabled={saindo}>{saindo ? 'Saindo…' : 'Sair da conta'}</button>
         </div>
       )}
 
