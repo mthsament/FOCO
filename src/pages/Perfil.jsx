@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
-import { useApp } from '../store.jsx'
+import { del } from 'idb-keyval'
+import { estadoInicial, useApp } from '../store.jsx'
 import { useNav } from '../App.jsx'
 import MascoteAba from '../components/MascoteAba.jsx'
 import Avatar from '../components/Avatar.jsx'
 import Icon from '../components/Icon.jsx'
 import Lembretes from '../components/Lembretes.jsx'
+import ExcluirConta from '../components/ExcluirConta.jsx'
 import { Seg, toast } from '../components/ui.jsx'
 import CriarArroba from '../components/CriarArroba.jsx'
 import { ativarAmigos, definirUsuario, fmtId, meuPerfil, privacidade } from '../lib/amigos.js'
@@ -25,7 +27,7 @@ function Chave({ on, onChange, titulo, texto }) {
 }
 
 export default function Perfil() {
-  const { s, update, sync } = useApp()
+  const { s, update, setState, sync } = useApp()
   const { params, entrar } = useNav()
   const sessao = sync.sessao
   const [secao, setSecao] = useState(SECOES.some((x) => x[0] === params?.secao) ? params.secao : 'perfil')
@@ -34,6 +36,7 @@ export default function Perfil() {
   const [semSql, setSemSql] = useState(false) // faltam as tabelas / colunas do Supabase
   const [trocando, setTrocando] = useState(false) // formulário de trocar o @ aberto
   const [saindo, setSaindo] = useState(false)
+  const [excluindo, setExcluindo] = useState(false)
   const fotoRef = useRef(null)
   const priv = privacidade(s)
 
@@ -82,6 +85,14 @@ export default function Perfil() {
     setSaindo(true)
     try { await sync.sair() } catch { toast('Não consegui sair. Tente de novo.') }
     setSaindo(false)
+  }
+  const excluirConta = async ({ limparAparelho }) => {
+    await sync.excluirConta()
+    if (limparAparelho) {
+      await del('foco-state-v1')
+      setState(estadoInicial())
+    }
+    toast('Conta excluída')
   }
   const setPriv = (k, v) => update((x) => { x.perfil.privacidade = { ...privacidade(x), [k]: v } })
 
@@ -164,9 +175,13 @@ export default function Perfil() {
             <h2><Icon name="cadeado" /> Sua conta</h2>
             <p className="mut small" style={{ margin: 0 }}>Conectado como <b>{sessao.email}</b>. Ao sair, seus dados continuam salvos na nuvem e neste aparelho, e você volta para a tela de entrada.</p>
           </div>
-          <button className="btn danger" onClick={sairDaConta} disabled={saindo}>{saindo ? 'Saindo…' : 'Sair da conta'}</button>
+          <div className="conta-botoes">
+            <button className="btn danger" onClick={sairDaConta} disabled={saindo}>{saindo ? 'Saindo…' : 'Sair da conta'}</button>
+            <button className="btn ghost danger" onClick={() => setExcluindo(true)}>Excluir conta</button>
+          </div>
         </div>
       )}
+      {excluindo && <ExcluirConta email={sessao.email} onCancelar={() => setExcluindo(false)} onExcluir={excluirConta} />}
 
       {secao === 'privacidade' && (
         <div className="card">

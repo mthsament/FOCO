@@ -164,3 +164,17 @@ grant usage on schema public to authenticated;
 grant select, insert, update, delete on public.perfis, public.amizades, public.checkins, public.ofensivas, public.ofensiva_membros to authenticated;
 grant execute on function public.buscar_amigo(text, text) to authenticated;
 grant execute on function public.usuario_disponivel(text) to anon, authenticated;
+
+-- ---------- excluir a própria conta ----------
+-- Apaga a conta de quem chama (e, em cascata, perfil, amizades, check-ins e ofensivas que a pessoa criou).
+create or replace function public.excluir_minha_conta() returns void
+language plpgsql security definer set search_path = public, auth as $$
+declare uid uuid := auth.uid();
+begin
+  if uid is null then raise exception 'não autenticado'; end if;
+  delete from public.estados where user_id = uid;
+  delete from auth.users where id = uid;
+end;
+$$;
+revoke all on function public.excluir_minha_conta() from public, anon;
+grant execute on function public.excluir_minha_conta() to authenticated;

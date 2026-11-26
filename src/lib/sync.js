@@ -161,6 +161,17 @@ export function useSincronia(state, setRaw, normalizar) {
     const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname })
     if (error) throw new Error(traduzir(error))
   }
+  // Exclui a conta de vez (função excluir_minha_conta do SQL). Depois limpa a sessão deste aparelho.
+  const excluirConta = async () => {
+    const { error } = await supabase.rpc('excluir_minha_conta')
+    if (error) {
+      if (['PGRST202', '42883'].includes(error.code) || /Could not find the function|does not exist/i.test(error.message || '')) {
+        throw new Error('Falta atualizar o SQL no Supabase (função excluir_minha_conta). Rode o supabase/amigos.sql de novo.')
+      }
+      throw new Error(traduzir(error))
+    }
+    await supabase.auth.signOut({ scope: 'local' })
+  }
   // antes de sair, manda o que ainda não subiu (para a próxima conta que usar este aparelho não apagar nada)
   const sair = async () => {
     const m = ref.current?.meta
@@ -176,5 +187,5 @@ export function useSincronia(state, setRaw, normalizar) {
     setConf(null)
   }
 
-  return { sessao, sessaoLida, ...info, conflito: !!conf, entrar, cadastrar, recuperar, sair, agora: agoraSync, usarNuvem, usarLocal }
+  return { sessao, sessaoLida, ...info, conflito: !!conf, entrar, cadastrar, recuperar, sair, excluirConta, agora: agoraSync, usarNuvem, usarLocal }
 }
