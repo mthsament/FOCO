@@ -5,13 +5,14 @@ import Icon from './Icon.jsx'
 // Aviso fixo acima do menu quando existe uma versão nova
 export function AvisoAtualizacao() {
   const { nova, dispensada } = useAtualizacao()
+  const [indo, setIndo] = useState(false)
   if (!nova || dispensada) return null
   return (
     <div className="atualiza" role="status">
       <Icon name="download" />
-      <span className="sp"><b>Nova versão disponível</b></span>
-      <button className="btn sm" onClick={dispensar}>Depois</button>
-      <button className="btn sm pri" onClick={aplicarAtualizacao}>Atualizar</button>
+      <span className="sp"><b>{indo ? 'Atualizando…' : 'Nova versão disponível'}</b></span>
+      {!indo && <button className="btn sm" onClick={dispensar}>Depois</button>}
+      <button className="btn sm pri" disabled={indo} onClick={() => { setIndo(true); aplicarAtualizacao() }}>{indo ? 'Aguarde' : 'Atualizar'}</button>
     </div>
   )
 }
@@ -56,7 +57,7 @@ export function CardVersao() {
       {msg && <p className="small" role="status" style={{ margin: '4px 0 10px' }}>{msg}</p>}
       <div className="row wrap">
         {nova ? (
-          <button className="btn pri" onClick={aplicarAtualizacao}>Atualizar agora</button>
+          <button className="btn pri" onClick={() => { setOcupado(true); setMsg('Atualizando…'); aplicarAtualizacao() }} disabled={ocupado}>Atualizar agora</button>
         ) : (
           <button className="btn pri" onClick={buscar} disabled={ocupado}>Buscar atualização</button>
         )}

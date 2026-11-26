@@ -26,6 +26,15 @@ export function iniciarSW() {
     onRegisteredSW: (_url, reg) => {
       registro = reg || null
       if (reg) setInterval(() => reg.update().catch(() => {}), 30 * 60 * 1000) // confere a cada 30 min
+      // Versão nova que ficou esperando de uma abertura anterior: aplica agora, logo ao abrir o app
+      // (ainda não há nada em edição). No máximo uma vez por sessão, para nunca entrar em ciclo.
+      if (reg?.waiting) {
+        try {
+          if (sessionStorage.getItem('foco-auto-atualizou')) return
+          sessionStorage.setItem('foco-auto-atualizou', '1')
+        } catch { /* sem sessionStorage: segue sem a trava */ }
+        aplicarAtualizacao()
+      }
     },
   })
   // ao voltar para o app, confere se há versão nova
@@ -38,7 +47,19 @@ export const useAtualizacao = () =>
   useSyncExternalStore((f) => { ouvintes.add(f); return () => ouvintes.delete(f) }, () => estado)
 
 export const dispensar = () => mudar({ dispensada: true })
-export const aplicarAtualizacao = () => (atualizarSW ? atualizarSW(true) : location.reload())
+// Troca para a versão nova e recarrega. Não depende só do reload automático da biblioteca (que em alguns casos
+// troca o service worker mas deixa a tela antiga aberta): escuta a troca, recarrega e, se nada acontecer em
+// poucos segundos, limpa o cache do app e recarrega (os seus dados não são tocados).
+export async function aplicarAtualizacao() {
+  let feito = false
+  const recarregar = () => { if (!feito) { feito = true; location.reload() } }
+  navigator.serviceWorker?.addEventListener('controllerchange', recarregar, { once: true })
+  const reg = registro || (await navigator.serviceWorker?.getRegistration?.().catch(() => null))
+  if (reg?.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' })
+  else if (atualizarSW) atualizarSW(false)
+  else return recarregar()
+  setTimeout(() => { if (!feito) liberarCache().catch(recarregar) }, 3000)
+}
 
 // Procura versão nova agora. Retorna 'nova' | 'atual' | 'indisponivel'.
 export async function buscarAtualizacao() {
