@@ -76,6 +76,18 @@ export async function criarPerfil(uid, { usuario, apelido }) {
   }
   throw new ErroAmigos('Não consegui gerar um ID livre. Tente de novo.')
 }
+// Define ou troca o @ (o ID de amigo continua o mesmo). Cria o perfil se a conta ainda não tiver um.
+export async function definirUsuario(uid, { usuario, apelido }) {
+  const u = limpaUsuario(usuario)
+  const msg = erroUsuario(u)
+  if (msg) throw new ErroAmigos(msg)
+  const atual = await meuPerfil(uid)
+  if (!atual) return criarPerfil(uid, { usuario: u, apelido })
+  const campos = { usuario: u }
+  if (apelido && apelido.trim().length >= 2) campos.apelido = apelido.trim().slice(0, 24)
+  const { error } = await supabase.from('perfis').update(campos).eq('user_id', uid)
+  if (error) throw traduz(error)
+}
 export async function atualizarPerfil(uid, campos) {
   ok(await supabase.from('perfis').update(campos).eq('user_id', uid))
 }

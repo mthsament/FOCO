@@ -6,7 +6,8 @@ import Avatar from '../components/Avatar.jsx'
 import Icon from '../components/Icon.jsx'
 import Lembretes from '../components/Lembretes.jsx'
 import { Seg, toast } from '../components/ui.jsx'
-import { fmtId, meuPerfil, privacidade } from '../lib/amigos.js'
+import CriarArroba from '../components/CriarArroba.jsx'
+import { ativarAmigos, definirUsuario, fmtId, meuPerfil, privacidade } from '../lib/amigos.js'
 import { reduzirFoto } from '../lib/foto.js'
 import Ajustes from './perfil/Ajustes.jsx'
 
@@ -30,6 +31,8 @@ export default function Perfil() {
   const [secao, setSecao] = useState(SECOES.some((x) => x[0] === params?.secao) ? params.secao : 'perfil')
   const [eu, setEu] = useState(null) // @usuário e ID, vindos do servidor
   const [carregou, setCarregou] = useState(false)
+  const [semSql, setSemSql] = useState(false) // faltam as tabelas / colunas do Supabase
+  const [trocando, setTrocando] = useState(false) // formulário de trocar o @ aberto
   const fotoRef = useRef(null)
   const priv = privacidade(s)
 
@@ -37,11 +40,20 @@ export default function Perfil() {
   useEffect(() => {
     setEu(null)
     setCarregou(false)
+    setSemSql(false)
     if (!sessao) return
     let vivo = true
-    meuPerfil(sessao.id).then((p) => vivo && setEu(p)).catch(() => {}).finally(() => vivo && setCarregou(true))
+    meuPerfil(sessao.id).then((p) => vivo && setEu(p)).catch((e) => vivo && setSemSql(!!e.semTabelas)).finally(() => vivo && setCarregou(true))
     return () => { vivo = false }
   }, [sessao?.id])
+  const salvarArroba = async (d) => {
+    await definirUsuario(sessao.id, d)
+    ativarAmigos(sessao.id)
+    if (d.apelido?.trim().length >= 2) update((x) => { x.perfil.apelido = d.apelido.trim().slice(0, 24) })
+    setEu(await meuPerfil(sessao.id))
+    setTrocando(false)
+    toast('Seu @ está pronto!')
+  }
 
   const nome = s.perfil.apelido || eu?.apelido || sessao?.meta?.apelido || sessao?.email || ''
   const trocarFoto = async (ev) => {
@@ -80,7 +92,7 @@ export default function Perfil() {
         </div>
         <div className="ph-info">
           <b className="ph-nome">{nome || 'Seu nome'}</b>
-          {eu?.usuario ? <span className="ph-arroba" translate="no">@{eu.usuario}</span> : <span className="ph-arroba mut">{sessao ? (carregou ? 'sem @ ainda' : '…') : 'sem conta'}</span>}
+          {eu?.usuario ? <span className="ph-arroba" translate="no">@{eu.usuario}</span> : sessao && carregou && !semSql ? <button className="ph-criar" onClick={() => { setSecao('perfil'); setTimeout(() => document.getElementById('cartao-arroba')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50) }}>+ Criar meu @</button> : <span className="ph-arroba mut">{sessao ? (carregou ? 'sem @ ainda' : '…') : 'sem conta'}</span>}
           {eu?.codigo && <span className="ph-id" translate="no">ID {fmtId(eu.codigo)}</span>}
           {sessao && <span className="ph-email">{sessao.email}</span>}
         </div>
@@ -104,27 +116,34 @@ export default function Perfil() {
             </div>
           </div>
 
-          <div className="card">
+          <div id="cartao-arroba" className={'card' + (sessao && carregou && !eu?.usuario && !semSql ? ' cartao-arroba-pendente' : '')}>
             <h2><Icon name="amigos" /> Seu @ e ID de amigo</h2>
             {!sessao ? (
               <>
                 <p className="mut small">Crie uma conta para ter um @ e um ID. Para te adicionar, seus amigos precisam dos dois.</p>
                 <button className="btn pri" onClick={entrar}>Entrar ou criar conta</button>
               </>
-            ) : eu ? (
-              <>
-                <p className="mut small" style={{ marginTop: 0 }}>Para te adicionar, seu amigo precisa do <b>@</b> e do <b>ID</b> juntos. Só o @ não basta.</p>
-                <div className="id-par">
-                  <div><small>@usuário</small><b translate="no">@{eu.usuario}</b></div>
-                  <div><small>ID</small><b translate="no">{fmtId(eu.codigo)}</b></div>
-                </div>
-                <div className="row wrap" style={{ marginTop: 12 }}>
-                  <button className="btn" onClick={() => copiar(`@${eu.usuario} · ID ${fmtId(eu.codigo)}`, 'Copiado')}><Icon name="clip" /> Copiar</button>
-                  <button className="btn pri" onClick={convidar}><Icon name="upload" /> Convidar amigo</button>
-                </div>
-              </>
+            ) : eu?.usuario ? (
+              trocando ? (
+                <CriarArroba atual={eu.usuario} pedirApelido={false} rotulo="Salvar novo @" onSalvar={salvarArroba} onCancelar={() => setTrocando(false)} texto="Seu ID não muda. Quem já é seu amigo continua amigo; quem for te adicionar passa a usar o @ novo." />
+              ) : (
+                <>
+                  <p className="mut small" style={{ marginTop: 0 }}>Para te adicionar, seu amigo precisa do <b>@</b> e do <b>ID</b> juntos. Só o @ não basta.</p>
+                  <div className="id-par">
+                    <div><small>@usuário</small><b translate="no">@{eu.usuario}</b></div>
+                    <div><small>ID</small><b translate="no">{fmtId(eu.codigo)}</b></div>
+                  </div>
+                  <div className="row wrap" style={{ marginTop: 12 }}>
+                    <button className="btn" onClick={() => copiar(`@${eu.usuario} · ID ${fmtId(eu.codigo)}`, 'Copiado')}><Icon name="clip" /> Copiar</button>
+                    <button className="btn pri" onClick={convidar}><Icon name="upload" /> Convidar amigo</button>
+                    <button className="btn ghost" onClick={() => setTrocando(true)}>Trocar @</button>
+                  </div>
+                </>
+              )
+            ) : semSql ? (
+              <div className="note warn">Faltam as tabelas de perfil e amigos no Supabase. Rode o SQL <b>supabase/amigos.sql</b> (SQL Editor → New query → Run) e abra esta tela de novo para criar seu @.</div>
             ) : carregou ? (
-              <div className="note warn">Seu perfil de amigos ainda não foi criado. Rode o SQL <b>supabase/amigos.sql</b> no Supabase e abra a aba Amigos para escolher seu @.</div>
+              <CriarArroba apelido0={s.perfil.apelido || eu?.apelido || sessao?.meta?.apelido || ''} onSalvar={salvarArroba} titulo={null} texto="Escolha o seu @, como no X. Seus amigos vão te achar por ele e pelo ID de 8 números que o app cria para você." />
             ) : (
               <div className="gc-vazio">Carregando…</div>
             )}

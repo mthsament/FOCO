@@ -893,3 +893,7 @@ details.card > summary { cursor: pointer; list-style: none; } details.card > sum
 .ah-arroba { color: var(--acc); font-weight: 700; }
 .amg-add { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; gap: 8px; align-items: stretch; }
 @media (max-width: 560px) { .perfil-hero { gap: 12px; padding: 14px; } .ph-nome { font-size: 26px; } .amg-add { grid-template-columns: minmax(0, 1fr); } .id-par { grid-template-columns: 1fr; } }
+
+.ph-criar { border: 1.5px dashed var(--acc); background: var(--acc-soft); color: var(--acc); font-weight: 700; font-size: 14px; padding: 4px 12px; border-radius: 99px; cursor: pointer; }
+.crie-arroba .fld { display: block; }
+.perfil-grid .cartao-arroba-pendente { order: -1; border-color: var(--acc-line); background: linear-gradient(160deg, var(--acc-soft), var(--card) 60%); }

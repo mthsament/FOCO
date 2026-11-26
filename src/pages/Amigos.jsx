@@ -5,11 +5,12 @@ import MascoteAba from '../components/MascoteAba.jsx'
 import Chama from '../components/Chama.jsx'
 import Icon from '../components/Icon.jsx'
 import AvatarBase from '../components/Avatar.jsx'
+import CriarArroba from '../components/CriarArroba.jsx'
 import { Empty, Seg, toast } from '../components/ui.jsx'
 import { todayISO } from '../lib/dates.js'
 import {
-  NOME_TIPO, TIPOS, aceitarConvite, aceitarPedido, adicionarAmigo, ativarAmigos, calcularOfensiva, criarOfensiva, criarPerfil,
-  encerrarOfensiva, erroUsuario, fmtId, limpaUsuario, removerAmizade, sairDaOfensiva, useAmigos,
+  NOME_TIPO, TIPOS, aceitarConvite, aceitarPedido, adicionarAmigo, ativarAmigos, calcularOfensiva, criarOfensiva,
+  definirUsuario, encerrarOfensiva, fmtId, limpaUsuario, removerAmizade, sairDaOfensiva, useAmigos,
 } from '../lib/amigos.js'
 
 function Avatar({ perfil, estado, tam = 40, eu = false }) {
@@ -72,11 +73,11 @@ export default function Amigos() {
     )
   }
   const D = A.dados
-  if (!D.eu) {
+  if (!D.eu?.usuario) {
     return (
       <>
         {cabeca}
-        <CriarPerfil apelido0={s.perfil.apelido || ''} onCriar={(d) => tenta(async () => { await criarPerfil(sessao.id, d); ativarAmigos(sessao.id) }, 'Perfil criado! Agora convide um amigo.')} ocupado={ocupado} />
+        <div className="card"><h2>Crie seu @ para usar amigos</h2><CriarArroba apelido0={s.perfil.apelido || D.eu?.apelido || sessao.meta?.apelido || ''} texto="Como no X: você escolhe um @ único. Seus amigos te acham pelo @ e por um ID de 8 números que o app cria para você." onSalvar={async (d) => { await definirUsuario(sessao.id, d); ativarAmigos(sessao.id); await A.recarregar(); toast('Seu @ está pronto! Agora convide um amigo.') }} /></div>
       </>
     )
   }
@@ -105,24 +106,6 @@ function SemTabelas() {
         <li>Clique em <b>Run</b> e volte aqui.</li>
       </ol>
       <p className="mut small">O SQL cria só tabelas de amigos, com regras de segurança por linha. Seus dados atuais não são tocados.</p>
-    </div>
-  )
-}
-
-function CriarPerfil({ onCriar, ocupado, apelido0 }) {
-  const [apelido, setApelido] = useState(apelido0)
-  const [usuario, setUsuario] = useState('')
-  const msg = usuario ? erroUsuario(usuario) : ''
-  return (
-    <div className="card">
-      <h2>Escolha seu @ de amigo</h2>
-      <p className="mut small">Seus amigos vão te achar pelo <b>@</b> e por um <b>ID</b> de 8 números que o app cria para você. Só o apelido, a foto, o “sobre” e o progresso diário (treino, dieta e água) ficam visíveis para quem você aceitar.</p>
-      <label className="fld"><span className="f">Apelido</span><input type="text" maxLength={24} autoComplete="nickname" value={apelido} onChange={(e) => setApelido(e.target.value)} /></label>
-      <label className="fld" style={{ marginTop: 10 }}><span className="f">Seu @ (único)</span>
-        <span className="ent-arroba"><i>@</i><input type="text" autoCapitalize="none" spellCheck={false} maxLength={20} autoComplete="username" value={usuario.replace(/^@+/, '')} onChange={(e) => setUsuario(e.target.value)} placeholder="seu_usuario" /></span>
-        <small className={'ent-dica' + (msg ? ' ruim' : '')}>{msg || 'Letras minúsculas, números e _'}</small>
-      </label>
-      <button className="btn pri" style={{ marginTop: 12 }} disabled={ocupado || !!erroUsuario(usuario) || apelido.trim().length < 2} onClick={() => onCriar({ usuario, apelido })}>Criar meu perfil</button>
     </div>
   )
 }
