@@ -815,3 +815,41 @@ details.card > summary { cursor: pointer; list-style: none; } details.card > sum
   .pt-txt { width: 100%; } .pt-txt small { font-size: 10.5px; } .pt-txt b { font-size: 17px; white-space: normal; } .pt-txt em { display: none; }
   .pt-bar { width: 100%; }
 }
+
+/* ---------- Amigos ---------- */
+.av { position: relative; display: inline-grid; place-items: center; flex: none; border-radius: 50%; font: 700 18px/1 var(--display); color: #fff; background: var(--c, var(--acc)); box-shadow: inset 0 -3px 0 rgba(0, 0, 0, .18); border: 2.5px solid transparent; }
+.av.ok { border-color: var(--ok); } .av.pend { border-color: var(--line); opacity: .88; } .av.miss { border-color: var(--bad); }
+.av-ok { position: absolute; right: -4px; bottom: -4px; width: 17px; height: 17px; display: grid; place-items: center; border-radius: 50%; background: var(--ok); color: #fff; border: 2px solid var(--card); } .av-ok .ico { width: 10px; height: 10px; }
+.amg-hero { display: flex; align-items: center; gap: 14px 18px; flex-wrap: wrap; padding: 16px; margin-bottom: 14px; border-radius: 22px; color: var(--on-ink); background: linear-gradient(135deg, var(--ink) 0%, var(--ink2) 100%); box-shadow: 0 10px 30px rgba(15, 27, 45, .18); }
+.ah-esq { display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1 1 200px; }
+.ah-nome { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-width: 0; } .ah-nome b { font: 700 24px/1.1 var(--display); overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.ah-nome input { min-width: 0; width: 140px; }
+.ah-edit { border: 0; background: none; padding: 0; color: var(--on-ink-mut); font-size: 12.5px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.ah-cod { display: flex; flex-direction: column; gap: 2px; padding: 8px 14px; border-radius: 14px; background: rgba(255, 255, 255, .07); border: 1px dashed rgba(255, 255, 255, .28); }
+.ah-cod small { font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--on-ink-mut); }
+.ah-cod b { font: 700 28px/1.1 ui-monospace, Consolas, monospace; letter-spacing: .06em; user-select: all; }
+.ah-acoes { display: flex; gap: 8px; flex-wrap: wrap; }
+.amg-hero .btn:not(.pri) { background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .2); color: var(--on-ink); }
+.amg-linha { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid var(--line); flex-wrap: wrap; } .amg-linha:first-of-type { border-top: 0; }
+.amg-convites { border-color: var(--acc-line); background: linear-gradient(160deg, var(--acc-soft), var(--card) 60%); }
+.amg-bolas { display: inline-flex; gap: 6px; }
+.bola { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--card2); color: var(--mut); border: 1.5px solid var(--line); } .bola .ico { width: 16px; height: 16px; }
+.bola.ok { background: rgba(30, 142, 90, .14); color: var(--ok); border-color: var(--ok); } .bola.miss { color: var(--bad); border-color: var(--bad); } .bola.rest { opacity: .55; }
+.gr-card { display: flex; flex-direction: column; gap: 12px; padding: 16px; border: 1.5px solid var(--line); border-radius: 20px; background: var(--card); box-shadow: var(--shadow); transition: border-color 200ms var(--ease-out), box-shadow 200ms var(--ease-out); }
+.gr-card.feita { border-color: color-mix(in srgb, var(--ok) 60%, var(--line)); box-shadow: 0 6px 22px rgba(30, 142, 90, .14); }
+.gr-topo { display: flex; align-items: flex-start; gap: 10px; } .gr-nome { display: block; font: 700 22px/1.15 var(--display); margin-bottom: 4px; }
+.gr-centro { display: flex; align-items: center; gap: 10px; }
+.gr-centro .chama { width: 34px; height: 42px; }
+.gr-n { font: 700 64px/1 var(--display); font-variant-numeric: tabular-nums; color: var(--acc); animation: gc-num 520ms var(--ease-out) both; }
+.gr-dias { display: flex; flex-direction: column; line-height: 1.2; font-size: 15px; } .gr-dias small { color: var(--mut); font-size: 12.5px; }
+.gr-membros { display: flex; gap: 10px 14px; flex-wrap: wrap; }
+.gr-m { display: grid; justify-items: center; gap: 2px; min-width: 64px; font-size: 13px; max-width: 84px; text-align: center; } .gr-m > span:not(.av) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; font-weight: 600; }
+.gr-m small { font-size: 11px; color: var(--mut); } .gr-m small.st-ok { color: var(--ok); } .gr-m small.st-miss { color: var(--bad); }
+.gr-m.espera { opacity: .6; }
+.gr-rodape { padding: 9px 12px; border-radius: 12px; background: var(--card2); font-size: 13.5px; color: var(--mut); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; } .gr-rodape b { color: var(--txt); }
+.gr-rodape.ok { background: rgba(30, 142, 90, .12); color: var(--ok); } .gr-rodape .ico { width: 16px; height: 16px; }
+.nova-gr { display: grid; gap: 14px; margin-bottom: 14px; }
+.amg-escolha { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.amg-pick { display: inline-flex; align-items: center; gap: 8px; padding: 5px 14px 5px 6px; min-height: 42px; border: 2px solid var(--line); border-radius: 99px; background: var(--card); color: var(--txt); font-weight: 600; cursor: pointer; transition: border-color 150ms var(--ease-out), background-color 150ms var(--ease-out), transform 150ms var(--ease-out); } .amg-pick:active { transform: scale(.97); }
+.amg-pick.on { border-color: var(--acc); background: var(--acc-soft); }
+@media (prefers-reduced-motion: reduce) { .gr-n { animation: none; } }

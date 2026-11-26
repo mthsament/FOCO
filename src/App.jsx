@@ -7,6 +7,7 @@ import { enviarProgresso, lerCfg, sincronizarAgenda } from './lib/push.js'
 import { aguaDoDia, metaAgua } from './lib/metrics.js'
 import { todayISO } from './lib/dates.js'
 import { corridaDuplicada, registrarCorrida } from './lib/registro.js'
+import { usePublicarCheckins } from './lib/amigos.js'
 import Icon from './components/Icon.jsx'
 import { AvisoAtualizacao } from './components/Atualizacao.jsx'
 import CelebracaoHost from './components/Celebracao.jsx'
@@ -14,6 +15,7 @@ import ConquistasHost from './components/ConquistasHost.jsx'
 import Hoje from './pages/Hoje.jsx'
 import Plano from './pages/Plano.jsx'
 import Evolucao from './pages/Evolucao.jsx'
+import Amigos from './pages/Amigos.jsx'
 import Conquistas from './pages/Conquistas.jsx'
 import Config from './pages/Config.jsx'
 
@@ -21,6 +23,7 @@ const TABS = [
   ['hoje', 'Hoje', 'hoje', Hoje],
   ['plano', 'Plano', 'lista', Plano],
   ['evolucao', 'Evolução', 'evolucao', Evolucao],
+  ['amigos', 'Amigos', 'amigos', Amigos],
   ['conquistas', 'Conquistas', 'trofeu', Conquistas],
   ['config', 'Ajustes', 'config', Config],
 ]
@@ -88,11 +91,18 @@ function useSincronizarLembretes() {
   }, [hoje, ml, meta])
 }
 
+// Quem já criou perfil em Amigos publica, sozinho, se cumpriu treino, dieta e água
+function usePublicarCheckinsDoApp() {
+  const { s, sync } = useApp()
+  usePublicarCheckins(s, sync?.sessao)
+}
+
 export default function App() {
   const [tab, setTab] = useState(tabFromHash)
   const [params, setParams] = useState(paramsFromHash)
   useImportarLink()
   useSincronizarLembretes()
+  usePublicarCheckinsDoApp()
 
   const go = useCallback((t, p = {}) => {
     const f = FUNDIDAS[t] // go('treino'), go('dieta'), go('corrida') e go('bio') continuam valendo

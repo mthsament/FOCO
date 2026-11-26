@@ -218,6 +218,14 @@ const G = {
     </>
   ),
   lista: <path d="M8.5 6.5H20M8.5 12H20M8.5 17.5H20M4 6.5h.01M4 12h.01M4 17.5h.01" className="bold" />,
+  amigos: (
+    <>
+      <circle cx="9" cy="8.2" r="3.2" />
+      <path d="M3.4 19.2c.5-3.4 2.8-5.2 5.6-5.2s5.1 1.8 5.6 5.2" />
+      <circle cx="17.2" cy="9.2" r="2.5" />
+      <path d="M15.6 14.3c.5-.2 1-.3 1.6-.3 2.2 0 3.7 1.5 4 4.4" />
+    </>
+  ),
   dot: <circle className="s" cx="12" cy="12" r="3" />,
   ring: <circle cx="12" cy="12" r="5" />,
 }

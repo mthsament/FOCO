@@ -91,6 +91,8 @@ export function mascoteDaAba(aba, s, { sync } = {}) {
       const p = av.proximas[0]
       return { pose: 1, anim: 'forca', fala: `${av.trofeus} troféus conquistados.${p ? ` Próxima meta: ${p.nome}.` : ''}` }
     }
+    case 'amigos':
+      return { pose: 1, anim: 'pula', fala: 'Ofensiva em dupla é muito mais difícil de largar. Chame um amigo e comecem juntos!' }
     case 'config':
       return sync?.sessao
         ? { pose: 6, anim: 'idle', fala: 'Tudo sincronizado com a sua conta. Faça um backup de vez em quando.' }
