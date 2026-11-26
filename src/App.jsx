@@ -7,7 +7,9 @@ import { enviarProgresso, lerCfg, sincronizarAgenda } from './lib/push.js'
 import { aguaDoDia, metaAgua } from './lib/metrics.js'
 import { todayISO } from './lib/dates.js'
 import { corridaDuplicada, registrarCorrida } from './lib/registro.js'
-import { usePublicarCheckins } from './lib/amigos.js'
+import { usePerfilPublico, usePublicarCheckins } from './lib/amigos.js'
+import Avatar from './components/Avatar.jsx'
+import TelaEntrada from './components/TelaEntrada.jsx'
 import Icon from './components/Icon.jsx'
 import { AvisoAtualizacao } from './components/Atualizacao.jsx'
 import CelebracaoHost from './components/Celebracao.jsx'
@@ -17,7 +19,7 @@ import Plano from './pages/Plano.jsx'
 import Evolucao from './pages/Evolucao.jsx'
 import Amigos from './pages/Amigos.jsx'
 import Conquistas from './pages/Conquistas.jsx'
-import Config from './pages/Config.jsx'
+import Perfil from './pages/Perfil.jsx'
 
 const TABS = [
   ['hoje', 'Hoje', 'hoje', Hoje],
@@ -25,14 +27,14 @@ const TABS = [
   ['evolucao', 'Evolução', 'evolucao', Evolucao],
   ['amigos', 'Amigos', 'amigos', Amigos],
   ['conquistas', 'Conquistas', 'trofeu', Conquistas],
-  ['config', 'Ajustes', 'config', Config],
+  ['perfil', 'Perfil', 'config', Perfil],
 ]
 
 const NavCtx = createContext(null)
 export const useNav = () => useContext(NavCtx)
 
-// Abas que foram juntadas em outras: treino, dieta e corrida viraram seções do Plano; a bio foi para a Evolução
-const FUNDIDAS = { treino: ['plano', 'treino'], dieta: ['plano', 'dieta'], corrida: ['plano', 'corrida'], bio: ['evolucao', 'medir'] }
+// Abas que foram juntadas em outras: treino, dieta e corrida viraram seções do Plano; a bio foi para a Evolução; os ajustes foram para o Perfil
+const FUNDIDAS = { treino: ['plano', 'treino'], dieta: ['plano', 'dieta'], corrida: ['plano', 'corrida'], bio: ['evolucao', 'medir'], config: ['perfil', 'ajustes'] }
 const tabFromHash = () => {
   const h = location.hash.replace('#', '')
   if (FUNDIDAS[h]) return FUNDIDAS[h][0]
@@ -93,11 +95,19 @@ function useSincronizarLembretes() {
 
 // Quem já criou perfil em Amigos publica, sozinho, se cumpriu treino, dieta e água
 function usePublicarCheckinsDoApp() {
-  const { s, sync } = useApp()
+  const { s, sync, update } = useApp()
+  usePerfilPublico(s, sync?.sessao, update)
   usePublicarCheckins(s, sync?.sessao)
 }
 
+// "Continuar sem conta": lembra a escolha neste aparelho até a pessoa entrar ou sair de uma conta
+const CHAVE_SEM_CONTA = 'foco-sem-conta'
+const lerSemConta = () => { try { return localStorage.getItem(CHAVE_SEM_CONTA) === '1' } catch { return false } }
+const gravarSemConta = (v) => { try { v ? localStorage.setItem(CHAVE_SEM_CONTA, '1') : localStorage.removeItem(CHAVE_SEM_CONTA) } catch { /* sem armazenamento */ } }
+
 export default function App() {
+  const { s, sync } = useApp()
+  const [semConta, setSemConta] = useState(lerSemConta)
   const [tab, setTab] = useState(tabFromHash)
   const [params, setParams] = useState(paramsFromHash)
   useImportarLink()
@@ -113,6 +123,13 @@ export default function App() {
     window.scrollTo(0, 0)
   }, [])
 
+  // entrou numa conta: some a escolha de "sem conta"; sair mostra a tela de entrada de novo
+  useEffect(() => {
+    if (sync.sessao && semConta) { gravarSemConta(false); setSemConta(false) }
+  }, [sync.sessao, semConta])
+  const pular = useCallback(() => { gravarSemConta(true); setSemConta(true) }, [])
+  const entrar = useCallback(() => { gravarSemConta(false); setSemConta(false) }, [])
+
   useEffect(() => {
     const h = () => { setTab(tabFromHash()); setParams(paramsFromHash()) }
     window.addEventListener('hashchange', h)
@@ -120,17 +137,24 @@ export default function App() {
   }, [])
 
   const Page = TABS.find((t) => t[0] === tab)[3]
-  const principais = TABS.filter((t) => t[0] !== 'config')
+  const principais = TABS.filter((t) => t[0] !== 'perfil')
+  const nomePerfil = s.perfil.apelido || sync.sessao?.meta?.apelido || sync.sessao?.email || ''
+
+  // ainda lendo se há alguém logado: não pisca a tela de entrada
+  if (!sync.sessaoLida) return <div className="app" />
+  if (!sync.sessao && !semConta) return <><TelaEntrada onPular={pular} /><Toaster /></>
 
   return (
-    <NavCtx.Provider value={{ tab, go, params }}>
+    <NavCtx.Provider value={{ tab, go, params, entrar }}>
       <div className="app">
         <a className="skip" href="#conteudo" onClick={(e) => { e.preventDefault(); document.getElementById('conteudo')?.focus() }}>Ir para o conteúdo</a>
         <header className="top">
           <span className="logo" translate="no">FOCO</span>
           <span className="sp" />
           <ThemeToggle />
-          <button className="iconbtn" onClick={() => go('config')} aria-label="Ajustes"><Icon name="config" /></button>
+          <button className="iconbtn perfilbtn" onClick={() => go('perfil')} aria-label="Perfil e ajustes">
+            <Avatar src={s.perfil.foto} nome={nomePerfil} seed={sync.sessao?.id || nomePerfil} tam={32} />
+          </button>
         </header>
         <nav className="nav" aria-label="Navegação">
           <div className="brand" translate="no">FOCO</div>
@@ -142,10 +166,9 @@ export default function App() {
           ))}
           <div className="grow" />
           <ThemeToggle className="cfg" rotulo />
-          <button className={'cfg ' + (tab === 'config' ? 'on' : '')} aria-current={tab === 'config' ? 'page' : undefined} onClick={() => go('config')}
-          >
-            <span className="ic"><Icon name="config" /></span>
-            <span>Ajustes</span>
+          <button className={'cfg ' + (tab === 'perfil' ? 'on' : '')} aria-current={tab === 'perfil' ? 'page' : undefined} onClick={() => go('perfil')}>
+            <span className="ic"><Avatar src={s.perfil.foto} nome={nomePerfil} seed={sync.sessao?.id || nomePerfil} tam={28} /></span>
+            <span>Perfil</span>
           </button>
         </nav>
         <main id="conteudo" tabIndex={-1}>

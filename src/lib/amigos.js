@@ -14,16 +14,28 @@ export const TIPOS = [
 ]
 export const NOME_TIPO = Object.fromEntries(TIPOS.map(([k, n]) => [k, n]))
 
-const ALF = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789' // sem 0/O, 1/I
-const novoCodigo = () => 'FOCO-' + Array.from({ length: 6 }, () => ALF[Math.floor(Math.random() * ALF.length)]).join('')
-export const normalizaCodigo = (c) => String(c || '').toUpperCase().replace(/\s+/g, '').replace(/^FOCO-?/, 'FOCO-')
+// ID de amigo: 8 números (mostrado como 4821 7305). Para adicionar alguém é preciso o @ e o ID.
+const novoId = () => String(Math.floor(Math.random() * 1e8)).padStart(8, '0')
+export const soDigitos = (t) => String(t || '').replace(/\D/g, '')
+export const fmtId = (id) => { const d = soDigitos(id); return d.length === 8 ? `${d.slice(0, 4)} ${d.slice(4)}` : String(id || '') }
+export const USUARIO_RE = /^[a-z0-9_]{3,20}$/
+export const limpaUsuario = (u) => String(u || '').trim().replace(/^@+/, '').toLowerCase()
+export const erroUsuario = (u) => {
+  const x = limpaUsuario(u)
+  if (x.length < 3) return 'O @ precisa de pelo menos 3 caracteres.'
+  if (!USUARIO_RE.test(x)) return 'Use só letras minúsculas, números e _ (até 20).'
+  return ''
+}
+
+export const privacidade = (s) => ({ pedidos: true, progresso: true, foto: true, ...(s?.perfil?.privacidade || {}) })
 
 export class ErroAmigos extends Error {
   constructor(msg, semTabelas = false) { super(msg); this.semTabelas = semTabelas }
 }
 function traduz(e) {
   const m = e?.message || String(e)
-  if (e?.code === 'PGRST205' || e?.code === '42P01' || e?.code === 'PGRST202' || /schema cache|does not exist|Could not find the (table|function)/i.test(m)) return new ErroAmigos('As tabelas de amigos ainda não existem no Supabase.', true)
+  if (['PGRST205', '42P01', 'PGRST202', 'PGRST204', '42703', '42883'].includes(e?.code) || /schema cache|does not exist|Could not find the (table|function|'[^']+' column)/i.test(m)) return new ErroAmigos('As tabelas de perfil e amigos ainda não estão no Supabase (ou falta atualizar o SQL).', true)
+  if (e?.code === '23505' && /usuario/i.test(m)) return new ErroAmigos('Esse @ já está em uso. Escolha outro.')
   if (e?.code === '23505') return new ErroAmigos('Isso já existe (pedido ou amizade com essa pessoa).')
   if (/fetch|network|Failed/i.test(m)) return new ErroAmigos('Sem conexão. Tente de novo quando voltar a internet.')
   if (/row-level security|permission/i.test(m)) return new ErroAmigos('Sem permissão para isso. Confira se rodou o SQL de amigos completo.')
@@ -34,7 +46,7 @@ const ok = ({ data, error }) => { if (error) throw traduz(error); return data }
 // ---------- leitura ----------
 export async function carregar(uid, hoje = todayISO()) {
   const [perfis, amizades, ofensivas, membros] = await Promise.all([
-    supabase.from('perfis').select('user_id, apelido, codigo').then(ok),
+    supabase.from('perfis').select('user_id, apelido, usuario, codigo, bio, avatar, aceita_pedidos').then(ok),
     supabase.from('amizades').select('id, de, para, status, criado_em').then(ok),
     supabase.from('ofensivas').select('id, nome, tipo, criada_por, inicio, encerrada').then(ok),
     supabase.from('ofensiva_membros').select('ofensiva_id, user_id, status').then(ok),
@@ -50,29 +62,42 @@ export async function carregar(uid, hoje = todayISO()) {
 }
 
 // ---------- escrita ----------
-export async function criarPerfil(uid, apelido) {
-  const nome = apelido.trim()
-  if (nome.length < 2) throw new ErroAmigos('Escolha um apelido com pelo menos 2 letras.')
+export async function criarPerfil(uid, { usuario, apelido }) {
+  const u = limpaUsuario(usuario)
+  const msg = erroUsuario(u)
+  if (msg) throw new ErroAmigos(msg)
+  const nome = String(apelido || '').trim() || u
   for (let i = 0; i < 6; i++) {
-    const { error } = await supabase.from('perfis').insert({ user_id: uid, apelido: nome.slice(0, 24), codigo: novoCodigo() })
+    const { error } = await supabase.from('perfis').insert({ user_id: uid, apelido: nome.slice(0, 24), usuario: u, codigo: novoId() })
     if (!error) return
-    if (error.code === '23505' && /user_id|pkey/i.test(error.message || '')) return // já existia
+    if (error.code === '23505' && /usuario/i.test(error.message || '')) throw traduz(error)
+    if (error.code === '23505' && /pkey|user_id/i.test(error.message || '')) return // já existia
     if (error.code !== '23505') throw traduz(error)
   }
-  throw new ErroAmigos('Não consegui gerar um código livre. Tente de novo.')
+  throw new ErroAmigos('Não consegui gerar um ID livre. Tente de novo.')
 }
-export const mudarApelido = async (uid, apelido) => {
-  if (apelido.trim().length < 2) throw new ErroAmigos('Escolha um apelido com pelo menos 2 letras.')
-  ok(await supabase.from('perfis').update({ apelido: apelido.trim().slice(0, 24) }).eq('user_id', uid))
+export async function atualizarPerfil(uid, campos) {
+  ok(await supabase.from('perfis').update(campos).eq('user_id', uid))
+}
+export async function usuarioDisponivel(u) {
+  const { data, error } = await supabase.rpc('usuario_disponivel', { u: limpaUsuario(u) })
+  if (error) return null // sem o SQL ainda: não dá para saber
+  return !!data
+}
+export async function meuPerfil(uid) {
+  const { data, error } = await supabase.from('perfis').select('user_id, apelido, usuario, codigo, bio, avatar, aceita_pedidos').eq('user_id', uid).maybeSingle()
+  if (error) throw traduz(error)
+  return data
 }
 
-export async function adicionarPorCodigo(uid, codigo, dados) {
-  const c = normalizaCodigo(codigo)
-  if (c.length < 8) throw new ErroAmigos('Digite o código completo, como FOCO-AB12CD.')
-  const achados = ok(await supabase.rpc('buscar_por_codigo', { c }))
+export async function adicionarAmigo(uid, usuario, id, dados) {
+  const u = limpaUsuario(usuario)
+  if (!USUARIO_RE.test(u)) throw new ErroAmigos('Digite o @ do seu amigo.')
+  if (soDigitos(id).length !== 8) throw new ErroAmigos('O ID tem 8 números, como 4821 7305.')
+  const achados = ok(await supabase.rpc('buscar_amigo', { u, c: soDigitos(id) }))
   const alvo = achados?.[0]
-  if (!alvo) throw new ErroAmigos('Não achei ninguém com esse código.')
-  if (alvo.user_id === uid) throw new ErroAmigos('Esse é o seu próprio código.')
+  if (!alvo) throw new ErroAmigos('Não achei ninguém com esse @ e esse ID. Confira os dois (ou a pessoa pausou os pedidos).')
+  if (alvo.user_id === uid) throw new ErroAmigos('Esse é o seu próprio perfil.')
   const ja = dados?.amizades?.find((a) => (a.de === uid && a.para === alvo.user_id) || (a.de === alvo.user_id && a.para === uid))
   if (ja?.status === 'aceita') throw new ErroAmigos(`Você e ${alvo.apelido} já são amigos.`)
   if (ja && ja.de === alvo.user_id) { // a pessoa já tinha pedido: aceita direto
@@ -166,10 +191,56 @@ export function usePublicarCheckins(s, sessao) {
   const linhas = s ? checkinsRecentes(s) : null
   const chave = linhas ? JSON.stringify(linhas) : ''
   useEffect(() => {
-    if (!uid || !linhas || !amigosAtivo(uid) || chave === ultimo.current) return
+    if (!uid || !linhas || !amigosAtivo(uid) || chave === ultimo.current || !privacidade(s).progresso) return
     const t = setTimeout(() => {
       publicarCheckins(uid, linhas).then(() => { ultimo.current = chave }).catch(() => {})
     }, 4000)
+    return () => clearTimeout(t)
+  }, [uid, chave])
+}
+
+// Espelha apelido, foto e "sobre" no perfil público (respeitando a privacidade) e garante que o perfil exista
+export function usePerfilPublico(s, sessao, atualizar) {
+  const uid = sessao?.id
+  const meta = sessao?.meta
+  const ultimo = useRef('')
+  const priv = s ? privacidade(s) : null
+  const campos = s
+    ? {
+        ...(s.perfil.apelido ? { apelido: s.perfil.apelido.slice(0, 24) } : {}),
+        bio: priv.foto ? (s.perfil.sobre || '').slice(0, 160) || null : null,
+        avatar: priv.foto ? s.perfil.foto || null : null,
+        aceita_pedidos: priv.pedidos,
+      }
+    : null
+  const chave = JSON.stringify(campos)
+
+  // 1) conta nova: cria o perfil com o @ escolhido no cadastro e traz o apelido para este aparelho
+  useEffect(() => {
+    if (!uid || !s) return
+    let vivo = true
+    ;(async () => {
+      try {
+        let eu = await meuPerfil(uid)
+        if (!eu && meta?.usuario) {
+          await criarPerfil(uid, { usuario: meta.usuario, apelido: meta.apelido })
+          eu = await meuPerfil(uid)
+        }
+        if (eu && vivo) {
+          ativarAmigos(uid)
+          if (!s.perfil.apelido && eu.apelido) atualizar((x) => { x.perfil.apelido = eu.apelido })
+        }
+      } catch { /* sem o SQL ainda: o perfil local continua funcionando */ }
+    })()
+    return () => { vivo = false }
+  }, [uid, !!s])
+
+  // 2) mudanças no perfil local sobem para o perfil público
+  useEffect(() => {
+    if (!uid || !campos || !amigosAtivo(uid) || chave === ultimo.current) return
+    const t = setTimeout(() => {
+      atualizarPerfil(uid, campos).then(() => { ultimo.current = chave }).catch(() => {})
+    }, 3000)
     return () => clearTimeout(t)
   }, [uid, chave])
 }

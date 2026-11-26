@@ -9,7 +9,7 @@ App (PWA) para celular e PC que controla dieta, treino e corrida a partir das su
 - **Dieta**: cardápio da semana editável, opções, metas calculadas (Mifflin-St Jeor) e rotina.
 - **Corrida**: plano de 12 semanas, timer de intervalos com aviso sonoro, registro manual e importação de GPX/TCX.
 - **Evolução**: peso, composição corporal, cintura, cargas, constância e corrida.
-- **Amigos**: adicione amigos pelo código e comecem uma ofensiva em grupo (treino, dieta, água ou geral). Precisa de conta e de rodar `supabase/amigos.sql` uma vez no Supabase.
+- **Amigos**: adicione amigos pelo código e comecem uma ofensiva em grupo (treino, dieta, água ou geral). Precisa de conta (@ e ID de amigo) e de rodar `supabase/amigos.sql` no Supabase.
 - **Backup** em JSON. Os dados ficam no aparelho (IndexedDB).
 
 ## Rodar

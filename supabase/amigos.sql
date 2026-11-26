@@ -1,15 +1,26 @@
--- FOCO · Amigos e ofensivas em grupo
--- Rode UMA vez no Supabase: SQL Editor → New query → cole tudo → Run.
--- Só compartilha o mínimo: apelido, código de amigo e, por dia, se treino / dieta / água foram cumpridos.
+-- FOCO · Perfil, amigos e ofensivas em grupo
+-- Rode no Supabase: SQL Editor → New query → cole tudo → Run. Pode rodar de novo sem problema (é idempotente).
+-- Só compartilha o mínimo: @usuário, apelido, ID de amigo, foto e "sobre" (se você deixar) e, por dia, se treino / dieta / água foram cumpridos.
 -- Peso, medidas, cargas, corridas e o resto continuam só na sua conta (tabela "estados").
 
 -- ---------- tabelas ----------
 create table if not exists public.perfis (
   user_id   uuid primary key references auth.users (id) on delete cascade,
   apelido   text not null check (char_length(apelido) between 2 and 24),
-  codigo    text not null unique,
+  codigo    text not null unique,            -- o "ID" numérico de amigo
   criado_em timestamptz not null default now()
 );
+alter table public.perfis add column if not exists usuario text;                         -- o @ (minúsculas, números e _)
+alter table public.perfis add column if not exists bio text;                             -- "sobre"
+alter table public.perfis add column if not exists avatar text;                          -- foto reduzida (data URL)
+alter table public.perfis add column if not exists aceita_pedidos boolean not null default true;
+alter table public.perfis drop constraint if exists perfis_usuario_formato;
+alter table public.perfis add constraint perfis_usuario_formato check (usuario is null or usuario ~ '^[a-z0-9_]{3,20}$');
+alter table public.perfis drop constraint if exists perfis_bio_tamanho;
+alter table public.perfis add constraint perfis_bio_tamanho check (bio is null or char_length(bio) <= 160);
+alter table public.perfis drop constraint if exists perfis_avatar_tamanho;
+alter table public.perfis add constraint perfis_avatar_tamanho check (avatar is null or char_length(avatar) <= 60000);
+create unique index if not exists perfis_usuario_unico on public.perfis (usuario) where usuario is not null;
 
 create table if not exists public.amizades (
   id        uuid primary key default gen_random_uuid(),
@@ -77,11 +88,22 @@ language sql stable security definer set search_path = public as $$
   );
 $$;
 
--- procura alguém pelo código de amigo (a pessoa não precisa ser sua amiga ainda)
-create or replace function public.buscar_por_codigo(c text) returns table (user_id uuid, apelido text)
+-- o @ está livre? (pode ser chamada na tela de cadastro, antes de entrar)
+create or replace function public.usuario_disponivel(u text) returns boolean
 language sql stable security definer set search_path = public as $$
-  select p.user_id, p.apelido from perfis p where p.codigo = upper(trim(c)) limit 1;
+  select not exists (select 1 from perfis where usuario = lower(ltrim(trim(u), '@')));
 $$;
+
+-- achar alguém para adicionar: precisa do @ E do ID (só o @ não basta)
+create or replace function public.buscar_amigo(u text, c text) returns table (user_id uuid, apelido text)
+language sql stable security definer set search_path = public as $$
+  select p.user_id, p.apelido from perfis p
+  where p.usuario = lower(ltrim(trim(u), '@'))
+    and regexp_replace(p.codigo, '\D', '', 'g') = regexp_replace(c, '\D', '', 'g')
+    and p.aceita_pedidos
+  limit 1;
+$$;
+drop function if exists public.buscar_por_codigo(text);
 
 -- ---------- segurança por linha (RLS) ----------
 alter table public.perfis enable row level security;
@@ -140,4 +162,5 @@ create policy membros_sair on public.ofensiva_membros for delete to authenticate
 
 grant usage on schema public to authenticated;
 grant select, insert, update, delete on public.perfis, public.amizades, public.checkins, public.ofensivas, public.ofensiva_membros to authenticated;
-grant execute on function public.buscar_por_codigo(text) to authenticated;
+grant execute on function public.buscar_amigo(text, text) to authenticated;
+grant execute on function public.usuario_disponivel(text) to anon, authenticated;

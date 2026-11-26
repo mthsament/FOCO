@@ -18,13 +18,18 @@ function traduzir(e) {
   const m = e?.message || String(e)
   if (e?.code === 'PGRST205' || e?.code === '42P01' || /does not exist|schema cache/i.test(m)) return 'A tabela "estados" não existe no Supabase. Rode o SQL de criação.'
   if (/Invalid login credentials/i.test(m)) return 'E-mail ou senha incorretos.'
-  if (/Email not confirmed/i.test(m)) return 'E-mail ainda não confirmado no Supabase.'
+  if (/Email not confirmed/i.test(m)) return 'Confirme seu e-mail (veja a caixa de entrada e o spam) e entre de novo.'
+  if (/already registered|already been registered/i.test(m)) return 'Esse e-mail já tem conta. Use "Entrar".'
+  if (/password should be at least|Password should/i.test(m)) return 'A senha precisa ter pelo menos 6 caracteres.'
+  if (/rate limit|too many/i.test(m)) return 'Muitas tentativas. Espere um minuto e tente de novo.'
+  if (/valid email|invalid.*email/i.test(m)) return 'Esse e-mail não parece válido.'
   if (/fetch|network|Failed/i.test(m)) return 'Sem conexão. As alterações ficam salvas e sobem quando voltar.'
   return m
 }
 
 export function useSincronia(state, setRaw, normalizar) {
   const [sessao, setSessao] = useState(null)
+  const [sessaoLida, setSessaoLida] = useState(false) // já sabemos se há alguém logado?
   const [info, setInfo] = useState({ status: 'off', msg: '', ultima: null })
   const [conf, setConf] = useState(null)
   const [pronto, setPronto] = useState(false)
@@ -95,8 +100,8 @@ export function useSincronia(state, setRaw, normalizar) {
 
   // sessão de login
   useEffect(() => {
-    const dados = (ses) => (ses ? { id: ses.user.id, email: ses.user.email } : null)
-    supabase.auth.getSession().then(({ data }) => setSessao(dados(data.session)))
+    const dados = (ses) => (ses ? { id: ses.user.id, email: ses.user.email, meta: ses.user.user_metadata || {} } : null)
+    supabase.auth.getSession().then(({ data }) => { setSessao(dados(data.session)); setSessaoLida(true) }).catch(() => setSessaoLida(true))
     const { data: sub } = supabase.auth.onAuthStateChange((_e, ses) => setSessao(dados(ses)))
     return () => sub.subscription.unsubscribe()
   }, [])
@@ -135,6 +140,15 @@ export function useSincronia(state, setRaw, normalizar) {
     const { error } = await supabase.auth.signInWithPassword({ email, password: senha })
     if (error) throw new Error(traduzir(error))
   }
+  const cadastrar = async (email, senha, meta) => {
+    const { data, error } = await supabase.auth.signUp({ email, password: senha, options: { data: meta } })
+    if (error) throw new Error(traduzir(error))
+    return { logado: !!data.session }
+  }
+  const recuperar = async (email) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname })
+    if (error) throw new Error(traduzir(error))
+  }
   const sair = () => supabase.auth.signOut()
   const agoraSync = () => sessao && puxar(sessao.id)
   const usarNuvem = () => { aplicarNuvem(conf); setConf(null) }
@@ -143,5 +157,5 @@ export function useSincronia(state, setRaw, normalizar) {
     setConf(null)
   }
 
-  return { sessao, ...info, conflito: !!conf, entrar, sair, agora: agoraSync, usarNuvem, usarLocal }
+  return { sessao, sessaoLida, ...info, conflito: !!conf, entrar, cadastrar, recuperar, sair, agora: agoraSync, usarNuvem, usarLocal }
 }

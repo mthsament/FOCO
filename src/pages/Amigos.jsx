@@ -4,31 +4,25 @@ import { useNav } from '../App.jsx'
 import MascoteAba from '../components/MascoteAba.jsx'
 import Chama from '../components/Chama.jsx'
 import Icon from '../components/Icon.jsx'
+import AvatarBase from '../components/Avatar.jsx'
 import { Empty, Seg, toast } from '../components/ui.jsx'
 import { todayISO } from '../lib/dates.js'
 import {
-  NOME_TIPO, TIPOS, aceitarConvite, aceitarPedido, adicionarPorCodigo, ativarAmigos, calcularOfensiva, criarOfensiva, criarPerfil,
-  encerrarOfensiva, mudarApelido, removerAmizade, sairDaOfensiva, useAmigos,
+  NOME_TIPO, TIPOS, aceitarConvite, aceitarPedido, adicionarAmigo, ativarAmigos, calcularOfensiva, criarOfensiva, criarPerfil,
+  encerrarOfensiva, erroUsuario, fmtId, limpaUsuario, removerAmizade, sairDaOfensiva, useAmigos,
 } from '../lib/amigos.js'
 
-const CORES = ['#ff6b35', '#5eaaff', '#3ddc97', '#a891ff', '#f2a93b', '#ff7b9c']
-const corDe = (id) => CORES[[...String(id)].reduce((a, c) => a + c.charCodeAt(0), 0) % CORES.length]
-const inicial = (n) => (n || '?').trim().charAt(0).toUpperCase()
-
-function Avatar({ perfil, estado, tam = 40 }) {
-  return (
-    <span className={'av' + (estado ? ' ' + estado : '')} style={{ '--c': corDe(perfil?.user_id), width: tam, height: tam, fontSize: tam * 0.42 }} title={perfil?.apelido}>
-      {inicial(perfil?.apelido)}
-      {estado === 'ok' && <i className="av-ok"><Icon name="check" /></i>}
-    </span>
-  )
+function Avatar({ perfil, estado, tam = 40, eu = false }) {
+  const { s } = useApp()
+  const foto = eu ? s.perfil.foto || perfil?.avatar : perfil?.avatar
+  return <AvatarBase src={foto} nome={perfil?.apelido} seed={perfil?.user_id} tam={tam} estado={estado} />
 }
 
 const ROT_ESTADO = { ok: 'cumpriu', pend: 'falta hoje', miss: 'falhou', rest: 'descanso' }
 
 export default function Amigos() {
   const { sync, s } = useApp()
-  const { go } = useNav()
+  const { go, entrar } = useNav()
   const sessao = sync.sessao
   const A = useAmigos(sessao)
   const [secao, setSecao] = useState('ofensivas')
@@ -62,8 +56,8 @@ export default function Amigos() {
       <>
         {cabeca}
         <Empty icon="amigos" title="Entre na sua conta para usar amigos">
-          <p>Amigos e ofensivas em grupo precisam de uma conta para os dados chegarem aos outros aparelhos. É a mesma conta do “Sincronizar aparelhos”.</p>
-          <button className="btn pri" onClick={() => go('config')}>Entrar ou criar conta</button>
+          <p>Amigos e ofensivas em grupo precisam de uma conta, para os seus dados chegarem aos outros aparelhos. Crie a sua com um @ e um ID só seus.</p>
+          <button className="btn pri" onClick={entrar}>Entrar ou criar conta</button>
         </Empty>
       </>
     )
@@ -82,7 +76,7 @@ export default function Amigos() {
     return (
       <>
         {cabeca}
-        <CriarPerfil onCriar={(nome) => tenta(async () => { await criarPerfil(sessao.id, nome); ativarAmigos(sessao.id) }, 'Perfil criado! Agora convide um amigo.')} ocupado={ocupado} />
+        <CriarPerfil apelido0={s.perfil.apelido || ''} onCriar={(d) => tenta(async () => { await criarPerfil(sessao.id, d); ativarAmigos(sessao.id) }, 'Perfil criado! Agora convide um amigo.')} ocupado={ocupado} />
       </>
     )
   }
@@ -91,7 +85,7 @@ export default function Amigos() {
   return (
     <>
       {cabeca}
-      <MeuCodigo eu={D.eu} onApelido={(n) => tenta(() => mudarApelido(sessao.id, n), 'Apelido atualizado')} />
+      <MeuCodigo eu={D.eu} irPerfil={() => go('perfil')} />
       <div className="ev-abas"><Seg value={secao} onChange={setSecao} options={[['ofensivas', 'Ofensivas juntos'], ['amigos', 'Amigos']]} /></div>
       {A.erro && <div className="note warn" style={{ marginBottom: 12 }}>{A.erro}</div>}
       {secao === 'ofensivas' && <Ofensivas D={D} uid={sessao.id} tenta={tenta} ocupado={ocupado} irAmigos={() => setSecao('amigos')} />}
@@ -115,52 +109,47 @@ function SemTabelas() {
   )
 }
 
-function CriarPerfil({ onCriar, ocupado }) {
-  const [nome, setNome] = useState('')
+function CriarPerfil({ onCriar, ocupado, apelido0 }) {
+  const [apelido, setApelido] = useState(apelido0)
+  const [usuario, setUsuario] = useState('')
+  const msg = usuario ? erroUsuario(usuario) : ''
   return (
     <div className="card">
-      <h2>Como seus amigos vão te chamar?</h2>
-      <p className="mut small">Só o apelido e o seu progresso diário (treino, dieta e água cumpridos) ficam visíveis para quem você aceitar. Peso, medidas e o resto continuam só com você.</p>
-      <div className="row wrap">
-        <input className="sp" type="text" maxLength={24} autoComplete="off" placeholder="Seu apelido (ex.: Math)" value={nome} onChange={(e) => setNome(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && onCriar(nome)} aria-label="Apelido" />
-        <button className="btn pri" disabled={ocupado || nome.trim().length < 2} onClick={() => onCriar(nome)}>Criar meu perfil</button>
-      </div>
+      <h2>Escolha seu @ de amigo</h2>
+      <p className="mut small">Seus amigos vão te achar pelo <b>@</b> e por um <b>ID</b> de 8 números que o app cria para você. Só o apelido, a foto, o “sobre” e o progresso diário (treino, dieta e água) ficam visíveis para quem você aceitar.</p>
+      <label className="fld"><span className="f">Apelido</span><input type="text" maxLength={24} autoComplete="nickname" value={apelido} onChange={(e) => setApelido(e.target.value)} /></label>
+      <label className="fld" style={{ marginTop: 10 }}><span className="f">Seu @ (único)</span>
+        <span className="ent-arroba"><i>@</i><input type="text" autoCapitalize="none" spellCheck={false} maxLength={20} autoComplete="username" value={usuario.replace(/^@+/, '')} onChange={(e) => setUsuario(e.target.value)} placeholder="seu_usuario" /></span>
+        <small className={'ent-dica' + (msg ? ' ruim' : '')}>{msg || 'Letras minúsculas, números e _'}</small>
+      </label>
+      <button className="btn pri" style={{ marginTop: 12 }} disabled={ocupado || !!erroUsuario(usuario) || apelido.trim().length < 2} onClick={() => onCriar({ usuario, apelido })}>Criar meu perfil</button>
     </div>
   )
 }
 
-function MeuCodigo({ eu, onApelido }) {
-  const [edit, setEdit] = useState(false)
-  const [nome, setNome] = useState(eu.apelido)
+function MeuCodigo({ eu, irPerfil }) {
+  const texto = `@${eu.usuario || ''} · ID ${fmtId(eu.codigo)}`
   const copiar = async () => {
-    try { await navigator.clipboard.writeText(eu.codigo); toast('Código copiado') } catch { toast(eu.codigo) }
+    try { await navigator.clipboard.writeText(texto); toast('Copiado') } catch { toast(texto) }
   }
   const compartilhar = async () => {
-    const texto = `Me adiciona no FOCO! Meu código de amigo: ${eu.codigo}`
-    if (navigator.share) { try { await navigator.share({ title: 'FOCO', text: texto, url: location.origin + location.pathname }); return } catch { /* cancelou */ } }
-    try { await navigator.clipboard.writeText(texto + ' ' + location.origin + location.pathname); toast('Convite copiado') } catch { toast(texto) }
+    const msg = `Me adiciona no FOCO! Meu @ é @${eu.usuario} e meu ID é ${fmtId(eu.codigo)}.`
+    if (navigator.share) { try { await navigator.share({ title: 'FOCO', text: msg, url: location.origin + location.pathname }); return } catch { /* cancelou */ } }
+    try { await navigator.clipboard.writeText(msg + ' ' + location.origin + location.pathname); toast('Convite copiado') } catch { toast(msg) }
   }
   return (
-    <section className="amg-hero" aria-label="Seu código de amigo">
+    <section className="amg-hero" aria-label="Seu @ e ID de amigo">
       <div className="ah-esq">
-        <Avatar perfil={eu} tam={52} />
+        <Avatar perfil={eu} tam={56} eu />
         <div className="ah-nome">
-          {edit ? (
-            <span className="row">
-              <input type="text" maxLength={24} value={nome} onChange={(e) => setNome(e.target.value)} aria-label="Novo apelido" />
-              <button className="btn sm pri" onClick={() => { onApelido(nome); setEdit(false) }}>Salvar</button>
-            </span>
-          ) : (
-            <>
-              <b>{eu.apelido}</b>
-              <button className="ah-edit" onClick={() => { setNome(eu.apelido); setEdit(true) }}>editar apelido</button>
-            </>
-          )}
+          <b>{eu.apelido}</b>
+          {eu.usuario && <span className="ah-arroba" translate="no">@{eu.usuario}</span>}
+          <button className="ah-edit" onClick={irPerfil}>editar perfil</button>
         </div>
       </div>
       <div className="ah-cod">
-        <small>Seu código de amigo</small>
-        <b translate="no">{eu.codigo}</b>
+        <small>Seu ID de amigo</small>
+        <b translate="no">{fmtId(eu.codigo)}</b>
       </div>
       <div className="ah-acoes">
         <button className="btn sm" onClick={copiar}><Icon name="clip" /> Copiar</button>
@@ -249,7 +238,7 @@ function Ofensivas({ D, uid, tenta, ocupado, irAmigos }) {
               <div className="gr-membros">
                 {uids.map((u) => (
                   <div className="gr-m" key={u}>
-                    <Avatar perfil={D.perfis[u]} estado={r.hoje[u]} />
+                    <Avatar perfil={D.perfis[u]} estado={r.hoje[u]} eu={u === uid} />
                     <span>{u === uid ? 'Você' : D.perfis[u]?.apelido || 'Amigo'}</span>
                     <small className={'st-' + r.hoje[u]}>{ROT_ESTADO[r.hoje[u]] || ''}</small>
                   </div>
@@ -333,7 +322,8 @@ function Hoje({ ch }) {
 }
 
 function Lista({ D, uid, tenta, ocupado }) {
-  const [codigo, setCodigo] = useState('')
+  const [arroba, setArroba] = useState('')
+  const [idAmigo, setIdAmigo] = useState('')
   const hoje = todayISO()
   const recebidos = D.amizades.filter((a) => a.status === 'pendente' && a.para === uid)
   const enviados = D.amizades.filter((a) => a.status === 'pendente' && a.de === uid)
@@ -341,8 +331,9 @@ function Lista({ D, uid, tenta, ocupado }) {
 
   const adicionar = () =>
     tenta(async () => {
-      const r = await adicionarPorCodigo(uid, codigo, D)
-      setCodigo('')
+      const r = await adicionarAmigo(uid, arroba, idAmigo, D)
+      setArroba('')
+      setIdAmigo('')
       return r
     }, (r) => (r.aceito ? `${r.apelido} agora é seu amigo!` : `Pedido enviado para ${r.apelido}`))
 
@@ -350,10 +341,11 @@ function Lista({ D, uid, tenta, ocupado }) {
     <>
       <div className="card">
         <h2>Adicionar amigo</h2>
-        <p className="mut small" style={{ margin: '0 0 10px' }}>Peça o código do seu amigo (aparece no topo desta tela dele) e digite aqui.</p>
-        <div className="row wrap">
-          <input className="sp" type="text" autoCapitalize="characters" autoComplete="off" spellCheck={false} placeholder="FOCO-AB12CD" value={codigo} onChange={(e) => setCodigo(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && adicionar()} aria-label="Código do amigo" />
-          <button className="btn pri" disabled={ocupado || codigo.trim().length < 6} onClick={adicionar}>Adicionar</button>
+        <p className="mut small" style={{ margin: '0 0 10px' }}>Peça ao seu amigo o <b>@</b> e o <b>ID</b> dele (estão no topo desta tela, na dele). Precisa dos dois.</p>
+        <div className="amg-add">
+          <span className="ent-arroba"><i>@</i><input type="text" autoCapitalize="none" autoComplete="off" spellCheck={false} maxLength={20} placeholder="usuario" value={arroba.replace(/^@+/, '')} onChange={(e) => setArroba(limpaUsuario(e.target.value))} aria-label="@ do amigo" /></span>
+          <input type="text" inputMode="numeric" autoComplete="off" maxLength={9} placeholder="ID: 4821 7305" value={idAmigo} onChange={(e) => setIdAmigo(e.target.value.replace(/[^\d ]/g, ''))} onKeyDown={(e) => e.key === 'Enter' && adicionar()} aria-label="ID do amigo" />
+          <button className="btn pri" disabled={ocupado || !limpaUsuario(arroba) || idAmigo.replace(/\D/g, '').length !== 8} onClick={adicionar}>Adicionar</button>
         </div>
       </div>
 
@@ -380,7 +372,7 @@ function Lista({ D, uid, tenta, ocupado }) {
           return (
             <div className="amg-linha" key={a.id}>
               <Avatar perfil={p} />
-              <div className="sp"><b>{p?.apelido || 'Amigo'}</b><div className="mut small">hoje</div></div>
+              <div className="sp"><b>{p?.apelido || 'Amigo'}</b><div className="mut small">{p?.usuario ? `@${p.usuario} · hoje` : 'hoje'}</div></div>
               <Hoje ch={D.checkins[outro]?.[hoje]} />
               <button className="btn sm ghost danger" disabled={ocupado} aria-label={`Remover ${p?.apelido}`} onClick={() => confirm(`Remover ${p?.apelido} dos amigos?`) && tenta(() => removerAmizade(a.id), 'Amigo removido')}><Icon name="trash" /></button>
             </div>

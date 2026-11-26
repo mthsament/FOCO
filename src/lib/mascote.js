@@ -93,9 +93,10 @@ export function mascoteDaAba(aba, s, { sync } = {}) {
     }
     case 'amigos':
       return { pose: 1, anim: 'pula', fala: 'Ofensiva em dupla é muito mais difícil de largar. Chame um amigo e comecem juntos!' }
+    case 'perfil':
     case 'config':
       return sync?.sessao
-        ? { pose: 6, anim: 'idle', fala: 'Tudo sincronizado com a sua conta. Faça um backup de vez em quando.' }
+        ? { pose: 6, anim: 'idle', fala: 'Tudo sincronizado com a sua conta. Capriche na foto e no “sobre” para os amigos!' }
         : { pose: 6, anim: 'idle', fala: 'Entre na sua conta para levar os dados entre o celular e o computador.' }
     default:
       return { pose: 3, anim: 'idle', fala: 'Foco!' }

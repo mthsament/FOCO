@@ -1,19 +1,17 @@
 import { useRef, useState } from 'react'
 import { del } from 'idb-keyval'
-import { useApp, aplicarImportacao, estadoInicial } from '../store.jsx'
-import { lerPlanilha, resumir } from '../importer.js'
-import { ThemeSeg, toast } from '../components/ui.jsx'
-import { metaAgua } from '../lib/metrics.js'
-import MascoteAba from '../components/MascoteAba.jsx'
-import { useNav } from '../App.jsx'
-import Icon from '../components/Icon.jsx'
-import Lembretes from '../components/Lembretes.jsx'
-import Sincronia from '../components/Sincronia.jsx'
-import { CardVersao } from '../components/Atualizacao.jsx'
+import { useApp, aplicarImportacao, estadoInicial } from '../../store.jsx'
+import { lerPlanilha, resumir } from '../../importer.js'
+import { ThemeSeg, toast } from '../../components/ui.jsx'
+import { metaAgua } from '../../lib/metrics.js'
+import { useNav } from '../../App.jsx'
+import Icon from '../../components/Icon.jsx'
+import Sincronia from '../../components/Sincronia.jsx'
+import { CardVersao } from '../../components/Atualizacao.jsx'
 
 const NOMES = { academia: 'Treino (Plano_Academia)', corrida: 'Corrida (Plano_Corrida)', alimentacao: 'Dieta e suplementação' }
 
-export default function Config() {
+export default function Ajustes() {
   const { s, setState, update } = useApp()
   const { go } = useNav()
   const [lidos, setLidos] = useState([])
@@ -78,10 +76,6 @@ export default function Config() {
   const validos = lidos.filter((l) => l.tipo)
   return (
     <>
-      <h1>Ajustes</h1>
-      <p className="sub">Importar planilhas, backup e integrações</p>
-      <MascoteAba aba="config" />
-
       <div className="card">
         <h2><Icon name="sun" /> Aparência</h2>
         <ThemeSeg />
@@ -100,8 +94,6 @@ export default function Config() {
         </label>
         <p className="mut small">A ofensiva de água conta os dias seguidos em que você bate essa meta. Mudar a meta vale para todos os dias.</p>
       </div>
-
-      <Lembretes />
 
       <div className="card">
         <h2><Icon name="upload" /> Importar planilhas</h2>
