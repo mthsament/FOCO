@@ -57,6 +57,12 @@ const OLHOS = (n) => `<g class="mv-olhos"><clipPath id="mv-${n}-ocl"><ellipse cx
   + `<ellipse cx="321" cy="149" rx="14.5" ry="12.5" fill="#fff"/><g clip-path="url(#mv-${n}-ocl)"><circle cx="324.5" cy="150.5" r="8.8" fill="#8A4521"/><circle cx="325" cy="150.5" r="4.9" fill="#1B0E08"/><circle cx="328" cy="146.6" r="2.5" fill="#fff"/></g><ellipse cx="321" cy="149" rx="14.5" ry="12.5" fill="none" stroke="#3A1E10" stroke-width="3"/>`
   + `<ellipse cx="379" cy="150" rx="11.5" ry="11.5" fill="#fff"/><g clip-path="url(#mv-${n}-ocr)"><circle cx="381.5" cy="151.5" r="7.2" fill="#8A4521"/><circle cx="381.8" cy="151.5" r="4" fill="#1B0E08"/><circle cx="384" cy="148.6" r="2" fill="#fff"/></g><ellipse cx="379" cy="150" rx="11.5" ry="11.5" fill="none" stroke="#3A1E10" stroke-width="3"/>`
   + `<path d="M304 133 L339 141" fill="none" stroke="#3A1E10" stroke-width="5" stroke-linecap="round"/><path d="M366 141 L393 134" fill="none" stroke="#3A1E10" stroke-width="4.6" stroke-linecap="round"/></g>`
+
+// No visual "yoga" o olho da imagem é um ponto escuro sem branco; no tema escuro ele some no fundo e parece um buraco.
+const OLHO_YOGA = (n) => `<g class="mv-olhos"><clipPath id="mv-${n}-oc"><ellipse cx="478" cy="194" rx="11" ry="13"/></clipPath>`
+  + `<ellipse cx="477" cy="194" rx="15" ry="16" fill="#F3653D"/><ellipse cx="478" cy="194" rx="11" ry="13" fill="#fff"/>`
+  + `<g clip-path="url(#mv-${n}-oc)"><circle cx="482" cy="195.5" r="7.6" fill="#8A4521"/><circle cx="482.6" cy="195.5" r="4.2" fill="#1B0E08"/><circle cx="485" cy="192" r="2" fill="#fff"/></g>`
+  + `<ellipse cx="478" cy="194" rx="11" ry="13" fill="none" stroke="#3A1E10" stroke-width="2.6"/></g>`
 const COM_OLHOS = new Set(['halter', 'modo-foco'])
 
 const sprites = {}
@@ -95,6 +101,7 @@ for (const nome of VISUAIS) {
     })
 
   if (COM_OLHOS.has(nome)) fig = fig.replace('<g class="mv-lid"', OLHOS(nome) + '<g class="mv-lid"')
+  if (nome === 'yoga') fig = fig.replace('<g class="mv-lid', OLHO_YOGA(nome) + '<g class="mv-lid')
 
   let estilo = readFileSync(join(dir, 'styles.css'), 'utf8')
   estilo = estilo.slice(estilo.indexOf('body{margin:0}') + 'body{margin:0}'.length)
