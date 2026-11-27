@@ -8,7 +8,7 @@ import AvatarBase from '../components/Avatar.jsx'
 import CriarArroba from '../components/CriarArroba.jsx'
 import { Empty, Seg, toast } from '../components/ui.jsx'
 import { todayISO } from '../lib/dates.js'
-import { aguaDoDia, metaAgua } from '../lib/metrics.js'
+import { META_AGUA_PADRAO, aguaDoDia, metaAgua } from '../lib/metrics.js'
 import {
   NOME_TIPO, TIPOS, aceitarConvite, aceitarPedido, adicionarAmigo, ativarAmigos, calcularOfensiva, criarOfensiva,
   definirUsuario, encerrarOfensiva, fmtId, limpaUsuario, removerAmizade, sairDaOfensiva, useAmigos,
@@ -226,7 +226,7 @@ function Ofensivas({ D, uid, tenta, ocupado, irAmigos }) {
                     <Avatar perfil={D.perfis[u]} estado={r.hoje[u]} eu={u === uid} />
                     <span>{u === uid ? 'Você' : D.perfis[u]?.apelido || 'Amigo'}</span>
                     <small className={'st-' + r.hoje[u]}>{ROT_ESTADO[r.hoje[u]] || ''}</small>
-                    {o.tipo === 'agua' && <AguaMembro ch={u === uid ? { agua_ml: aguaDoDia(s, hoje), meta_agua_ml: metaAgua(s) } : D.checkins[u]?.[hoje]} />}
+                    {o.tipo === 'agua' && <AguaMembro ch={u === uid ? { agua_ml: aguaDoDia(s, hoje), meta_agua_ml: metaAgua(s) } : aguaDoAmigo(D.checkins[u], hoje)} />}
                   </div>
                 ))}
                 {pendentes.map((u) => (
@@ -250,9 +250,15 @@ function Ofensivas({ D, uid, tenta, ocupado, irAmigos }) {
 
 // Quanto o membro já bebeu hoje e a meta dele (só aparece em ofensivas de água)
 const fmtL = (ml) => (ml / 1000).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 2 })
+// Sem registro de hoje: barra vazia (0) com a última meta conhecida do amigo, ou a padrão
+function aguaDoAmigo(dias, hoje) {
+  const hojeCh = dias?.[hoje]
+  if (hojeCh?.agua_ml != null && hojeCh.meta_agua_ml) return hojeCh
+  const ultima = Object.keys(dias || {}).filter((d) => dias[d].meta_agua_ml).sort().pop()
+  return { agua_ml: 0, meta_agua_ml: (ultima && dias[ultima].meta_agua_ml) || META_AGUA_PADRAO }
+}
 function AguaMembro({ ch }) {
-  const meta = ch?.meta_agua_ml
-  if (!ch || ch.agua_ml == null || !meta) return <small className="gr-agua-sem">sem dados de água</small>
+  const meta = ch.meta_agua_ml
   const pct = Math.min(100, Math.round((ch.agua_ml / meta) * 100))
   const falta = Math.max(0, meta - ch.agua_ml)
   return (
