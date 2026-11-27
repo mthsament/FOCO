@@ -224,6 +224,7 @@ function Ofensivas({ D, uid, tenta, ocupado, irAmigos }) {
                     <Avatar perfil={D.perfis[u]} estado={r.hoje[u]} eu={u === uid} />
                     <span>{u === uid ? 'Você' : D.perfis[u]?.apelido || 'Amigo'}</span>
                     <small className={'st-' + r.hoje[u]}>{ROT_ESTADO[r.hoje[u]] || ''}</small>
+                    {o.tipo === 'agua' && <AguaMembro ch={D.checkins[u]?.[hoje]} />}
                   </div>
                 ))}
                 {pendentes.map((u) => (
@@ -242,6 +243,22 @@ function Ofensivas({ D, uid, tenta, ocupado, irAmigos }) {
         })}
       </div>
     </>
+  )
+}
+
+// Quanto o membro já bebeu hoje e a meta dele (só aparece em ofensivas de água)
+const fmtL = (ml) => (ml / 1000).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 2 })
+function AguaMembro({ ch }) {
+  const meta = ch?.meta_agua_ml
+  if (!ch || ch.agua_ml == null || !meta) return <small className="gr-agua-sem">sem dados de água</small>
+  const pct = Math.min(100, Math.round((ch.agua_ml / meta) * 100))
+  const falta = Math.max(0, meta - ch.agua_ml)
+  return (
+    <div className="gr-agua" title={falta ? `Faltam ${fmtL(falta)} L` : 'Meta batida'}>
+      <div className="gr-agua-barra" role="progressbar" aria-valuemin={0} aria-valuemax={meta} aria-valuenow={ch.agua_ml}><i style={{ width: pct + '%' }} className={pct >= 100 ? 'cheia' : ''} /></div>
+      <b>{fmtL(ch.agua_ml)} <em>/ {fmtL(meta)} L</em></b>
+      <small>{falta ? `falta ${fmtL(falta)} L` : 'meta batida'}</small>
+    </div>
   )
 }
 

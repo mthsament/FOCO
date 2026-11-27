@@ -43,6 +43,9 @@ function traduz(e) {
 }
 const ok = ({ data, error }) => { if (error) throw traduz(error); return data }
 
+// SQL antigo (sem agua_ml / meta_agua_ml): o app continua funcionando, só sem mostrar os litros
+const semColunaAgua = (e) => e && (e.code === '42703' || e.code === 'PGRST204' || /agua_ml|meta_agua_ml/.test(e.message || ''))
+
 // ---------- leitura ----------
 export async function carregar(uid, hoje = todayISO()) {
   const [perfis, amizades, ofensivas, membros] = await Promise.all([
@@ -54,7 +57,13 @@ export async function carregar(uid, hoje = todayISO()) {
   const inicios = ofensivas.map((o) => o.inicio)
   const desde = [addDays(hoje, -40), ...inicios].sort()[0]
   const ids = perfis.map((p) => p.user_id)
-  const lista = ids.length ? await supabase.from('checkins').select('user_id, data, treino, dieta, agua').in('user_id', ids).gte('data', desde).then(ok) : []
+  let lista = []
+  if (ids.length) {
+    const q = (cols) => supabase.from('checkins').select(cols).in('user_id', ids).gte('data', desde)
+    let r = await q('user_id, data, treino, dieta, agua, agua_ml, meta_agua_ml')
+    if (r.error && semColunaAgua(r.error)) r = await q('user_id, data, treino, dieta, agua') // SQL antigo: sem litros
+    lista = ok(r)
+  }
   const checkins = {}
   for (const c of lista) (checkins[c.user_id] = checkins[c.user_id] || {})[c.data] = c
   const porId = Object.fromEntries(perfis.map((p) => [p.user_id, p]))
@@ -184,7 +193,7 @@ export function checkinsRecentes(s, hoje = todayISO(), n = 7) {
   for (let i = n - 1; i >= 0; i--) {
     const data = addDays(hoje, -i)
     const st = statusDia(s, data, hoje)
-    out.push({ data, treino: mapa(st.treino), dieta: mapa(st.dieta), agua: aguaDoDia(s, data) >= metaAgua(s) })
+    out.push({ data, treino: mapa(st.treino), dieta: mapa(st.dieta), agua: aguaDoDia(s, data) >= metaAgua(s), agua_ml: Math.round(aguaDoDia(s, data)), meta_agua_ml: Math.round(metaAgua(s)) })
   }
   return out
 }
@@ -193,7 +202,10 @@ export const amigosAtivo = (uid) => { try { return localStorage.getItem(CHAVE) =
 export const ativarAmigos = (uid) => { try { localStorage.setItem(CHAVE, uid) } catch { /* sem armazenamento */ } }
 
 export async function publicarCheckins(uid, linhas) {
-  ok(await supabase.from('checkins').upsert(linhas.map((l) => ({ user_id: uid, ...l })), { onConflict: 'user_id,data' }))
+  const up = (ls) => supabase.from('checkins').upsert(ls.map((l) => ({ user_id: uid, ...l })), { onConflict: 'user_id,data' })
+  let r = await up(linhas)
+  if (r.error && semColunaAgua(r.error)) r = await up(linhas.map(({ agua_ml, meta_agua_ml, ...resto }) => resto))
+  ok(r)
 }
 
 // Publica sozinho (depois de a pessoa criar o perfil em Amigos) sempre que o dia muda
