@@ -919,3 +919,4 @@ details.card > summary { cursor: pointer; list-style: none; } details.card > sum
 .gr-agua-sem { font-size: 10.5px; color: var(--mut); text-align: center; }
 .gr-m:has(.gr-agua) { min-width: 84px; max-width: 110px; }
 @media (prefers-reduced-motion: reduce) { .gr-agua-barra i { transition: none; } }
+.gr-centro .garrafa.mini.gr-garrafa { width: 26px; height: auto; flex: none; margin: 0 4px; }

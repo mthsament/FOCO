@@ -3,6 +3,7 @@ import { useApp } from '../store.jsx'
 import { useNav } from '../App.jsx'
 import MascoteAba from '../components/MascoteAba.jsx'
 import Chama from '../components/Chama.jsx'
+import { Garrafa } from '../components/Agua.jsx'
 import Icon from '../components/Icon.jsx'
 import AvatarBase from '../components/Avatar.jsx'
 import CriarArroba from '../components/CriarArroba.jsx'
@@ -203,6 +204,9 @@ function Ofensivas({ D, uid, tenta, ocupado, irAmigos }) {
           const r = calcularOfensiva(o, uids, D.checkins, hoje)
           const faltam = r.falta.map((u) => (u === uid ? 'você' : D.perfis[u]?.apelido || 'amigo'))
           const souDono = o.criada_por === uid
+          // ofensiva de água: a garrafa enche com a média do progresso de todo mundo hoje
+          const aguaDe = (u) => (u === uid ? { agua_ml: aguaDoDia(s, hoje), meta_agua_ml: metaAgua(s) } : aguaDoAmigo(D.checkins[u], hoje))
+          const pctGrupo = uids.length ? uids.reduce((t, u) => { const a = aguaDe(u); return t + Math.min(1, a.agua_ml / a.meta_agua_ml) }, 0) / uids.length : 0
           return (
             <article className={'gr-card' + (r.hojeOk ? ' feita' : '')} key={o.id}>
               <header className="gr-topo">
@@ -216,7 +220,7 @@ function Ofensivas({ D, uid, tenta, ocupado, irAmigos }) {
                 }}>{souDono ? 'Encerrar' : 'Sair'}</button>
               </header>
               <div className="gr-centro">
-                <Chama on={r.atual > 0} />
+                {o.tipo === 'agua' ? <Garrafa pct={pctGrupo} className={'mini gr-garrafa' + (r.atual > 0 ? ' on' : '')} /> : <Chama on={r.atual > 0} />}
                 <b key={r.atual} className="gr-n">{r.atual}</b>
                 <span className="gr-dias">{r.atual === 1 ? 'dia' : 'dias'} juntos<small>recorde {r.melhor}</small></span>
               </div>
@@ -226,7 +230,7 @@ function Ofensivas({ D, uid, tenta, ocupado, irAmigos }) {
                     <Avatar perfil={D.perfis[u]} estado={r.hoje[u]} eu={u === uid} />
                     <span>{u === uid ? 'Você' : D.perfis[u]?.apelido || 'Amigo'}</span>
                     <small className={'st-' + r.hoje[u]}>{ROT_ESTADO[r.hoje[u]] || ''}</small>
-                    {o.tipo === 'agua' && <AguaMembro ch={u === uid ? { agua_ml: aguaDoDia(s, hoje), meta_agua_ml: metaAgua(s) } : aguaDoAmigo(D.checkins[u], hoje)} />}
+                    {o.tipo === 'agua' && <AguaMembro ch={aguaDe(u)} />}
                   </div>
                 ))}
                 {pendentes.map((u) => (
