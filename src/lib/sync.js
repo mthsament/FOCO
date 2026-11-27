@@ -153,7 +153,7 @@ export function useSincronia(state, setRaw, normalizar) {
     if (error) throw new Error(traduzir(error))
   }
   const cadastrar = async (email, senha, meta) => {
-    const { data, error } = await supabase.auth.signUp({ email, password: senha, options: { data: meta } })
+    const { data, error } = await supabase.auth.signUp({ email, password: senha, options: { data: meta, emailRedirectTo: location.origin + import.meta.env.BASE_URL } })
     if (error) throw new Error(traduzir(error))
     return { logado: !!data.session }
   }
