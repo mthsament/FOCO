@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { supabase } from './supabase.js'
 import { addDays, diffDays, todayISO } from './dates.js'
 import { aguaDoDia, metaAgua, statusDia } from './metrics.js'
+import { estatisticas } from './conquistas.js'
 
 // Amigos e ofensivas em grupo (tabelas criadas por supabase/amigos.sql).
 // O que sai do aparelho: apelido, código de amigo e, por dia, "treino / dieta / água cumpridos".
@@ -46,10 +47,13 @@ const ok = ({ data, error }) => { if (error) throw traduz(error); return data }
 // SQL antigo (sem agua_ml / meta_agua_ml): o app continua funcionando, só sem mostrar os litros
 const semColunaAgua = (e) => e && (e.code === '42703' || e.code === 'PGRST204' || /agua_ml|meta_agua_ml/.test(e.message || ''))
 
+const semColunaResumo = (e) => e && (e.code === '42703' || e.code === 'PGRST204' || /resumo/.test(e.message || ''))
+
 // ---------- leitura ----------
 export async function carregar(uid, hoje = todayISO()) {
+  const colPerfis = 'user_id, apelido, usuario, codigo, bio, avatar, aceita_pedidos'
   const [perfis, amizades, ofensivas, membros] = await Promise.all([
-    supabase.from('perfis').select('user_id, apelido, usuario, codigo, bio, avatar, aceita_pedidos').then(ok),
+    supabase.from('perfis').select(colPerfis + ', resumo').then((r) => (r.error && semColunaResumo(r.error) ? supabase.from('perfis').select(colPerfis) : r)).then(ok),
     supabase.from('amizades').select('id, de, para, status, criado_em').then(ok),
     supabase.from('ofensivas').select('id, nome, tipo, criada_por, inicio, encerrada').then(ok),
     supabase.from('ofensiva_membros').select('ofensiva_id, user_id, status').then(ok),
@@ -98,7 +102,15 @@ export async function definirUsuario(uid, { usuario, apelido }) {
   if (error) throw traduz(error)
 }
 export async function atualizarPerfil(uid, campos) {
-  ok(await supabase.from('perfis').update(campos).eq('user_id', uid))
+  let r = await supabase.from('perfis').update(campos).eq('user_id', uid)
+  if (r.error && semColunaResumo(r.error)) { const { resumo, ...resto } = campos; r = await supabase.from('perfis').update(resto).eq('user_id', uid) } // SQL antigo
+  ok(r)
+}
+
+// Números do perfil que os amigos podem ver: maior ofensiva, água total e as estatísticas das conquistas
+export function resumoPerfil(s, hoje = todayISO()) {
+  const e = estatisticas(s, hoje)
+  return { ...e, maiorOfensiva: Math.max(e.seqTreino, e.seqDieta, e.seqAgua) }
 }
 export async function usuarioDisponivel(u) {
   const { data, error } = await supabase.rpc('usuario_disponivel', { u: limpaUsuario(u) })
@@ -201,6 +213,35 @@ const CHAVE = 'foco-amigos-uid'
 export const amigosAtivo = (uid) => { try { return localStorage.getItem(CHAVE) === uid } catch { return false } }
 export const ativarAmigos = (uid) => { try { localStorage.setItem(CHAVE, uid) } catch { /* sem armazenamento */ } }
 
+// Pendências para o selinho do menu: pedidos de amizade recebidos + convites de ofensiva.
+// Consulta leve (só contagem); quem nunca usou Amigos neste aparelho não consulta nada.
+const EVENTO = 'foco-amigos-mudou'
+export const avisaMudouAmigos = () => window.dispatchEvent(new Event(EVENTO))
+export function usePendenciasAmigos(sessao) {
+  const [n, setN] = useState({ pedidos: 0, convites: 0 })
+  const uid = sessao?.id
+  useEffect(() => {
+    if (!uid) { setN({ pedidos: 0, convites: 0 }); return }
+    let vivo = true
+    const ler = async () => {
+      if (!amigosAtivo(uid) || document.visibilityState === 'hidden') return
+      try {
+        const [a, b] = await Promise.all([
+          supabase.from('amizades').select('id', { count: 'exact', head: true }).eq('para', uid).eq('status', 'pendente'),
+          supabase.from('ofensiva_membros').select('ofensiva_id', { count: 'exact', head: true }).eq('user_id', uid).eq('status', 'convidado'),
+        ])
+        if (vivo && !a.error && !b.error) setN({ pedidos: a.count || 0, convites: b.count || 0 })
+      } catch { /* sem conexão: tenta na próxima */ }
+    }
+    ler()
+    const t = setInterval(ler, 60000)
+    document.addEventListener('visibilitychange', ler)
+    window.addEventListener(EVENTO, ler)
+    return () => { vivo = false; clearInterval(t); document.removeEventListener('visibilitychange', ler); window.removeEventListener(EVENTO, ler) }
+  }, [uid])
+  return { ...n, total: n.pedidos + n.convites }
+}
+
 export async function publicarCheckins(uid, linhas) {
   const up = (ls) => supabase.from('checkins').upsert(ls.map((l) => ({ user_id: uid, ...l })), { onConflict: 'user_id,data' })
   let r = await up(linhas)
@@ -236,6 +277,7 @@ export function usePerfilPublico(s, sessao, atualizar) {
         bio: priv.foto ? (s.perfil.sobre || '').slice(0, 160) || null : null,
         avatar: priv.foto ? s.perfil.foto || null : null,
         aceita_pedidos: priv.pedidos,
+        resumo: priv.progresso ? resumoPerfil(s) : null,
       }
     : null
   const chave = JSON.stringify(campos)
@@ -291,6 +333,7 @@ export function useAmigos(sessao) {
     try {
       const dados = await carregar(uid)
       if (vivo.current) setEstado({ carregando: false, dados, erro: '', semTabelas: false })
+      avisaMudouAmigos()
     } catch (e) {
       const er = e instanceof ErroAmigos ? e : traduz(e)
       if (vivo.current) setEstado((a) => ({ ...a, carregando: false, erro: er.semTabelas ? '' : er.message, semTabelas: !!er.semTabelas }))

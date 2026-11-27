@@ -182,3 +182,6 @@ grant execute on function public.excluir_minha_conta() to authenticated;
 -- ---------- água dos amigos (quanto bebeu hoje e a meta) ----------
 alter table public.checkins add column if not exists agua_ml integer;
 alter table public.checkins add column if not exists meta_agua_ml integer;
+
+-- ---------- resumo do perfil (maior ofensiva, água total, conquistas) ----------
+alter table public.perfis add column if not exists resumo jsonb;

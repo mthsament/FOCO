@@ -162,6 +162,9 @@ main { flex: 1; width: 100%; max-width: 980px; margin: 0 auto; padding: 18px 16p
 .nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 30; display: flex; justify-content: space-around; background: var(--ink); padding: 6px 4px calc(6px + var(--safe-b)); }
 .nav button { flex: 1; background: none; border: 0; color: var(--on-ink-mut); display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 12px; font-weight: 500; padding: 4px 0; cursor: pointer; }
 .nav button .ic { display: grid; place-items: center; width: 44px; height: 30px; border-radius: 99px; transition: background-color 180ms var(--ease-out), color 180ms var(--ease-out), transform 160ms var(--ease-out); }
+.nav button .ic { position: relative; }
+.bolinha { position: absolute; top: -3px; right: 2px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 99px; background: var(--bad); color: #fff; font: 700 11px/18px var(--body, inherit); text-align: center; box-shadow: 0 0 0 2px var(--ink); animation: rise 260ms var(--ease-out) backwards; }
+.bolinha.in { position: static; display: inline-block; margin-left: 6px; box-shadow: none; vertical-align: 1px; }
 .nav button:active .ic { transform: scale(.94); }
 .nav button.on { color: var(--on-ink); font-weight: 600; }
 .nav button.on .ic { background: var(--acc); color: var(--acc-ink); }
@@ -925,3 +928,9 @@ details.card > summary { cursor: pointer; list-style: none; } details.card > sum
 .gr-m:has(.gr-agua) { min-width: 84px; max-width: 110px; }
 @media (prefers-reduced-motion: reduce) { .gr-agua-barra i { transition: none; } }
 .gr-centro .garrafa.mini.gr-garrafa { width: 26px; height: auto; flex: none; margin: 0 4px; }
+
+.amg-abrir { display: flex; align-items: center; gap: 10px; background: none; border: 0; padding: 0; color: inherit; font: inherit; text-align: left; cursor: pointer; min-width: 0; }
+.amg-abrir > span { display: grid; min-width: 0; }
+.amg-abrir:hover b { text-decoration: underline; }
+.pf-amigo { margin-top: 12px; }
+.pf-stat { display: grid; justify-items: start; gap: 2px; } .pf-stat b { font-size: 24px; }

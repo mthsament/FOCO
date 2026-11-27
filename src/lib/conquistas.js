@@ -58,6 +58,7 @@ export function estatisticas(s, hoje = todayISO()) {
     diasAgua,
     seqAgua: sequenciaAgua(s).melhor,
     litros: Math.floor(ml / 1000),
+    ml: Math.round(ml),
     corridas: cor.length,
     km: r1(cor.reduce((a, c) => a + (c.km || 0), 0)),
     maiorKm: cor.reduce((m, c) => Math.max(m, c.km || 0), 0),
@@ -89,8 +90,10 @@ export const CATALOGO = [
   { id: 'dias-perfeitos', cat: 'constancia', nome: 'Dia perfeito', icone: 'hoje', metas: [1, 7, 21, 60], un: 'dias', desc: (m) => `${m} ${m === 1 ? 'dia' : 'dias'} com treino, dieta e água em dia`, v: (e) => e.perfeitos },
 ]
 
-export function avaliar(s, hoje = todayISO()) {
-  const est = estatisticas(s, hoje)
+export const avaliar = (s, hoje = todayISO()) => avaliarEst(estatisticas(s, hoje))
+
+// Avalia a partir das estatísticas já calculadas (também usado para o perfil de um amigo)
+export function avaliarEst(est) {
   const itens = CATALOGO.map((d) => {
     const valor = d.v(est)
     const nivel = d.metas.filter((m) => valor >= m).length

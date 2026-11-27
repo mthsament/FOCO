@@ -8,6 +8,8 @@ import Icon from '../components/Icon.jsx'
 import AvatarBase from '../components/Avatar.jsx'
 import CriarArroba from '../components/CriarArroba.jsx'
 import { Empty, Seg, toast } from '../components/ui.jsx'
+import Medalha from '../components/Medalha.jsx'
+import { CATEGORIAS, NOME_TIER, TIERS, avaliarEst } from '../lib/conquistas.js'
 import { todayISO } from '../lib/dates.js'
 import { META_AGUA_PADRAO, aguaDoDia, metaAgua } from '../lib/metrics.js'
 import {
@@ -30,6 +32,7 @@ export default function Amigos() {
   const A = useAmigos(sessao)
   const [secao, setSecao] = useState('ofensivas')
   const [ocupado, setOcupado] = useState(false)
+  const [ver, setVer] = useState(null) // user_id do amigo cujo perfil está aberto
 
   const tenta = async (fn, msg) => {
     if (ocupado) return
@@ -84,15 +87,19 @@ export default function Amigos() {
     )
   }
   ativarAmigos(sessao.id)
+  const nPedidos = D.amizades.filter((a) => a.status === 'pendente' && a.para === sessao.id).length
+  const nConvites = D.membros.filter((m) => m.user_id === sessao.id && m.status === 'convidado').length
+
+  if (ver && D.perfis[ver]) return <PerfilAmigo p={D.perfis[ver]} voltar={() => setVer(null)} />
 
   return (
     <>
       {cabeca}
       <MeuCodigo eu={D.eu} irPerfil={() => go('perfil')} />
-      <div className="ev-abas"><Seg value={secao} onChange={setSecao} options={[['ofensivas', 'Ofensivas juntos'], ['amigos', 'Amigos']]} /></div>
+      <div className="ev-abas"><Seg value={secao} onChange={setSecao} options={[['ofensivas', <>Ofensivas juntos{nConvites > 0 && <b className="bolinha in">{nConvites}</b>}</>], ['amigos', <>Amigos{nPedidos > 0 && <b className="bolinha in">{nPedidos}</b>}</>]]} /></div>
       {A.erro && <div className="note warn" style={{ marginBottom: 12 }}>{A.erro}</div>}
       {secao === 'ofensivas' && <Ofensivas D={D} uid={sessao.id} tenta={tenta} ocupado={ocupado} irAmigos={() => setSecao('amigos')} />}
-      {secao === 'amigos' && <Lista D={D} uid={sessao.id} tenta={tenta} ocupado={ocupado} />}
+      {secao === 'amigos' && <Lista D={D} uid={sessao.id} tenta={tenta} ocupado={ocupado} abrir={setVer} />}
     </>
   )
 }
@@ -333,7 +340,7 @@ function Hoje({ ch }) {
   )
 }
 
-function Lista({ D, uid, tenta, ocupado }) {
+function Lista({ D, uid, tenta, ocupado, abrir }) {
   const [arroba, setArroba] = useState('')
   const [idAmigo, setIdAmigo] = useState('')
   const hoje = todayISO()
@@ -383,8 +390,10 @@ function Lista({ D, uid, tenta, ocupado }) {
           const p = D.perfis[outro]
           return (
             <div className="amg-linha" key={a.id}>
-              <Avatar perfil={p} />
-              <div className="sp"><b>{p?.apelido || 'Amigo'}</b><div className="mut small">{p?.usuario ? `@${p.usuario} · hoje` : 'hoje'}</div></div>
+              <button type="button" className="amg-abrir sp" disabled={!p} onClick={() => abrir(outro)} aria-label={`Ver perfil de ${p?.apelido || 'amigo'}`}>
+                <Avatar perfil={p} />
+                <span><b>{p?.apelido || 'Amigo'}</b><span className="mut small">{p?.usuario ? `@${p.usuario} · hoje` : 'hoje'}</span></span>
+              </button>
               <Hoje ch={D.checkins[outro]?.[hoje]} />
               <button className="btn sm ghost danger" disabled={ocupado} aria-label={`Remover ${p?.apelido}`} onClick={() => confirm(`Remover ${p?.apelido} dos amigos?`) && tenta(() => removerAmizade(a.id), 'Amigo removido')}><Icon name="trash" /></button>
             </div>
@@ -403,6 +412,66 @@ function Lista({ D, uid, tenta, ocupado }) {
           </div>
         )}
       </div>
+    </>
+  )
+}
+
+// ---------- Perfil de um amigo ----------
+function PerfilAmigo({ p, voltar }) {
+  const r = p.resumo
+  const av = useMemo(() => (r ? avaliarEst(r) : null), [r])
+  const [cat, setCat] = useState('todas')
+  const conquistadas = av ? av.itens.filter((i) => i.nivel > 0 && (cat === 'todas' || i.cat === cat)) : []
+  const litros = r ? (r.ml ?? r.litros * 1000) / 1000 : 0
+  return (
+    <>
+      <button className="btn sm ghost" onClick={voltar}>← Voltar</button>
+      <section className="amg-hero pf-amigo" aria-label={`Perfil de ${p.apelido}`}>
+        <div className="ah-esq">
+          <Avatar perfil={p} tam={72} />
+          <div className="ah-nome">
+            <b>{p.apelido}</b>
+            {p.usuario && <span className="ah-arroba" translate="no">@{p.usuario}</span>}
+            {p.bio && <span className="mut small">{p.bio}</span>}
+          </div>
+        </div>
+      </section>
+      {!r ? (
+        <div className="card"><div className="gc-vazio">{p.apelido} ainda não compartilhou as estatísticas. Elas aparecem quando a pessoa abre o app com a conta e deixa o progresso visível.</div></div>
+      ) : (
+        <>
+          <div className="grid c2">
+            <div className="card pf-stat"><Icon name="flame" /><b>{r.maiorOfensiva} {r.maiorOfensiva === 1 ? 'dia' : 'dias'}</b><span className="mut small">maior ofensiva</span></div>
+            <div className="card pf-stat"><Icon name="gota" /><b>{litros.toLocaleString('pt-BR', { maximumFractionDigits: 1 })} L</b><span className="mut small">de água já bebida</span></div>
+          </div>
+          <div className="card">
+            <div className="row"><h2 className="sp"><Icon name="trofeu" /> Conquistas</h2><span className="chip">{av.trofeus}/{av.total}</span></div>
+            <div className="cq-tiers" style={{ margin: '8px 0' }}>
+              {TIERS.map((t) => (
+                <div key={t} className="cq-tier" title={NOME_TIER[t]}>
+                  <Medalha tier={t} icone="trofeu" tamanho={34} bloqueada={!av.porTier[t]} />
+                  <b>{av.porTier[t]}</b><span>{NOME_TIER[t]}</span>
+                </div>
+              ))}
+            </div>
+            <div className="chips-sel" role="group" aria-label="Filtrar por categoria">
+              <button className={'chip' + (cat === 'todas' ? ' sel' : '')} aria-pressed={cat === 'todas'} onClick={() => setCat('todas')}>Todas</button>
+              {CATEGORIAS.map(([c, nome]) => <button key={c} className={'chip' + (cat === c ? ' sel' : '')} aria-pressed={cat === c} onClick={() => setCat(c)}>{nome}</button>)}
+            </div>
+            {conquistadas.length === 0 && <div className="gc-vazio">Nenhuma conquista nessa categoria ainda.</div>}
+            <div className="cq-grade">
+              {conquistadas.map((i) => (
+                <div key={i.id} className="cq-card">
+                  <div className="cq-topo">
+                    <Medalha tier={TIERS[i.nivel - 1]} icone={i.icone} tamanho={56} titulo={`${i.nome}: ${NOME_TIER[TIERS[i.nivel - 1]]}`} />
+                    <div className="cq-txt"><b>{i.nome}</b><span className="mut small">Nível {NOME_TIER[TIERS[i.nivel - 1]].toLowerCase()}</span></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
     </>
   )
 }

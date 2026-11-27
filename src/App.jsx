@@ -10,6 +10,7 @@ import { corridaDuplicada, registrarCorrida } from './lib/registro.js'
 import { usePerfilPublico, usePublicarCheckins } from './lib/amigos.js'
 import Avatar from './components/Avatar.jsx'
 import TelaEntrada from './components/TelaEntrada.jsx'
+import { usePendenciasAmigos } from './lib/amigos.js'
 import TelaNovaSenha from './components/TelaNovaSenha.jsx'
 import Icon from './components/Icon.jsx'
 import { AvisoAtualizacao } from './components/Atualizacao.jsx'
@@ -137,6 +138,7 @@ export default function App() {
     return () => window.removeEventListener('hashchange', h)
   }, [])
 
+  const pend = usePendenciasAmigos(sync.sessao)
   const Page = TABS.find((t) => t[0] === tab)[3]
   const principais = TABS.filter((t) => t[0] !== 'perfil')
   const nomePerfil = s.perfil.apelido || sync.sessao?.meta?.apelido || sync.sessao?.email || ''
@@ -162,7 +164,7 @@ export default function App() {
           <div className="brand" translate="no">FOCO</div>
           {principais.map(([k, l, ic]) => (
             <button key={k} className={tab === k ? 'on' : ''} aria-current={tab === k ? 'page' : undefined} onClick={() => go(k)}>
-              <span className="ic"><Icon name={ic} /></span>
+              <span className="ic"><Icon name={ic} />{k === 'amigos' && pend.total > 0 && <b className="bolinha" role="status" aria-label={`${pend.total} ${pend.total === 1 ? 'novidade' : 'novidades'} em Amigos`}>{pend.total > 9 ? '9+' : pend.total}</b>}</span>
               <span>{l}</span>
             </button>
           ))}
