@@ -8,6 +8,7 @@ import AvatarBase from '../components/Avatar.jsx'
 import CriarArroba from '../components/CriarArroba.jsx'
 import { Empty, Seg, toast } from '../components/ui.jsx'
 import { todayISO } from '../lib/dates.js'
+import { aguaDoDia, metaAgua } from '../lib/metrics.js'
 import {
   NOME_TIPO, TIPOS, aceitarConvite, aceitarPedido, adicionarAmigo, ativarAmigos, calcularOfensiva, criarOfensiva,
   definirUsuario, encerrarOfensiva, fmtId, limpaUsuario, removerAmizade, sairDaOfensiva, useAmigos,
@@ -144,6 +145,7 @@ function MeuCodigo({ eu, irPerfil }) {
 
 // ---------- Ofensivas juntos ----------
 function Ofensivas({ D, uid, tenta, ocupado, irAmigos }) {
+  const { s } = useApp()
   const [novo, setNovo] = useState(false)
   const hoje = todayISO()
   const amigos = useMemo(() => amigosDe(D, uid), [D, uid])
@@ -224,7 +226,7 @@ function Ofensivas({ D, uid, tenta, ocupado, irAmigos }) {
                     <Avatar perfil={D.perfis[u]} estado={r.hoje[u]} eu={u === uid} />
                     <span>{u === uid ? 'Você' : D.perfis[u]?.apelido || 'Amigo'}</span>
                     <small className={'st-' + r.hoje[u]}>{ROT_ESTADO[r.hoje[u]] || ''}</small>
-                    {o.tipo === 'agua' && <AguaMembro ch={D.checkins[u]?.[hoje]} />}
+                    {o.tipo === 'agua' && <AguaMembro ch={u === uid ? { agua_ml: aguaDoDia(s, hoje), meta_agua_ml: metaAgua(s) } : D.checkins[u]?.[hoje]} />}
                   </div>
                 ))}
                 {pendentes.map((u) => (
