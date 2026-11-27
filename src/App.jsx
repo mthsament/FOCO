@@ -10,6 +10,7 @@ import { corridaDuplicada, registrarCorrida } from './lib/registro.js'
 import { usePerfilPublico, usePublicarCheckins } from './lib/amigos.js'
 import Avatar from './components/Avatar.jsx'
 import TelaEntrada from './components/TelaEntrada.jsx'
+import TelaNovaSenha from './components/TelaNovaSenha.jsx'
 import Icon from './components/Icon.jsx'
 import { AvisoAtualizacao } from './components/Atualizacao.jsx'
 import CelebracaoHost from './components/Celebracao.jsx'
@@ -142,6 +143,7 @@ export default function App() {
 
   // ainda lendo se há alguém logado: não pisca a tela de entrada
   if (!sync.sessaoLida) return <div className="app" />
+  if (sync.sessao && sync.recuperando) return <><TelaNovaSenha /><Toaster /></>
   if (!sync.sessao && !semConta) return <><TelaEntrada onPular={pular} /><Toaster /></>
 
   return (

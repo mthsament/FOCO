@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { useApp } from '../store.jsx'
 import { Seg } from './ui.jsx'
 import MascoteSprite from './MascoteSprite.jsx'
+import CampoSenha from './CampoSenha.jsx'
+import { erroSenha } from '../lib/senha.js'
 import { erroUsuario, limpaUsuario, usuarioDisponivel } from '../lib/amigos.js'
 
 // Tela de entrada: aparece no primeiro acesso e depois de sair da conta.
@@ -9,7 +11,6 @@ export default function TelaEntrada({ onPular }) {
   const { sync } = useApp()
   const [modo, setModo] = useState('entrar')
   const [f, setF] = useState({ apelido: '', usuario: '', email: '', senha: '' })
-  const [ver, setVer] = useState(false)
   const [erro, setErro] = useState('')
   const [aviso, setAviso] = useState('')
   const [ocupado, setOcupado] = useState(false)
@@ -37,7 +38,8 @@ export default function TelaEntrada({ onPular }) {
       const eu = erroUsuario(u)
       if (eu) return setErro(eu)
       if (livre === false) return setErro('Esse @ já está em uso. Escolha outro.')
-      if (f.senha.length < 6) return setErro('A senha precisa ter pelo menos 6 caracteres.')
+      const es = erroSenha(f.senha, [email, u, f.apelido])
+      if (es) return setErro(es)
     }
     setOcupado(true)
     try {
@@ -98,12 +100,7 @@ export default function TelaEntrada({ onPular }) {
           <label className="fld"><span className="f">E-mail</span>
             <input type="email" autoComplete="email" inputMode="email" value={f.email} onChange={set('email')} placeholder="voce@exemplo.com" required />
           </label>
-          <label className="fld"><span className="f">Senha</span>
-            <span className="ent-senha">
-              <input type={ver ? 'text' : 'password'} autoComplete={modo === 'entrar' ? 'current-password' : 'new-password'} value={f.senha} onChange={set('senha')} placeholder={modo === 'criar' ? 'Mínimo de 6 caracteres' : ''} required />
-              <button type="button" className="btn sm ghost" onClick={() => setVer((v) => !v)} aria-pressed={ver}>{ver ? 'Ocultar' : 'Mostrar'}</button>
-            </span>
-          </label>
+          <CampoSenha value={f.senha} onChange={set('senha')} novo={modo === 'criar'} politica={modo === 'criar'} pessoais={[f.email, u, f.apelido]} placeholder={modo === 'criar' ? 'Crie uma senha forte' : ''} />
 
           {erro && <div className="note warn" role="alert" style={{ margin: '10px 0' }}>{erro}</div>}
           {aviso && <div className="note" role="status" style={{ margin: '10px 0' }}>{aviso}</div>}

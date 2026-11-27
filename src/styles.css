@@ -865,6 +865,11 @@ details.card > summary { cursor: pointer; list-style: none; } details.card > sum
 .ent-arroba { display: flex; align-items: stretch; } .ent-arroba i { display: grid; place-items: center; padding: 0 12px; font-style: normal; font-weight: 700; color: var(--mut); background: var(--card2); border: 1.5px solid var(--line); border-right: 0; border-radius: 12px 0 0 12px; } .ent-arroba input { border-radius: 0 12px 12px 0 !important; min-width: 0; flex: 1; }
 .ent-senha { display: flex; gap: 8px; align-items: center; } .ent-senha input { flex: 1; min-width: 0; }
 .ent-dica { display: block; margin-top: 4px; color: var(--mut); font-size: 12.5px; } .ent-dica.ok { color: var(--ok); } .ent-dica.ruim { color: var(--bad); }
+.senha-pol { margin: -2px 0 10px; }
+.senha-barra { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; } .senha-barra i { height: 5px; border-radius: 3px; background: var(--line); transition: background 200ms var(--ease-out); }
+.senha-barra[data-n="1"] i:nth-child(-n+1) { background: var(--bad); } .senha-barra[data-n="2"] i:nth-child(-n+2) { background: #e0a100; } .senha-barra[data-n="3"] i:nth-child(-n+3), .senha-barra[data-n="4"] i { background: var(--ok); }
+.senha-forca { display: block; margin-top: 3px; font-size: 12.5px; font-weight: 600; color: var(--mut); }
+.senha-pol ul { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 2px; font-size: 12.5px; color: var(--mut); } .senha-pol li.ok { color: var(--ok); } .senha-pol li.ruim { color: var(--bad); } .senha-pol li span[aria-hidden] { display: inline-block; width: 14px; }
 .ent-ok { width: 100%; margin-top: 4px; }
 .ent-link { display: block; margin: 12px auto 0; background: none; border: 0; color: var(--blue); cursor: pointer; font-size: 14px; text-decoration: underline; text-underline-offset: 3px; }
 .ent-pular { background: none; border: 0; color: var(--on-ink-mut); font-size: 14px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; padding: 8px; }

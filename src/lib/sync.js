@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { supabase } from './supabase.js'
+import { erroSenha, limpaFalhas, registraFalha, segundosBloqueado } from './senha.js'
 
 // Sincronização entre aparelhos: um único documento por usuário (tabela `estados`).
 // Cada aparelho guarda em meta.editadoEm quando mexeu e em meta.sincEm a última versão sincronizada.
@@ -20,7 +21,9 @@ function traduzir(e) {
   if (/Invalid login credentials/i.test(m)) return 'E-mail ou senha incorretos.'
   if (/Email not confirmed/i.test(m)) return 'Confirme seu e-mail (veja a caixa de entrada e o spam) e entre de novo.'
   if (/already registered|already been registered/i.test(m)) return 'Esse e-mail já tem conta. Use "Entrar".'
-  if (/password should be at least|Password should/i.test(m)) return 'A senha precisa ter pelo menos 6 caracteres.'
+  if (/same.*password|different from the old/i.test(m)) return 'A senha nova precisa ser diferente da atual.'
+  if (/password.*(weak|pwned|easy to guess|known)/i.test(m)) return 'Essa senha é fraca ou já vazou em algum site. Escolha outra.'
+  if (/password should|at least \d+ char|should contain at least one character/i.test(m)) return 'A senha não atende à política: 8+ caracteres com maiúscula, minúscula, número e caractere especial.'
   if (/rate limit|too many/i.test(m)) return 'Muitas tentativas. Espere um minuto e tente de novo.'
   if (/valid email|invalid.*email/i.test(m)) return 'Esse e-mail não parece válido.'
   if (/fetch|network|Failed/i.test(m)) return 'Sem conexão. As alterações ficam salvas e sobem quando voltar.'
@@ -33,6 +36,7 @@ export function useSincronia(state, setRaw, normalizar) {
   const [info, setInfo] = useState({ status: 'off', msg: '', ultima: null })
   const [conf, setConf] = useState(null)
   const [pronto, setPronto] = useState(false)
+  const [recuperando, setRecuperando] = useState(false) // abriu o link de "esqueci minha senha": falta criar a senha nova
   const ref = useRef(state)
   ref.current = state
   const carregado = !!state
@@ -114,7 +118,11 @@ export function useSincronia(state, setRaw, normalizar) {
   useEffect(() => {
     const dados = (ses) => (ses ? { id: ses.user.id, email: ses.user.email, meta: ses.user.user_metadata || {} } : null)
     supabase.auth.getSession().then(({ data }) => { setSessao(dados(data.session)); setSessaoLida(true) }).catch(() => setSessaoLida(true))
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, ses) => setSessao(dados(ses)))
+    const { data: sub } = supabase.auth.onAuthStateChange((ev, ses) => {
+      if (ev === 'PASSWORD_RECOVERY') setRecuperando(true)
+      if (ev === 'SIGNED_OUT') setRecuperando(false)
+      setSessao(dados(ses))
+    })
     return () => sub.subscription.unsubscribe()
   }, [])
 
@@ -149,10 +157,30 @@ export function useSincronia(state, setRaw, normalizar) {
   }, [state?.meta?.editadoEm, state?.meta?.sincEm, sessao, pronto, conf, info.status])
 
   const entrar = async (email, senha) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password: senha })
+    const espera = segundosBloqueado()
+    if (espera > 0) throw new Error(`Muitas tentativas erradas. Espere ${espera > 60 ? Math.ceil(espera / 60) + ' min' : espera + ' s'} para tentar de novo.`)
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password: senha })
+    if (error) {
+      if (/Invalid login credentials/i.test(error.message || '')) registraFalha()
+      throw new Error(traduzir(error))
+    }
+    limpaFalhas()
+    // conta antiga com senha que não passa na política: marca na conta para forçar a troca (vale também depois de recarregar)
+    if (erroSenha(senha, [email, data?.user?.user_metadata?.usuario, data?.user?.user_metadata?.apelido])) {
+      await supabase.auth.updateUser({ data: { senha_fraca: true } })
+    }
+  }
+  // Troca a senha de quem está logado (também usada depois do link de recuperação)
+  const trocarSenha = async (nova) => {
+    const p = erroSenha(nova, [sessao?.email, sessao?.meta?.usuario, sessao?.meta?.apelido])
+    if (p) throw new Error(p)
+    const { error } = await supabase.auth.updateUser({ password: nova, data: { senha_fraca: false } })
     if (error) throw new Error(traduzir(error))
+    setRecuperando(false)
   }
   const cadastrar = async (email, senha, meta) => {
+    const p = erroSenha(senha, [email, meta?.usuario, meta?.apelido])
+    if (p) throw new Error(p)
     const { data, error } = await supabase.auth.signUp({ email, password: senha, options: { data: meta, emailRedirectTo: location.origin + import.meta.env.BASE_URL } })
     if (error) throw new Error(traduzir(error))
     return { logado: !!data.session }
@@ -187,5 +215,5 @@ export function useSincronia(state, setRaw, normalizar) {
     setConf(null)
   }
 
-  return { sessao, sessaoLida, ...info, conflito: !!conf, entrar, cadastrar, recuperar, sair, excluirConta, agora: agoraSync, usarNuvem, usarLocal }
+  return { sessao, sessaoLida, recuperando: recuperando || !!sessao?.meta?.senha_fraca, senhaFraca: !!sessao?.meta?.senha_fraca, ...info, conflito: !!conf, entrar, trocarSenha, cadastrar, recuperar, sair, excluirConta, agora: agoraSync, usarNuvem, usarLocal }
 }
